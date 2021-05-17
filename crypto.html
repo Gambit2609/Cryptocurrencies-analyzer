@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+
+<head>
+    <html lang="pl">
+    <meta charset="UFT-8">
+    <script src="FileSaver.js"></script>
+    <link rel="stylesheet" href="crypto.css">
+</head>
+
+<body>
+    <div class="sideBar">
+        <div>
+            <label for="uploadCryptoData">Upload cryptocurrencies data</label>
+            <input type="file" id="uploadCryptoData">
+        </div>
+        <div class="filters">
+            <label for="dateFilterCheckbox">Search by date</label>
+            <input type="checkbox" id="dateFilterCheckbox">
+            <label for="counterFilterCheckBox">Search for best/worst performing cryptocurrencies</label>
+            <input type="checkbox" id="counterFilterCheckBox">
+            <label for="token">Dont show token cryptocurrencies</label>
+            <input type="checkbox" id="token">
+        </div>
+        <div id="startDateFilter">
+            <label for="startSearchDate">Start search date:</label>
+            <input type="date" id="startSearchDate">
+        </div>
+        <div id="endDateFilter">
+            <label for="endSearchDate">End search date:</label>
+            <input type="date" id="endSearchDate">
+        </div>
+        <div id="counterFilter">
+            <label for="counterUp">Show crypto that grown more then x times</label>
+            <input type="number" id="counterUp">
+            <label for="counterDown">Show crypto that grown less then x times</label>
+            <input type="number" id="counterDown">
+        </div>
+        <div id="buttonCalculate">
+            <button type="button" id="calculate">Calculate</button>
+        </div>
+    </div>
+    <div class="table">
+        <table id="table"></table>
+    </div>
+</body>
+<script src="crypto.js"></script>
