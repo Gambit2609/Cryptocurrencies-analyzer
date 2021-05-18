@@ -16,8 +16,10 @@
         <div class="filters">
             <label for="dateFilterCheckbox">Search by date</label>
             <input type="checkbox" id="dateFilterCheckbox">
-            <label for="counterFilterCheckBox">Search for best/worst performing cryptocurrencies</label>
-            <input type="checkbox" id="counterFilterCheckBox">
+            <label for="bestPerformingCryptoFilterCheckBox">Search for best performing cryptocurrencies</label>
+            <input type="checkbox" id="bestPerformingCryptoFilterCheckBox">
+            <label for="worstPerformingCryptoFilterCheckBox">Search for worst performing cryptocurrencies</label>
+            <input type="checkbox" id="worstPerformingCryptoFilterCheckBox">
             <label for="token">Dont show token cryptocurrencies</label>
             <input type="checkbox" id="token">
         </div>
@@ -29,11 +31,18 @@
             <label for="endSearchDate">End search date:</label>
             <input type="date" id="endSearchDate">
         </div>
-        <div id="counterFilter">
-            <label for="counterUp">Show crypto that grown more then x times</label>
-            <input type="number" id="counterUp">
-            <label for="counterDown">Show crypto that grown less then x times</label>
-            <input type="number" id="counterDown">
+        <div id="bestPerFormingCryptoFilter">
+            <label for="growMoreThen">Show crypto that grown more then x percent</label>
+            <input type="number" id="growMoreThen">
+            <label for="growLessThen">Show crypto that grown less then x percent</label>
+            <input type="number" id="growLessThen">
+        </div>
+        <div id="worstPerFormingCryptoFilter">
+            <label for="shrinkMoreThen">Show crypto that shrink more then x times</label>
+            <input type="number" id="shrinkMoreThen">
+            <label for="shrinkLessThen">Show crypto that shrink less then x times</label>
+            <input type="number" id="shrinkLessThen">
+
         </div>
         <div id="buttonCalculate">
             <button type="button" id="calculate">Calculate</button>
