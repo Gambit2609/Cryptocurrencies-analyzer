@@ -12,6 +12,8 @@ const growMoreThenInput = document.getElementById("growMoreThen");
 const growLessThenInput = document.getElementById("growLessThen");
 const shrinkMoreThenInput = document.getElementById("shrinkMoreThen");
 const shrinkLessThenInput = document.getElementById("shrinkLessThen");
+const cryptoWorthDolarsCheckBox = document.getElementById("worthDolars");
+const cryptoWorthCentsCheckBox = document.getElementById("worthCents");
 const dateFilterCheckbox = document.getElementById("dateFilterCheckbox");
 const startDateFilter = document.getElementById("startDateFilter");
 const endDateFilter = document.getElementById("endDateFilter");
@@ -31,17 +33,19 @@ function addListeners() {
     worstPerformingCryptoFilterCheckBox.addEventListener("change", hideBestPerformingFilter);
     bestPerformingCryptoFilterCheckBox.addEventListener("change", showHideFilters);
     worstPerformingCryptoFilterCheckBox.addEventListener("change", showHideFilters);
-    growMoreThenInput.addEventListener("change", disableEnableGrowMoreThenInput);
-    growLessThenInput.addEventListener("change", disableEnableGrowLessThenInput);
-    shrinkMoreThenInput.addEventListener("change", disableEnableShrinkMoreThenInput);
-    shrinkLessThenInput.addEventListener("change", disableEnableShrinkLessThenInput);
+    growMoreThenInput.addEventListener("change", disableEnableGrowLessThenInput);
+    growLessThenInput.addEventListener("change", disableEnableGrowMoreThenInput);
+    shrinkMoreThenInput.addEventListener("change", disableEnableShrinkLessThenInput);
+    shrinkLessThenInput.addEventListener("change", disableEnableShrinkMoreThenInput);
+    cryptoWorthDolarsCheckBox.addEventListener("change", disableCryptoWorthCentsCheckBox);
+    cryptoWorthCentsCheckBox.addEventListener("change", disableCryptoWorthDolarsCheckBox);
 }
 
 addListeners();
 showHideFilters();
+// onDownloadAllCryptoButton();
 
-
-// 1. rozdzielić filtr na best/worst performing crypto
+// 1. dodać filtowanie po crypto które straciły więcej lub mniej niż...
 // 2. filtr na best / worst zrobić na zasadzie procentów a nie mnożnika
 // 3. dodać opis w inputach best / worst dla informacji użytkownika
 // 4. dodać filtr na wartość market cap
@@ -53,9 +57,12 @@ function onCalculatePressed() {
     let cryptoWithHistoricalMaxMin = getMaxMinValueHistorical(cryptoData);
     let tokenFiltered = tokenCheckBox.checked ? getCryptoFilteredByToken(cryptoWithHistoricalMaxMin) : cryptoWithHistoricalMaxMin;
     let timeFiltered = dateFilterCheckbox.checked ? getCryptoFilteredByTime(tokenFiltered) : tokenFiltered;
-    let counterFiltered = bestPerformingCryptoFilterCheckBox.checked ? getCryptoFilteredByMultiplier(timeFiltered) : timeFiltered;
-    createAndDeleteTable(counterFiltered);
-    console.log(counterFiltered);
+    let bestPerformingCryptoFiltered = bestPerformingCryptoFilterCheckBox.checked ? getBestPerformingCrypto(timeFiltered) : timeFiltered;
+    let worstPerformingCryptoFiltered = worstPerformingCryptoFilterCheckBox.checked ? getWorstPerformingCrypto(bestPerformingCryptoFiltered) : bestPerformingCryptoFiltered;
+    let cryptoWorthDolarsFiltered = cryptoWorthDolarsCheckBox.checked ? getCryptoWorthMoreThenDolar(worstPerformingCryptoFiltered) : worstPerformingCryptoFiltered;
+    let cryptoWorthCentsFiltered = cryptoWorthCentsCheckBox.checked ? getCryptoWorthLessThenDolar(cryptoWorthDolarsFiltered) : cryptoWorthDolarsFiltered;
+    createAndDeleteTable(cryptoWorthCentsFiltered);
+    console.log(cryptoWorthCentsFiltered);
 }
 
 function createAndDeleteTable(cryptoToTable) {
@@ -64,22 +71,10 @@ function createAndDeleteTable(cryptoToTable) {
     generateTableRows(cryptoToTable)
 }
 
+
 function deleteTable() {
-    let removeTable = table;
-    if (removeTable.childElementCount > 0) {
-        removeTable.removeChild(removeTable.childNodes[0]);
-    } else {
-        return;
-    }
+    table.childElementCount && table.removeChild(table.childNodes[0])
 }
-
-function addTableRows(row, rowName) {
-    let th = document.createElement("th");
-    let text = document.createTextNode(rowName);
-    th.appendChild(text);
-    row.appendChild(th);
-}
-
 
 function generateTableHead(table, crypto) {
     let thead = table.createTHead();
@@ -89,33 +84,34 @@ function generateTableHead(table, crypto) {
     th.appendChild(text);
     row.appendChild(th);
     let propertyNames = Object.keys(crypto[0]);
+
     if (propertyNames.includes("id")) {
         let name = "Crypto ID";
-        addTableRows(row, name);
+        addHeaderCellToRow(row, name);
     }
     if (propertyNames.includes("name")) {
         let name = "Crypto name";
-        addTableRows(row, name);
-    }
-    if (propertyNames.includes("minPriceData")) {
-        let name = "Lowest price";
-        addTableRows(row, name);
-    }
-    if (propertyNames.includes("maxPriceData")) {
-        let name = "Highest price";
-        addTableRows(row, name);
+        addHeaderCellToRow(row, name);
     }
     if (propertyNames.includes("percentChange")) {
         let name = "Percent change";
-        addTableRows(row, name);
+        addHeaderCellToRow(row, name);
+    }
+    if (propertyNames.includes("minPriceData")) {
+        let name = "Lowest price";
+        addHeaderCellToRow(row, name);
+    }
+    if (propertyNames.includes("maxPriceData")) {
+        let name = "Highest price";
+        addHeaderCellToRow(row, name);
     }
     if (propertyNames.includes("minPriceDataHistorical")) {
         let name = "Historical min. price";
-        addTableRows(row, name);
+        addHeaderCellToRow(row, name);
     }
     if (propertyNames.includes("maxPriceDataHistorical")) {
         let name = "Historical max. price";
-        addTableRows(row, name);
+        addHeaderCellToRow(row, name);
     }
 }
 
@@ -123,6 +119,13 @@ function addCellsToTable(row, data) {
     let cell = row.insertCell();
     let text = document.createTextNode(data);
     cell.appendChild(text);
+}
+
+function addHeaderCellToRow(row, rowName) {
+    let th = document.createElement("th");
+    let text = document.createTextNode(rowName);
+    th.appendChild(text);
+    row.appendChild(th);
 }
 
 function generateTableRows(crypto) {
@@ -140,7 +143,7 @@ function generateTableRows(crypto) {
             addCellsToTable(row, rowData)
         }
         if (obj.percentChange) {
-            let rowData = obj.percentChange;
+            let rowData = `${obj.percentChange.toFixed(2)}%`;
             let parsedPercent = parseFloat(rowData);
             let cell = row.insertCell();
             let text = document.createTextNode(rowData);
@@ -192,44 +195,33 @@ function validateDateFilter() {
 }
 
 function disableEnableShrinkMoreThenInput() {
-    if (shrinkMoreThenInput.valueAsNumber === 0) {
-        shrinkLessThenInput.disabled = false;
-    } else if (Number.isNaN(shrinkMoreThenInput.valueAsNumber)) {
-        shrinkLessThenInput.disabled = false;
-    } else if (shrinkMoreThenInput.valueAsNumber !== 0 || shrinkMoreThenInput.valueAsNumber !== NaN) {
-        shrinkLessThenInput.disabled = true;
-    }
+    shrinkLessThenInput.value !== "" ? shrinkMoreThenInput.disabled = true : shrinkMoreThenInput.disabled = false;
 }
 
 function disableEnableShrinkLessThenInput() {
-    if (shrinkLessThenInput.valueAsNumber === 0) {
-        shrinkMoreThenInput.disabled = false;
-    } else if (Number.isNaN(shrinkLessThenInput.valueAsNumber)) {
-        shrinkMoreThenInput.disabled = false;
-    } else if (shrinkLessThenInput.valueAsNumber !== 0 || shrinkLessThenInput.valueAsNumber !== NaN) {
-        shrinkMoreThenInput.disabled = true;
-    }
-}
-
-function disableEnableGrowMoreThenInput() {
-    if (growMoreThenInput.valueAsNumber === 0) {
-        growLessThenInput.disabled = false;
-    } else if (Number.isNaN(growMoreThenInput.valueAsNumber)) {
-        growLessThenInput.disabled = false;
-    } else if (growMoreThenInput.valueAsNumber !== 0 || growMoreThenInput.valueAsNumber !== NaN) {
-        growLessThenInput.disabled = true;
-    }
+    shrinkMoreThenInput.value !== "" ? shrinkLessThenInput.disabled = true : shrinkLessThenInput.disabled = false;
 }
 
 function disableEnableGrowLessThenInput() {
-    if (growLessThenInput.valueAsNumber === 0) {
-        growMoreThenInput.disabled = false;
-    } else if (Number.isNaN(growLessThenInput.valueAsNumber)) {
-        growMoreThenInput.disabled = false;
-    } else if (growLessThenInput.valueAsNumber !== 0 || growLessThenInput.valueAsNumber !== NaN) {
-        growMoreThenInput.disabled = true;
-    }
+    growMoreThenInput.value !== "" ? growLessThenInput.disabled = true : growLessThenInput.disabled = false;
 }
+
+function disableEnableGrowMoreThenInput() {
+    growLessThenInput.value !== "" ? growMoreThenInput.disabled = true : growMoreThenInput.disabled = false;
+
+}
+
+function disableCryptoWorthCentsCheckBox() {
+    if (cryptoWorthDolarsCheckBox.checked) {
+        cryptoWorthCentsCheckBox.checked = false;
+    }
+};
+
+function disableCryptoWorthDolarsCheckBox() {
+    if (cryptoWorthCentsCheckBox.checked) {
+        cryptoWorthDolarsCheckBox.checked = false;
+    }
+};
 
 function getCryptoFilteredByToken(data) {
     let filteredByToken = data.filter(obj => !obj.name.toLowerCase().includes("token"));
@@ -240,12 +232,20 @@ function getCryptoFilteredByToken(data) {
 function hideWorstPerformingFilter() {
     if (bestPerformingCryptoFilterCheckBox.checked) {
         worstPerformingCryptoFilterCheckBox.checked = false;
+        shrinkLessThenInput.value = null;
+        shrinkMoreThenInput.value = null;
+        disableEnableShrinkMoreThenInput();
+        disableEnableShrinkLessThenInput();
     }
 }
 
-function hideBestPerformingFilter () {
+function hideBestPerformingFilter() {
     if (worstPerformingCryptoFilterCheckBox.checked) {
         bestPerformingCryptoFilterCheckBox.checked = false;
+        growLessThenInput.value = null;
+        growMoreThenInput.value = null;
+        disableEnableGrowLessThenInput();
+        disableEnableGrowMoreThenInput();
     }
 }
 
@@ -254,27 +254,35 @@ function showHideFilters() {
     dateFilterCheckbox.checked ? endDateFilter.style.display = "" : endDateFilter.style.display = "none";
     bestPerformingCryptoFilterCheckBox.checked ? bestPerFormingCryptoFilter.style.display = "" : bestPerFormingCryptoFilter.style.display = "none";
     worstPerformingCryptoFilterCheckBox.checked ? worstPerFormingCryptoFilter.style.display = "" : worstPerFormingCryptoFilter.style.display = "none";
+
 }
 
-function getCounterValue() {
+function getPercentValue() {
     let counter = {};
-    growMoreThenInput.value.length == 0 || growMoreThenInput.value == 0 ? counter.Up = undefined : counter.Up = parseInt(growMoreThenInput.value);
-    growLessThenInput.value.length == 0 || growLessThenInput.value == 0 ? counter.Down = undefined : counter.Down = parseInt(growLessThenInput.value);
-    if (counter.Up < 0 || counter.Down < 0) {
-        alert(`Value on "grow less/more" cannot be negative`);
+    growMoreThenInput.value ? counter.growMore = parseFloat(growMoreThenInput.value) : counter.growMore = undefined;
+    growLessThenInput.value ? counter.growLess = parseFloat(growLessThenInput.value) : counter.growLess = undefined;
+    shrinkMoreThenInput.value ? counter.shrinkMore = parseFloat(shrinkMoreThenInput.value) : counter.shrinkMore = undefined;
+    shrinkLessThenInput.value ? counter.shrinkLess = parseFloat(shrinkLessThenInput.value) : counter.shrinkLess = undefined;
+    if (counter.growLess < 0 || counter.growMore < 0 || counter.shrinkLess < 0 || counter.shrinkMore < 0) {
+        alert(`Percent value cannot be negative`);
         throw new Error;
-    }else if (counter.Up == undefined && counter.Down == undefined) {
-        alert(`Value on "grow less/more" cannot be empty or has 0 value. Un match filter checkbox in case you don't want to use it`);
+    } else if (counter.growLess == 0 || counter.growMore == 0 || counter.shrinkLess == 0 || counter.shrinkMore == 0) {
+        alert(`Percent value cannot has 0 value. Un match filter checkbox in case you don't want to use it`);
+        throw new Error;
+    } else if (counter.growLess == undefined && counter.growMore == undefined && counter.shrinkMore == undefined && counter.shrinkLess == undefined) {
+        alert(`Percent value cannot be empty. Un match filter checkbox in case you don't want to use it`);
+        throw new Error;
+    } else if (counter.shrinkMore >= 100) {
+        alert(`Its not possible to shrink more then 100%. Correct "shrink more then" value.`);
         throw new Error;
     }
 
     return counter;
-
 }
 
 function getMaxMinValueHistorical(data) {
     let historicalMinMaxData = data.map(crypto => {
-        let cryptoWithHistoricalMaxMin = {...crypto};
+        let cryptoWithHistoricalMaxMin = { ...crypto };
         cryptoWithHistoricalMaxMin.minPriceDataHistorical = cryptoWithHistoricalMaxMin.dailyStats.reduce((acc, val) => parseFloat(acc.price) < parseFloat(val.price) ? acc : acc = val);
         cryptoWithHistoricalMaxMin.maxPriceDataHistorical = cryptoWithHistoricalMaxMin.dailyStats.reduce((acc, val) => parseFloat(acc.price) > parseFloat(val.price) ? acc : acc = val);
         try {
@@ -297,46 +305,62 @@ function getPercentChangeValue(data) {
         if (crypto[`${historicalOrRangeMinDate}`].date > crypto[`${historicalOrRangeMaxDate}`].date) {
             let differenceBetweenMaxMin = (crypto[`${historicalOrRangeMinDate}`].price - crypto[`${historicalOrRangeMaxDate}`].price) / crypto[`${historicalOrRangeMaxDate}`].price;
             let changeDifferenceToPercent = -Math.abs(differenceBetweenMaxMin) * 100;
-            crypto.percentChange = `${changeDifferenceToPercent.toFixed(2)}%`;
+            crypto.percentChange = changeDifferenceToPercent;
+
             return crypto;
+
         } else {
             let differenceBetweenMaxMin = (crypto[`${historicalOrRangeMaxDate}`].price - crypto[`${historicalOrRangeMinDate}`].price) / crypto[`${historicalOrRangeMinDate}`].price;
             let changeDifferenceToPercent = Math.abs(differenceBetweenMaxMin) * 100;
 
 
-            crypto.percentChange = `${changeDifferenceToPercent.toFixed(2)}%`;
+            crypto.percentChange = changeDifferenceToPercent;
+
             return crypto;
         }
     });
+
     return cryptoWithPercentChange;
 }
 
+function getCryptoFilteredByPercent(percent, crypto) {
+    if (percent.growMore) {
+        let filtered = crypto.filter(obj => obj.percentChange > 0 && obj.percentChange > percent.growMore);
 
-function getCryptoFilteredByMultiplier(data) {
-    let counter = getCounterValue();
-    let dataWithPercentChange = getPercentChangeValue(data);
-    let filteredByCounter = [];
-    if (dataWithPercentChange[0].minPriceData && dataWithPercentChange[0].maxPriceData) {
-        if (counter.Up) {
-            let filtered = dataWithPercentChange.filter(obj => obj.maxPriceData.price > (obj.minPriceData.price * counter.Up) && parseFloat(obj.percentChange) > 0);
-            filteredByCounter.push(...filtered);
-        } else {
-            let filtered = dataWithPercentChange.filter(obj => obj.maxPriceData.price < (obj.minPriceData.price * counter.Down) && parseFloat(obj.percentChange) > 0);
-            filteredByCounter.push(...filtered);
-        }
+        return filtered;
+    };
+    if (percent.growLess) {
+        let filtered = crypto.filter(obj => obj.percentChange > 0 && obj.percentChange < percent.growLess);
 
-        return filteredByCounter;
+        return filtered;
+    };
+    if (percent.shrinkMore) {
+        let filtered = crypto.filter(obj => obj.percentChange < 0 && obj.percentChange < -Math.abs(percent.shrinkMore));
 
-    } else {
-        if (counter.Up) {
-            let filtered = dataWithPercentChange.filter(obj => obj.maxPriceDataHistorical.price > (obj.minPriceDataHistorical.price * counter.Up) && parseFloat(obj.percentChange) > 0);
-            filteredByCounter.push(...filtered);
-        } else {
-            let filtered = dataWithPercentChange.filter(obj => obj.maxPriceDataHistorical.price < (obj.minPriceDataHistorical.price * counter.Down) && parseFloat(obj.percentChange) > 0);
-            filteredByCounter.push(...filtered);
-        }
-        return filteredByCounter;
+        return filtered;
+    };
+    if (percent.shrinkLess) {
+        let filtered = crypto.filter(obj => obj.percentChange < 0 && obj.percentChange > -Math.abs(percent.shrinkLess));
+
+        return filtered;
     }
+}
+
+function getBestPerformingCrypto(data) {
+    let percentValue = getPercentValue();
+    let dataWithPercentChange = getPercentChangeValue(data);
+    let filteredByPercent = getCryptoFilteredByPercent(percentValue, dataWithPercentChange);
+
+    return filteredByPercent;
+
+}
+
+function getWorstPerformingCrypto(data) {
+    let percentValue = getPercentValue();
+    let dataWithPercentChange = getPercentChangeValue(data);
+    let filteredByPercent = getCryptoFilteredByPercent(percentValue, dataWithPercentChange);
+
+    return filteredByPercent;
 
 }
 
@@ -351,13 +375,15 @@ function getCryptoFilteredByTime(data) {
         filteredCrypto.name = crypto.name;
         filteredCrypto.dailyStats = [];
         let startEndFilteredData = crypto.dailyStats.filter(x => x.date >= start && x.date <= end);
+
         if (startEndFilteredData.length === 0) {
             return;
         }
+
         filteredCrypto.dailyStats.push(...startEndFilteredData);
-        filteredCrypto.minPriceData = filteredCrypto.dailyStats.reduce((acc, val) => acc.price < val.price ? acc : acc = val);
+        filteredCrypto.minPriceData = filteredCrypto.dailyStats.reduce((acc, val) => parseFloat(acc.price) < parseFloat(val.price) ? acc : acc = val);
         filteredCrypto.minPriceData.price = parseFloat(filteredCrypto.minPriceData.price).toFixed(10);
-        filteredCrypto.maxPriceData = filteredCrypto.dailyStats.reduce((acc, val) => acc.price > val.price ? acc : acc = val);
+        filteredCrypto.maxPriceData = filteredCrypto.dailyStats.reduce((acc, val) => parseFloat(acc.price) > parseFloat(val.price) ? acc : acc = val);
         filteredCrypto.maxPriceData.price = parseFloat(filteredCrypto.maxPriceData.price).toFixed(10);
         searchResults.push(filteredCrypto);
     });
@@ -365,6 +391,31 @@ function getCryptoFilteredByTime(data) {
     let percentChange = getPercentChangeValue(searchResults);
 
     return percentChange;
+
+}
+
+function getCryptoWorthMoreThenDolar(data) {
+    let cryptoWorthDolars = data.filter(obj => {
+        let sumOfAllCryptoPrices = obj.dailyStats.reduce((sum, val) => sum + parseFloat(val.price), 0);
+        let averagePrice = sumOfAllCryptoPrices / obj.dailyStats.length;
+
+        return averagePrice > 1;
+
+    })
+
+    return cryptoWorthDolars;
+}
+
+function getCryptoWorthLessThenDolar(data) {
+    let cryptoWorthCents = data.filter(obj => {
+        let sumOfAllCryptoPrices = obj.dailyStats.reduce((sum, val) => sum + parseFloat(val.price), 0);
+        let averagePrice = sumOfAllCryptoPrices / obj.dailyStats.length;
+
+        return averagePrice < 1;
+
+    })
+
+    return cryptoWorthCents;
 }
 
 function getStartEndDateInUnix(event) {
@@ -426,7 +477,7 @@ async function fetchCyrptoCurrencies(cryptoList) {
 
     for (let i = 0; i < cryptoList.length; i++) {
         try {
-            await delayFetch(500);
+            await delayFetch(700);
             let cryptoID = cryptoList[i].id;
             let cryptoName = cryptoList[i].name;
             let inquiry = `https://api.coingecko.com/api/v3/coins/${cryptoID}/market_chart?vs_currency=USD&days=max&interval=daily`
@@ -457,8 +508,8 @@ async function fetchCyrptoCurrencies(cryptoList) {
 
 function ignoreDefaultCrypto(data, time) {
     if (data.prices == undefined) {
-    let defaultCrypto = true;
-    return defaultCrypto;
+        let defaultCrypto = true;
+        return defaultCrypto;
     }
     let defaultCrypto = data.prices.find(x => x[0] > time);
 
@@ -491,11 +542,15 @@ function convertCurrencyDataToNewFormat(data, name, id) {
 
     data.prices.forEach((x, i) => {
         let dailyStats = {};
-        dailyStats.date = x[0];
-        dailyStats.price = x[1]
-        dailyStats.volume = parseInt(data.total_volumes[i][1]);
-        dailyStats.marketCap = data.market_caps[i][1].toFixed(8);
-        cryptoObj.dailyStats.push(dailyStats);
+        try {
+            dailyStats.date = x[0];
+            dailyStats.price = x[1]
+            dailyStats.volume = parseInt(data.total_volumes[i][1]);
+            dailyStats.marketCap = data.market_caps[i][1].toFixed(8);
+            cryptoObj.dailyStats.push(dailyStats);
+        } catch (error) {
+            console.error(error);
+        }
     })
 
     return cryptoObj;
