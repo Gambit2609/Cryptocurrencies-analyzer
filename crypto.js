@@ -22,6 +22,7 @@ const bestPerFormingCryptoFilter = document.getElementById("bestPerFormingCrypto
 const worstPerformingCryptoFilterCheckBox = document.getElementById("worstPerformingCryptoFilterCheckBox");
 const worstPerFormingCryptoFilter = document.getElementById("worstPerFormingCryptoFilter");
 const table = document.getElementById("table");
+let cryptoToSort = [];
 
 function addListeners() {
     uploadCryptoButton.addEventListener("change", onCryptoUploaded);
@@ -54,6 +55,7 @@ showHideFilters();
 
 
 function onCalculatePressed() {
+    cryptoToSort = [];
     let cryptoWithHistoricalMaxMin = getMaxMinValueHistorical(cryptoData);
     let tokenFiltered = tokenCheckBox.checked ? getCryptoFilteredByToken(cryptoWithHistoricalMaxMin) : cryptoWithHistoricalMaxMin;
     let timeFiltered = dateFilterCheckbox.checked ? getCryptoFilteredByTime(tokenFiltered) : tokenFiltered;
@@ -61,6 +63,7 @@ function onCalculatePressed() {
     let worstPerformingCryptoFiltered = worstPerformingCryptoFilterCheckBox.checked ? getWorstPerformingCrypto(bestPerformingCryptoFiltered) : bestPerformingCryptoFiltered;
     let cryptoWorthDolarsFiltered = cryptoWorthDolarsCheckBox.checked ? getCryptoWorthMoreThenDolar(worstPerformingCryptoFiltered) : worstPerformingCryptoFiltered;
     let cryptoWorthCentsFiltered = cryptoWorthCentsCheckBox.checked ? getCryptoWorthLessThenDolar(cryptoWorthDolarsFiltered) : cryptoWorthDolarsFiltered;
+    cryptoToSort.push(...cryptoWorthCentsFiltered);
     createAndDeleteTable(cryptoWorthCentsFiltered);
     console.log(cryptoWorthCentsFiltered);
 }
@@ -87,31 +90,38 @@ function generateTableHead(table, crypto) {
 
     if (propertyNames.includes("id")) {
         let name = "Crypto ID";
-        addHeaderCellToRow(row, name); 
+        let nameWithChanges = name.replaceAll(" ", "").replaceAll(".", "");
+        addHeaderCellToRow(row, name, nameWithChanges);
     }
     if (propertyNames.includes("name")) {
         let name = "Crypto name";
-        addHeaderCellToRow(row, name);
+        let nameWithChanges = name.replaceAll(" ", "").replaceAll(".", "");
+        addHeaderCellToRow(row, name, nameWithChanges);
     }
     if (propertyNames.includes("percentChange")) {
         let name = "Percent change";
-        addHeaderCellToRow(row, name);
+        let nameWithChanges = name.replaceAll(" ", "").replaceAll(".", "");
+        addHeaderCellToRow(row, name, nameWithChanges);
     }
-    if (propertyNames.includes("minPriceData")) {
+    if (propertyNames.includes("lowestPriceData")) {
         let name = "Lowest price";
-        addHeaderCellToRow(row, name);
+        let nameWithChanges = name.replaceAll(" ", "").replaceAll(".", "");
+        addHeaderCellToRow(row, name, nameWithChanges);
     }
-    if (propertyNames.includes("maxPriceData")) {
+    if (propertyNames.includes("highestPriceData")) {
         let name = "Highest price";
-        addHeaderCellToRow(row, name);
+        let nameWithChanges = name.replaceAll(" ", "").replaceAll(".", "");
+        addHeaderCellToRow(row, name, nameWithChanges);
     }
     if (propertyNames.includes("minPriceDataHistorical")) {
         let name = "Historical min. price";
-        addHeaderCellToRow(row, name);
+        let nameWithChanges = name.replaceAll(" ", "").replaceAll(".", "");
+        addHeaderCellToRow(row, name, nameWithChanges);
     }
     if (propertyNames.includes("maxPriceDataHistorical")) {
         let name = "Historical max. price";
-        addHeaderCellToRow(row, name);
+        let nameWithChanges = name.replaceAll(" ", "").replaceAll(".", "");
+        addHeaderCellToRow(row, name, nameWithChanges);
     }
 }
 
@@ -121,25 +131,24 @@ function addCellsToTable(row, data) {
     cell.appendChild(text);
 }
 
-function addHeaderCellToRow(row, rowName) {
-    let nameWithoutSpaces = rowName.replace(" ","");
+function addHeaderCellToRow(row, rowName, filterName) {
     let arrowUpUnicode = String.fromCharCode("9650");
     let arrowDownUnicode = String.fromCharCode("9660");
     let th = document.createElement("th");
-    let arrowUp = document.createElement("button");
-    let arrowDown = document.createElement("button");
-    arrowUp.setAttribute("id", `"${nameWithoutSpaces}FilterArrowUp"`);
-    arrowDown.setAttribute("id", `"${nameWithoutSpaces}FilterArrowDown"`)
-    let arrowUpButton = document.createTextNode(arrowUpUnicode);
-    let arrowDownButton = document.createTextNode(arrowDownUnicode);
+    let arrowUpButton = document.createElement("button");
+    let arrowDownButton = document.createElement("button");
+    arrowUpButton.setAttribute("id", `${filterName}FilterArrowUp`);
+    arrowDownButton.setAttribute("id", `${filterName}FilterArrowDown`)
+    let arrowUp = document.createTextNode(arrowUpUnicode);
+    let arrowDown = document.createTextNode(arrowDownUnicode);
     let text = document.createTextNode(rowName);
-    arrowUp.appendChild(arrowUpButton);
-    arrowDown.appendChild(arrowDownButton);
+    arrowUpButton.appendChild(arrowUp);
+    arrowDownButton.appendChild(arrowDown);
     th.appendChild(text);
-    th.appendChild(arrowUp);
-    th.appendChild(arrowDown);
+    th.appendChild(arrowUpButton);
+    th.appendChild(arrowDownButton);
     row.appendChild(th);
-   
+    addEventListenerToSortFilter(arrowUpButton, arrowDownButton)
 }
 
 function generateTableRows(crypto) {
@@ -168,12 +177,12 @@ function generateTableRows(crypto) {
             }
             cell.appendChild(text);
         }
-        if (obj.minPriceData) {
-            let rowData = obj.minPriceData.price;
+        if (obj.lowestPriceData) {
+            let rowData = obj.lowestPriceData.price;
             addCellsToTable(row, rowData)
         }
-        if (obj.maxPriceData) {
-            let CryptoData = obj.maxPriceData.price;
+        if (obj.highestPriceData) {
+            let CryptoData = obj.highestPriceData.price;
             addCellsToTable(row, CryptoData)
         }
         if (obj.minPriceDataHistorical) {
@@ -186,8 +195,57 @@ function generateTableRows(crypto) {
         }
 
     });
-
 }
+
+function addEventListenerToSortFilter(sortUp, sortDown) {
+    document.getElementById(`${sortUp.id}`).addEventListener("click", getCrypoValueToSort)
+    document.getElementById(`${sortDown.id}`).addEventListener("click", getCrypoValueToSort)
+}
+
+function getCrypoValueToSort(event) {
+    let rowNameToSort = event.target.id.toLowerCase();
+    rowNameToSort.includes("id") && rowNameToSort.includes("up") && sortUp("id");
+    rowNameToSort.includes("id") && rowNameToSort.includes("down") && sortDown("id");
+    rowNameToSort.includes("name") && rowNameToSort.includes("up") && sortUp("name");
+    rowNameToSort.includes("name") && rowNameToSort.includes("down") && sortDown("name");
+    rowNameToSort.includes("lowest") && rowNameToSort.includes("up") && sortUp("lowestPriceData", "price");
+    rowNameToSort.includes("lowest") && rowNameToSort.includes("down") && sortDown("lowestPriceData", "price");
+    rowNameToSort.includes("highest") && rowNameToSort.includes("up") && sortUp("highestPriceData", "price");
+    rowNameToSort.includes("highest") && rowNameToSort.includes("down") && sortDown("highestPriceData", "price");
+    rowNameToSort.includes("min") && rowNameToSort.includes("up") && sortUp("minPriceDataHistorical", "price");
+    rowNameToSort.includes("min") && rowNameToSort.includes("down") && sortDown("minPriceDataHistorical", "price");
+    rowNameToSort.includes("max") && rowNameToSort.includes("up") && sortUp("maxPriceDataHistorical", "price");
+    rowNameToSort.includes("max") && rowNameToSort.includes("down") && sortDown("maxPriceDataHistorical", "price");
+    rowNameToSort.includes("percent") && rowNameToSort.includes("up") && sortUp("percentChange");
+    rowNameToSort.includes("percent") && rowNameToSort.includes("down") && sortDown("percentChange");
+}
+
+function sortUp(cryptoKey, cryptoSecondKey) {
+    if (cryptoKey === "id" || cryptoKey === "name") {
+        cryptoToSort.sort((a, b) => a[cryptoKey].localeCompare(b[cryptoKey]));
+        createAndDeleteTable(cryptoToSort);
+    } else if (cryptoKey === "percentChange") {
+        cryptoToSort.sort((a, b) => parseFloat(a[cryptoKey]) - parseFloat(b[cryptoKey]));
+        createAndDeleteTable(cryptoToSort);
+    } else {
+        cryptoToSort.sort((a, b) => parseFloat(a[cryptoKey][cryptoSecondKey]) - parseFloat(b[cryptoKey][cryptoSecondKey]));
+        createAndDeleteTable(cryptoToSort);
+    }
+}
+
+function sortDown(cryptoKey, cryptoSecondKey) {
+    if (cryptoKey === "id" || cryptoKey === "name") {
+        cryptoToSort.sort((a, b) => b[cryptoKey].localeCompare(a[cryptoKey]));
+        createAndDeleteTable(cryptoToSort);
+    } else if (cryptoKey === "percentChange") {
+        cryptoToSort.sort((a, b) => parseFloat(b[cryptoKey]) - parseFloat(a[cryptoKey]));
+        createAndDeleteTable(cryptoToSort);
+    } else {
+        cryptoToSort.sort((a, b) => parseFloat(b[cryptoKey][cryptoSecondKey]) - parseFloat(a[cryptoKey][cryptoSecondKey]));
+        createAndDeleteTable(cryptoToSort);
+    }
+}
+
 
 function validateDateFilter() {
     let startSearch = startEndSearchDate.start;
@@ -313,8 +371,8 @@ function getMaxMinValueHistorical(data) {
 }
 
 function getPercentChangeValue(data) {
-    let historicalOrRangeMinDate = data[0].minPriceData ? "minPriceData" : "minPriceDataHistorical";
-    let historicalOrRangeMaxDate = data[0].minPriceData ? "maxPriceData" : "maxPriceDataHistorical"
+    let historicalOrRangeMinDate = data[0].lowestPriceData ? "lowestPriceData" : "minPriceDataHistorical";
+    let historicalOrRangeMaxDate = data[0].highestPriceData ? "highestPriceData" : "maxPriceDataHistorical"
     let cryptoWithPercentChange = data.map(crypto => {
         if (crypto[`${historicalOrRangeMinDate}`].date > crypto[`${historicalOrRangeMaxDate}`].date) {
             let differenceBetweenMaxMin = (crypto[`${historicalOrRangeMinDate}`].price - crypto[`${historicalOrRangeMaxDate}`].price) / crypto[`${historicalOrRangeMaxDate}`].price;
@@ -395,10 +453,10 @@ function getCryptoFilteredByTime(data) {
         }
 
         filteredCrypto.dailyStats.push(...startEndFilteredData);
-        filteredCrypto.minPriceData = filteredCrypto.dailyStats.reduce((acc, val) => parseFloat(acc.price) < parseFloat(val.price) ? acc : acc = val);
-        filteredCrypto.minPriceData.price = parseFloat(filteredCrypto.minPriceData.price).toFixed(10);
-        filteredCrypto.maxPriceData = filteredCrypto.dailyStats.reduce((acc, val) => parseFloat(acc.price) > parseFloat(val.price) ? acc : acc = val);
-        filteredCrypto.maxPriceData.price = parseFloat(filteredCrypto.maxPriceData.price).toFixed(10);
+        filteredCrypto.lowestPriceData = filteredCrypto.dailyStats.reduce((acc, val) => parseFloat(acc.price) < parseFloat(val.price) ? acc : acc = val);
+        filteredCrypto.lowestPriceData.price = parseFloat(filteredCrypto.lowestPriceData.price).toFixed(10);
+        filteredCrypto.highestPriceData = filteredCrypto.dailyStats.reduce((acc, val) => parseFloat(acc.price) > parseFloat(val.price) ? acc : acc = val);
+        filteredCrypto.highestPriceData.price = parseFloat(filteredCrypto.highestPriceData.price).toFixed(10);
         searchResults.push(filteredCrypto);
     });
 
