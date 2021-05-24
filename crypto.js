@@ -87,7 +87,7 @@ function generateTableHead(table, crypto) {
 
     if (propertyNames.includes("id")) {
         let name = "Crypto ID";
-        addHeaderCellToRow(row, name);
+        addHeaderCellToRow(row, name); 
     }
     if (propertyNames.includes("name")) {
         let name = "Crypto name";
@@ -122,10 +122,24 @@ function addCellsToTable(row, data) {
 }
 
 function addHeaderCellToRow(row, rowName) {
+    let nameWithoutSpaces = rowName.replace(" ","");
+    let arrowUpUnicode = String.fromCharCode("9650");
+    let arrowDownUnicode = String.fromCharCode("9660");
     let th = document.createElement("th");
+    let arrowUp = document.createElement("button");
+    let arrowDown = document.createElement("button");
+    arrowUp.setAttribute("id", `"${nameWithoutSpaces}FilterArrowUp"`);
+    arrowDown.setAttribute("id", `"${nameWithoutSpaces}FilterArrowDown"`)
+    let arrowUpButton = document.createTextNode(arrowUpUnicode);
+    let arrowDownButton = document.createTextNode(arrowDownUnicode);
     let text = document.createTextNode(rowName);
+    arrowUp.appendChild(arrowUpButton);
+    arrowDown.appendChild(arrowDownButton);
     th.appendChild(text);
+    th.appendChild(arrowUp);
+    th.appendChild(arrowDown);
     row.appendChild(th);
+   
 }
 
 function generateTableRows(crypto) {
