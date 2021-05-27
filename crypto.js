@@ -2,6 +2,7 @@ const cryptocurrencies = [];
 const defaultedCryptocurrencies = [];
 const cryptoData = [];
 const startEndSearchDate = {};
+const cryptoSearchInput = document.getElementById("cryptoSearch");
 const uploadCryptoButton = document.getElementById("uploadCryptoData");
 const startSearchDateInput = document.getElementById("startSearchDate");
 const endSearchDateInput = document.getElementById("endSearchDate");
@@ -23,6 +24,7 @@ const worstPerformingCryptoFilterCheckBox = document.getElementById("worstPerfor
 const worstPerFormingCryptoFilter = document.getElementById("worstPerFormingCryptoFilter");
 const table = document.getElementById("table");
 let cryptoToSort = [];
+let cryptoToSearch = [];
 
 function addListeners() {
     uploadCryptoButton.addEventListener("change", onCryptoUploaded);
@@ -40,18 +42,19 @@ function addListeners() {
     shrinkLessThenInput.addEventListener("change", disableEnableShrinkMoreThenInput);
     cryptoWorthDolarsCheckBox.addEventListener("change", disableCryptoWorthCentsCheckBox);
     cryptoWorthCentsCheckBox.addEventListener("change", disableCryptoWorthDolarsCheckBox);
+    cryptoSearchInput.addEventListener("keydown", getSearchResults);
+
 }
 
 addListeners();
 showHideFilters();
 // onDownloadAllCryptoButton();
 
-// 1. dodać filtowanie po crypto które straciły więcej lub mniej niż...
-// 2. filtr na best / worst zrobić na zasadzie procentów a nie mnożnika
+
 // 3. dodać opis w inputach best / worst dla informacji użytkownika
 // 4. dodać filtr na wartość market cap
 // 5. dodać filtr na wolumen
-// 6. 
+// 6. dodać licznik "ulubionych cryptowalut"
 
 
 function onCalculatePressed() {
@@ -65,6 +68,7 @@ function onCalculatePressed() {
     let cryptoWorthCentsFiltered = cryptoWorthCentsCheckBox.checked ? getCryptoWorthLessThenDolar(cryptoWorthDolarsFiltered) : cryptoWorthDolarsFiltered;
     cryptoToSort.push(...cryptoWorthCentsFiltered);
     createAndDeleteTable(cryptoWorthCentsFiltered);
+    addFavorites();
     console.log(cryptoWorthCentsFiltered);
 }
 
@@ -198,11 +202,11 @@ function generateTableRows(crypto) {
 }
 
 function addEventListenerToSortFilter(sortUp, sortDown) {
-    document.getElementById(`${sortUp.id}`).addEventListener("click", getCrypoValueToSort)
-    document.getElementById(`${sortDown.id}`).addEventListener("click", getCrypoValueToSort)
+    document.getElementById(`${sortUp.id}`).addEventListener("click", findTableColumnToSort)
+    document.getElementById(`${sortDown.id}`).addEventListener("click", findTableColumnToSort)
 }
 
-function getCrypoValueToSort(event) {
+function findTableColumnToSort(event) {
     let rowNameToSort = event.target.id.toLowerCase();
     rowNameToSort.includes("id") && rowNameToSort.includes("up") && sortUp("id");
     rowNameToSort.includes("id") && rowNameToSort.includes("down") && sortDown("id");
@@ -528,7 +532,31 @@ function onCryptoUploaded(e) {
     reader.readAsText(file);
 }
 
+function getSearchResults(event) {
+    if (event.key === "Enter") {
+        let searchResultsCrypto = cryptoToSort.filter(obj => {
+            let compareString = cryptoSearchInput.value;
+            let nameToLowerCase = obj.name.toLowerCase();
+            let idToLowerCase = obj.id.toLowerCase();
+            return nameToLowerCase.includes(compareString) || idToLowerCase.includes(compareString)
+        });
+        searchResultsCrypto.length > 0 ? createAndDeleteTable(searchResultsCrypto): alert("0 cryptocurrencies with this id or name");
+    }
+}
 
+function addFavorites () {
+    addListenersToRows()
+}
+
+function addListenersToRows () {
+    const tableRow = document.getElementsByTagName("tr");
+    let tableRowConvertedData = Array.from(tableRow);
+    tableRowConvertedData.forEach(row=> row.addEventListener("click", changeRowColor));
+    }
+
+function changeRowColor (event) {
+    event.path[1].style.backgroundColor === "" ? event.path[1].style.backgroundColor = "green": event.path[1].style.backgroundColor = "";
+}
 
 async function onDownloadAllCryptoButton() {
     let cryptoList = await fetchCryptoCurrenciesList();
