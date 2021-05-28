@@ -2,6 +2,7 @@ const cryptocurrencies = [];
 const defaultedCryptocurrencies = [];
 const cryptoData = [];
 const startEndSearchDate = {};
+const favoriteCrypto = [];
 const cryptoSearchInput = document.getElementById("cryptoSearch");
 const uploadCryptoButton = document.getElementById("uploadCryptoData");
 const startSearchDateInput = document.getElementById("startSearchDate");
@@ -68,7 +69,7 @@ function onCalculatePressed() {
     let cryptoWorthCentsFiltered = cryptoWorthCentsCheckBox.checked ? getCryptoWorthLessThenDolar(cryptoWorthDolarsFiltered) : cryptoWorthDolarsFiltered;
     cryptoToSort.push(...cryptoWorthCentsFiltered);
     createAndDeleteTable(cryptoWorthCentsFiltered);
-    addFavorites();
+    // addFavorites();
     console.log(cryptoWorthCentsFiltered);
 }
 
@@ -158,6 +159,8 @@ function addHeaderCellToRow(row, rowName, filterName) {
 function generateTableRows(crypto) {
     crypto.forEach((obj, i) => {
         let row = table.insertRow();
+        addListenerToRow(row);
+        checkForFavorites(obj.id, row)
         let cell = row.insertCell();
         let text = document.createTextNode(i + 1);
         cell.appendChild(text);
@@ -201,9 +204,17 @@ function generateTableRows(crypto) {
     });
 }
 
+function addListenerToRow(row) {
+    row.addEventListener("click", addFavoritesFunc);
+}
+
+function checkForFavorites(objId, row) {
+    favoriteCrypto.find(x=> x === objId) ? row.style.backgroundColor = "green": row.style.backgroundColor = "";
+}
+
 function addEventListenerToSortFilter(sortUp, sortDown) {
-    document.getElementById(`${sortUp.id}`).addEventListener("click", findTableColumnToSort)
-    document.getElementById(`${sortDown.id}`).addEventListener("click", findTableColumnToSort)
+    document.getElementById(`${sortUp.id}`).addEventListener("click", findTableColumnToSort);
+    document.getElementById(`${sortDown.id}`).addEventListener("click", findTableColumnToSort);
 }
 
 function findTableColumnToSort(event) {
@@ -540,22 +551,34 @@ function getSearchResults(event) {
             let idToLowerCase = obj.id.toLowerCase();
             return nameToLowerCase.includes(compareString) || idToLowerCase.includes(compareString)
         });
-        searchResultsCrypto.length > 0 ? createAndDeleteTable(searchResultsCrypto): alert("0 cryptocurrencies with this id or name");
+        searchResultsCrypto.length > 0 ? createAndDeleteTable(searchResultsCrypto) : alert("0 cryptocurrencies with this id or name");
     }
 }
 
-function addFavorites () {
-    addListenersToRows()
+function addFavoritesFunc(e) {
+    changeRowColor(e);
 }
 
-function addListenersToRows () {
-    const tableRow = document.getElementsByTagName("tr");
-    let tableRowConvertedData = Array.from(tableRow);
-    tableRowConvertedData.forEach(row=> row.addEventListener("click", changeRowColor));
-    }
 
-function changeRowColor (event) {
-    event.path[1].style.backgroundColor === "" ? event.path[1].style.backgroundColor = "green": event.path[1].style.backgroundColor = "";
+function changeRowColor(event) {
+    // event.path[1].style.backgroundColor === "" ? event.path[1].style.backgroundColor = "green": event.path[1].style.backgroundColor = "";
+    event.path[1].style.backgroundColor === "" ? addCryptoToFavorites(event) : removeCryptoFromFavorites(event);
+}
+
+function addCryptoToFavorites(event) {
+    event.path[1].style.backgroundColor = "green";
+    let cryptoToAdd = event.path[1].cells[1].textContent;
+    favoriteCrypto.push(cryptoToAdd);
+    console.log(favoriteCrypto)
+
+}
+
+function removeCryptoFromFavorites(event) {
+    event.path[1].style.backgroundColor = ""
+    let cryptoToRemove = event.path[1].cells[1].textContent;
+    let index = favoriteCrypto.indexOf(cryptoToRemove);
+    index > -1 && favoriteCrypto.splice(index, 1);
+    console.log(favoriteCrypto)
 }
 
 async function onDownloadAllCryptoButton() {
