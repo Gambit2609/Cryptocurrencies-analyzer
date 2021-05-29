@@ -24,6 +24,7 @@ const bestPerFormingCryptoFilter = document.getElementById("bestPerFormingCrypto
 const worstPerformingCryptoFilterCheckBox = document.getElementById("worstPerformingCryptoFilterCheckBox");
 const worstPerFormingCryptoFilter = document.getElementById("worstPerFormingCryptoFilter");
 const table = document.getElementById("table");
+const favoriteCounter = document.getElementsByClassName("favoriteCounter");
 let cryptoToSort = [];
 let cryptoToSearch = [];
 
@@ -45,17 +46,17 @@ function addListeners() {
     cryptoWorthCentsCheckBox.addEventListener("change", disableCryptoWorthDolarsCheckBox);
     cryptoSearchInput.addEventListener("keydown", getSearchResults);
 
+
 }
 
 addListeners();
 showHideFilters();
 // onDownloadAllCryptoButton();
 
-
+// 2. dodać nowe okno dla ulubionych kryptowalut
 // 3. dodać opis w inputach best / worst dla informacji użytkownika
 // 4. dodać filtr na wartość market cap
 // 5. dodać filtr na wolumen
-// 6. dodać licznik "ulubionych cryptowalut"
 
 
 function onCalculatePressed() {
@@ -557,11 +558,11 @@ function getSearchResults(event) {
 
 function addFavoritesFunc(e) {
     changeRowColor(e);
+    changefavoriteCounterValue();
 }
 
 
 function changeRowColor(event) {
-    // event.path[1].style.backgroundColor === "" ? event.path[1].style.backgroundColor = "green": event.path[1].style.backgroundColor = "";
     event.path[1].style.backgroundColor === "" ? addCryptoToFavorites(event) : removeCryptoFromFavorites(event);
 }
 
@@ -579,6 +580,10 @@ function removeCryptoFromFavorites(event) {
     let index = favoriteCrypto.indexOf(cryptoToRemove);
     index > -1 && favoriteCrypto.splice(index, 1);
     console.log(favoriteCrypto)
+}
+
+function changefavoriteCounterValue () {
+    favoriteCounter[0].textContent = favoriteCrypto.length;
 }
 
 async function onDownloadAllCryptoButton() {

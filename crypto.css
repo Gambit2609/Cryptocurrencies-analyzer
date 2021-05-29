@@ -105,3 +105,20 @@ hr{
     right: 30px;
     position: relative;
 }
+
+.favoriteButton{
+    width: 61px;
+    height: 60px;
+    position: relative;
+    float: right;
+    right: 15px;
+}
+
+span{
+    position: absolute;
+    right: 52px;
+    bottom: 7px;
+    font-size: 18px;
+    font-family: monospace;
+    color:black;
+}
