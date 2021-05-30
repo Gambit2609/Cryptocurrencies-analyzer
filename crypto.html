@@ -4,7 +4,9 @@
     <html lang="pl">
     <meta charset="UFT-8">
     <script src="FileSaver.js"></script>
-    <link rel="stylesheet" href="crypto.css">
+    <link rel="stylesheet" href="CSS/bodyAndTable.css">
+    <link rel="stylesheet" href="CSS/topBar.css">
+    <link rel="stylesheet" href="CSS/modal.css">
 </head>
 
 <body>
@@ -55,8 +57,11 @@
         </div>
         <div class="container">
             <div class="topBar">
-                <input type="image" src="Data/Star.png" class="favoriteButton">
-                <span class="favoriteCounter">0</span>
+                <div class="favoritesContainer">
+                    <input type="image" src="Data/favoritesButton.png" class="favoriteButton">
+                    <span class="favoriteCounter">0</span>
+                    <input type="image" src="Data/showFavorites.png" id="showFavoriteButton">
+                </div>
                 <input type="search" id="cryptoSearch" placeholder="Search cryptocurrency">
             </div>
             <hr>

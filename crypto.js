@@ -24,7 +24,9 @@ const bestPerFormingCryptoFilter = document.getElementById("bestPerFormingCrypto
 const worstPerformingCryptoFilterCheckBox = document.getElementById("worstPerformingCryptoFilterCheckBox");
 const worstPerFormingCryptoFilter = document.getElementById("worstPerFormingCryptoFilter");
 const table = document.getElementById("table");
+const favoritesContainer = document.getElementsByClassName("favoritesContainer");
 const favoriteCounter = document.getElementsByClassName("favoriteCounter");
+const showFavoritesButton = document.getElementById("showFavoriteButton");
 let cryptoToSort = [];
 let cryptoToSearch = [];
 
@@ -45,18 +47,18 @@ function addListeners() {
     cryptoWorthDolarsCheckBox.addEventListener("change", disableCryptoWorthCentsCheckBox);
     cryptoWorthCentsCheckBox.addEventListener("change", disableCryptoWorthDolarsCheckBox);
     cryptoSearchInput.addEventListener("keydown", getSearchResults);
-
-
+    showFavoritesButton.addEventListener("click", showFavoritesInNewWindow)
 }
 
 addListeners();
 showHideFilters();
 // onDownloadAllCryptoButton();
-
+// 1.dodać zjdęcia do listy
 // 2. dodać nowe okno dla ulubionych kryptowalut
 // 3. dodać opis w inputach best / worst dla informacji użytkownika
 // 4. dodać filtr na wartość market cap
 // 5. dodać filtr na wolumen
+// 6. dodać top trending crypto
 
 
 function onCalculatePressed() {
@@ -160,24 +162,28 @@ function addHeaderCellToRow(row, rowName, filterName) {
 function generateTableRows(crypto) {
     crypto.forEach((obj, i) => {
         let row = table.insertRow();
-        addListenerToRow(row);
+        row.addEventListener("click", addFavoritesFunc);
         checkForFavorites(obj.id, row)
         let cell = row.insertCell();
         let text = document.createTextNode(i + 1);
         cell.appendChild(text);
+
         if (obj.id) {
             let rowData = obj.id;
             addCellsToTable(row, rowData)
         }
+
         if (obj.name) {
             let rowData = obj.name;
             addCellsToTable(row, rowData)
         }
+
         if (obj.percentChange) {
             let rowData = `${obj.percentChange.toFixed(2)}%`;
             let parsedPercent = parseFloat(rowData);
             let cell = row.insertCell();
             let text = document.createTextNode(rowData);
+
             if (parsedPercent > 0) {
                 cell.style.color = "green";
             } else if (parsedPercent < 0) {
@@ -185,14 +191,17 @@ function generateTableRows(crypto) {
             }
             cell.appendChild(text);
         }
+
         if (obj.lowestPriceData) {
             let rowData = obj.lowestPriceData.price;
             addCellsToTable(row, rowData)
         }
+
         if (obj.highestPriceData) {
             let CryptoData = obj.highestPriceData.price;
             addCellsToTable(row, CryptoData)
         }
+
         if (obj.minPriceDataHistorical) {
             let rowData = obj.minPriceDataHistorical.price;
             addCellsToTable(row, rowData)
@@ -205,12 +214,8 @@ function generateTableRows(crypto) {
     });
 }
 
-function addListenerToRow(row) {
-    row.addEventListener("click", addFavoritesFunc);
-}
-
 function checkForFavorites(objId, row) {
-    favoriteCrypto.find(x=> x === objId) ? row.style.backgroundColor = "green": row.style.backgroundColor = "";
+    favoriteCrypto.find(x => x === objId) ? row.style.backgroundColor = "green" : row.style.backgroundColor = "";
 }
 
 function addEventListenerToSortFilter(sortUp, sortDown) {
@@ -518,17 +523,9 @@ function getStartEndDateInUnix(event) {
     }
 }
 
-function onStartReaderLoad() {
-    document.body.style.cursor = "wait";
-}
-
-function onLoadFinish() {
-    document.body.style.cursor = "default"
-}
-
 function addEventListenersToFileReader(reader) {
-    reader.addEventListener("loadstart", onStartReaderLoad);
-    reader.addEventListener("loadend", onLoadFinish);
+    reader.addEventListener("loadstart", ()=> document.body.style.cursor = "wait");
+    reader.addEventListener("loadend", ()=> document.body.style.cursor = "default");
 }
 
 
@@ -546,13 +543,16 @@ function onCryptoUploaded(e) {
 
 function getSearchResults(event) {
     if (event.key === "Enter") {
-        let searchResultsCrypto = cryptoToSort.filter(obj => {
-            let compareString = cryptoSearchInput.value;
-            let nameToLowerCase = obj.name.toLowerCase();
-            let idToLowerCase = obj.id.toLowerCase();
-            return nameToLowerCase.includes(compareString) || idToLowerCase.includes(compareString)
-        });
-        searchResultsCrypto.length > 0 ? createAndDeleteTable(searchResultsCrypto) : alert("0 cryptocurrencies with this id or name");
+        const searchedValue = event.target.value.toLowerCase();
+        let filteredCurrencies = cryptoToSort.filter(currencyData =>
+            currencyData.name.toLowerCase().includes(searchedValue) || currencyData.id.toLowerCase().includes(searchedValue));
+
+        if (filteredCurrencies.length) {
+            createAndDeleteTable(filteredCurrencies)
+        }
+        else {
+            alert("0 cryptocurrencies with this id or name");
+        }
     }
 }
 
@@ -582,9 +582,25 @@ function removeCryptoFromFavorites(event) {
     console.log(favoriteCrypto)
 }
 
-function changefavoriteCounterValue () {
+function changefavoriteCounterValue() {
     favoriteCounter[0].textContent = favoriteCrypto.length;
 }
+
+function showFavoritesInNewWindow() {
+    createModal();
+}
+
+function createModal() {
+    let modalBackdrop = document.createElement("div");
+    modalBackdrop.setAttribute("class", "modalBackdrop");
+    modalBackdrop.setAttribute("id", "modal");
+    let modalCard = document.createElement("div");
+    modalCard.setAttribute("class", "modalCard");
+    modalBackdrop.appendChild(modalCard);
+    document.getElementsByTagName("section")[0].appendChild(modalBackdrop);
+    modalBackdrop.addEventListener("click", () => document.getElementById("modal").remove());
+}
+
 
 async function onDownloadAllCryptoButton() {
     let cryptoList = await fetchCryptoCurrenciesList();
@@ -596,7 +612,6 @@ async function onDownloadAllCryptoButton() {
 function delayFetch(time) {
 
     return new Promise((resolve) => setTimeout(resolve, time));
-
 }
 
 async function fetchCyrptoCurrencies(cryptoList) {
@@ -607,6 +622,7 @@ async function fetchCyrptoCurrencies(cryptoList) {
         try {
             await delayFetch(700);
             let cryptoID = cryptoList[i].id;
+            let cryptoSymbol = cryptoList[i].symbol /// do sprawdzenia czy działa poprawnie
             let cryptoName = cryptoList[i].name;
             let inquiry = `https://api.coingecko.com/api/v3/coins/${cryptoID}/market_chart?vs_currency=USD&days=max&interval=daily`
             let dailyDataResponse = await fetch(inquiry);
@@ -622,7 +638,7 @@ async function fetchCyrptoCurrencies(cryptoList) {
                 continue;
             }
 
-            let currencyData = convertCurrencyDataToNewFormat(dailyData, cryptoName, cryptoID);
+            let currencyData = convertCurrencyDataToNewFormat(dailyData, cryptoName, cryptoSymbol);
             fetchedData.push(currencyData);
             console.log("krypto dodane:", fetchedData.length, "krypto smieci:", defaultedCryptocurrencies.length);
         } catch (error) {
@@ -637,8 +653,10 @@ async function fetchCyrptoCurrencies(cryptoList) {
 function ignoreDefaultCrypto(data, time) {
     if (data.prices == undefined) {
         let defaultCrypto = true;
+
         return defaultCrypto;
     }
+
     let defaultCrypto = data.prices.find(x => x[0] > time);
 
     if (defaultCrypto == undefined) {
@@ -658,18 +676,18 @@ async function fetchCryptoCurrenciesList() {
     let cryptoList = await cryptoListReponse.json();
 
     return cryptoList;
-
 }
 
-function convertCurrencyDataToNewFormat(data, name, id) {
+function convertCurrencyDataToNewFormat(data, name, symbol) {
     let cryptoObj = {
-        id: id,
+        id: symbol,
         name: name,
         dailyStats: []
     }
 
     data.prices.forEach((x, i) => {
         let dailyStats = {};
+
         try {
             dailyStats.date = x[0];
             dailyStats.price = x[1]

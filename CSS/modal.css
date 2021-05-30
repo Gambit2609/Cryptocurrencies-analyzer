@@ -1,0 +1,22 @@
+.modalBackdrop {
+    z-index: 10;
+    display: grid;
+    place-items: center;
+    width: 100vw;
+    height: 100vh;
+    position: absolute;
+    top: 0;
+    left: 0;
+    background: #cececed1;
+}
+
+.modalCard {
+    width: 80%;
+    height: 70%;
+    background: white;
+    border-radius: 20px;
+    border: 2px gray;
+    box-shadow: -10px 15px 21px grey;
+    z-index: 2000;
+}
+
