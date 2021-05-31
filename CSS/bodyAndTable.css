@@ -41,6 +41,7 @@ float: right;
 text-align: center;
 margin: 0px;
 border-collapse: collapse;
+transition: 0.7s;
 }
 
 th{

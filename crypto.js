@@ -28,7 +28,7 @@ const favoritesContainer = document.getElementsByClassName("favoritesContainer")
 const favoriteCounter = document.getElementsByClassName("favoriteCounter");
 const showFavoritesButton = document.getElementById("showFavoriteButton");
 let cryptoToSort = [];
-let cryptoToSearch = [];
+let searchedCrypto = [];
 
 function addListeners() {
     uploadCryptoButton.addEventListener("change", onCryptoUploaded);
@@ -71,19 +71,18 @@ function onCalculatePressed() {
     let cryptoWorthDolarsFiltered = cryptoWorthDolarsCheckBox.checked ? getCryptoWorthMoreThenDolar(worstPerformingCryptoFiltered) : worstPerformingCryptoFiltered;
     let cryptoWorthCentsFiltered = cryptoWorthCentsCheckBox.checked ? getCryptoWorthLessThenDolar(cryptoWorthDolarsFiltered) : cryptoWorthDolarsFiltered;
     cryptoToSort.push(...cryptoWorthCentsFiltered);
-    createAndDeleteTable(cryptoWorthCentsFiltered);
-    // addFavorites();
+    createAndDeleteTable(table, cryptoWorthCentsFiltered);
+    addListenersToTable();
     console.log(cryptoWorthCentsFiltered);
 }
 
-function createAndDeleteTable(cryptoToTable) {
-    deleteTable();
-    generateTableHead(table, cryptoToTable);
-    generateTableRows(cryptoToTable)
+function createAndDeleteTable(tableId, cryptoToTable) {
+    deleteTable(tableId);
+    generateTableHead(tableId, cryptoToTable);
+    generateTableRows(cryptoToTable);
 }
 
-
-function deleteTable() {
+function deleteTable(table) {
     table.childElementCount && table.removeChild(table.childNodes[0])
 }
 
@@ -214,6 +213,11 @@ function generateTableRows(crypto) {
     });
 }
 
+function addListenersToTable() {
+    favoritesContainer[0].addEventListener("mouseover", () => table.style.opacity = "0.3");
+    favoritesContainer[0].addEventListener("mouseleave", () => table.style.opacity = "0.9");
+}
+
 function checkForFavorites(objId, row) {
     favoriteCrypto.find(x => x === objId) ? row.style.backgroundColor = "green" : row.style.backgroundColor = "";
 }
@@ -242,28 +246,30 @@ function findTableColumnToSort(event) {
 }
 
 function sortUp(cryptoKey, cryptoSecondKey) {
+    let sortFrom = searchedCrypto.length ? searchedCrypto: cryptoToSort;
     if (cryptoKey === "id" || cryptoKey === "name") {
-        cryptoToSort.sort((a, b) => a[cryptoKey].localeCompare(b[cryptoKey]));
-        createAndDeleteTable(cryptoToSort);
+        sortFrom.sort((a, b) => a[cryptoKey].localeCompare(b[cryptoKey]));
+        createAndDeleteTable(table, sortFrom);
     } else if (cryptoKey === "percentChange") {
-        cryptoToSort.sort((a, b) => parseFloat(a[cryptoKey]) - parseFloat(b[cryptoKey]));
-        createAndDeleteTable(cryptoToSort);
+        sortFrom.sort((a, b) => parseFloat(a[cryptoKey]) - parseFloat(b[cryptoKey]));
+        createAndDeleteTable(table, sortFrom);
     } else {
-        cryptoToSort.sort((a, b) => parseFloat(a[cryptoKey][cryptoSecondKey]) - parseFloat(b[cryptoKey][cryptoSecondKey]));
-        createAndDeleteTable(cryptoToSort);
+        sortFrom.sort((a, b) => parseFloat(a[cryptoKey][cryptoSecondKey]) - parseFloat(b[cryptoKey][cryptoSecondKey]));
+        createAndDeleteTable(table, sortFrom);
     }
 }
 
 function sortDown(cryptoKey, cryptoSecondKey) {
+    let sortFrom = searchedCrypto.length ? searchedCrypto: cryptoToSort;
     if (cryptoKey === "id" || cryptoKey === "name") {
-        cryptoToSort.sort((a, b) => b[cryptoKey].localeCompare(a[cryptoKey]));
-        createAndDeleteTable(cryptoToSort);
+        sortFrom.sort((a, b) => b[cryptoKey].localeCompare(a[cryptoKey]));
+        createAndDeleteTable(table, sortFrom);
     } else if (cryptoKey === "percentChange") {
-        cryptoToSort.sort((a, b) => parseFloat(b[cryptoKey]) - parseFloat(a[cryptoKey]));
-        createAndDeleteTable(cryptoToSort);
+        sortFrom.sort((a, b) => parseFloat(b[cryptoKey]) - parseFloat(a[cryptoKey]));
+        createAndDeleteTable(table, sortFrom);
     } else {
-        cryptoToSort.sort((a, b) => parseFloat(b[cryptoKey][cryptoSecondKey]) - parseFloat(a[cryptoKey][cryptoSecondKey]));
-        createAndDeleteTable(cryptoToSort);
+        sortFrom.sort((a, b) => parseFloat(b[cryptoKey][cryptoSecondKey]) - parseFloat(a[cryptoKey][cryptoSecondKey]));
+        createAndDeleteTable(table, sortFrom);
     }
 }
 
@@ -548,7 +554,9 @@ function getSearchResults(event) {
             currencyData.name.toLowerCase().includes(searchedValue) || currencyData.id.toLowerCase().includes(searchedValue));
 
         if (filteredCurrencies.length) {
-            createAndDeleteTable(filteredCurrencies)
+            searchedCrypto = [];
+            createAndDeleteTable(table, filteredCurrencies);
+            searchedCrypto.push(...filteredCurrencies);
         }
         else {
             alert("0 cryptocurrencies with this id or name");
@@ -587,7 +595,8 @@ function changefavoriteCounterValue() {
 }
 
 function showFavoritesInNewWindow() {
-    createModal();
+    let modalForFavorites = createModal();
+    // createAndDeleteTable(modalForFavorites, favoriteCrypto) // poprawić funckję ponieważ wyrzuca modala przy użyciu
 }
 
 function createModal() {
@@ -596,9 +605,23 @@ function createModal() {
     modalBackdrop.setAttribute("id", "modal");
     let modalCard = document.createElement("div");
     modalCard.setAttribute("class", "modalCard");
+    let modalHeader = document.createElement("div");
+    modalHeader.setAttribute("class", "modalHeader");
+    let modalCloseButton = document.createElement("span");
+    modalCloseButton.setAttribute("id", "closeModal");
+    let closeText = document.createTextNode("Close");
+    modalCloseButton.appendChild(closeText);
+    let headerText = document.createTextNode("Favorites list");
+    modalHeader.appendChild(headerText);
+    modalHeader.appendChild(modalCloseButton);
+    modalCard.appendChild(modalHeader);
     modalBackdrop.appendChild(modalCard);
     document.getElementsByTagName("section")[0].appendChild(modalBackdrop);
     modalBackdrop.addEventListener("click", () => document.getElementById("modal").remove());
+    modalCard.addEventListener("click", (event) => event.stopPropagation());
+    modalCloseButton.addEventListener("click", () => document.getElementById("modal").remove());
+
+    return modalBackdrop;
 }
 
 
