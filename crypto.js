@@ -2,7 +2,8 @@ const cryptocurrencies = [];
 const defaultedCryptocurrencies = [];
 const cryptoData = [];
 const startEndSearchDate = {};
-const favoriteCrypto = [];
+const favoriteCryptoList = [];
+const tableList = [];
 const cryptoSearchInput = document.getElementById("cryptoSearch");
 const uploadCryptoButton = document.getElementById("uploadCryptoData");
 const startSearchDateInput = document.getElementById("startSearchDate");
@@ -23,12 +24,13 @@ const bestPerformingCryptoFilterCheckBox = document.getElementById("bestPerformi
 const bestPerFormingCryptoFilter = document.getElementById("bestPerFormingCryptoFilter");
 const worstPerformingCryptoFilterCheckBox = document.getElementById("worstPerformingCryptoFilterCheckBox");
 const worstPerFormingCryptoFilter = document.getElementById("worstPerFormingCryptoFilter");
-const table = document.getElementById("table");
+const mainTable = document.getElementById("mainTable");
 const favoritesContainer = document.getElementsByClassName("favoritesContainer");
 const favoriteCounter = document.getElementsByClassName("favoriteCounter");
 const showFavoritesButton = document.getElementById("showFavoriteButton");
-let cryptoToSort = [];
+let calculatedCryptoList = [];
 let searchedCrypto = [];
+let favoriteCrypto = [];
 
 function addListeners() {
     uploadCryptoButton.addEventListener("change", onCryptoUploaded);
@@ -53,6 +55,7 @@ function addListeners() {
 addListeners();
 showHideFilters();
 // onDownloadAllCryptoButton();
+
 // 1.dodać zjdęcia do listy
 // 2. dodać nowe okno dla ulubionych kryptowalut
 // 3. dodać opis w inputach best / worst dla informacji użytkownika
@@ -62,7 +65,7 @@ showHideFilters();
 
 
 function onCalculatePressed() {
-    cryptoToSort = [];
+    calculatedCryptoList = [];
     let cryptoWithHistoricalMaxMin = getMaxMinValueHistorical(cryptoData);
     let tokenFiltered = tokenCheckBox.checked ? getCryptoFilteredByToken(cryptoWithHistoricalMaxMin) : cryptoWithHistoricalMaxMin;
     let timeFiltered = dateFilterCheckbox.checked ? getCryptoFilteredByTime(tokenFiltered) : tokenFiltered;
@@ -70,16 +73,17 @@ function onCalculatePressed() {
     let worstPerformingCryptoFiltered = worstPerformingCryptoFilterCheckBox.checked ? getWorstPerformingCrypto(bestPerformingCryptoFiltered) : bestPerformingCryptoFiltered;
     let cryptoWorthDolarsFiltered = cryptoWorthDolarsCheckBox.checked ? getCryptoWorthMoreThenDolar(worstPerformingCryptoFiltered) : worstPerformingCryptoFiltered;
     let cryptoWorthCentsFiltered = cryptoWorthCentsCheckBox.checked ? getCryptoWorthLessThenDolar(cryptoWorthDolarsFiltered) : cryptoWorthDolarsFiltered;
-    cryptoToSort.push(...cryptoWorthCentsFiltered);
-    createAndDeleteTable(table, cryptoWorthCentsFiltered);
+    calculatedCryptoList.push(...cryptoWorthCentsFiltered);
+    createAndDeleteTable(mainTable, cryptoWorthCentsFiltered);
     addListenersToTable();
+    addTableToList(mainTable);
     console.log(cryptoWorthCentsFiltered);
 }
 
-function createAndDeleteTable(tableId, cryptoToTable) {
-    deleteTable(tableId);
-    generateTableHead(tableId, cryptoToTable);
-    generateTableRows(cryptoToTable);
+function createAndDeleteTable(table, cryptoToTable) {
+    deleteTable(table);
+    generateTableHead(table, cryptoToTable);
+    generateTableRows(table, cryptoToTable);
 }
 
 function deleteTable(table) {
@@ -98,37 +102,37 @@ function generateTableHead(table, crypto) {
     if (propertyNames.includes("id")) {
         let name = "Crypto ID";
         let nameWithChanges = name.replaceAll(" ", "").replaceAll(".", "");
-        addHeaderCellToRow(row, name, nameWithChanges);
+        addHeaderCellToRow(table, row, name, nameWithChanges);
     }
     if (propertyNames.includes("name")) {
         let name = "Crypto name";
         let nameWithChanges = name.replaceAll(" ", "").replaceAll(".", "");
-        addHeaderCellToRow(row, name, nameWithChanges);
+        addHeaderCellToRow(table, row, name, nameWithChanges);
     }
     if (propertyNames.includes("percentChange")) {
         let name = "Percent change";
         let nameWithChanges = name.replaceAll(" ", "").replaceAll(".", "");
-        addHeaderCellToRow(row, name, nameWithChanges);
+        addHeaderCellToRow(table, row, name, nameWithChanges);
     }
     if (propertyNames.includes("lowestPriceData")) {
         let name = "Lowest price";
         let nameWithChanges = name.replaceAll(" ", "").replaceAll(".", "");
-        addHeaderCellToRow(row, name, nameWithChanges);
+        addHeaderCellToRow(table, row, name, nameWithChanges);
     }
     if (propertyNames.includes("highestPriceData")) {
         let name = "Highest price";
         let nameWithChanges = name.replaceAll(" ", "").replaceAll(".", "");
-        addHeaderCellToRow(row, name, nameWithChanges);
+        addHeaderCellToRow(table, row, name, nameWithChanges);
     }
     if (propertyNames.includes("minPriceDataHistorical")) {
         let name = "Historical min. price";
         let nameWithChanges = name.replaceAll(" ", "").replaceAll(".", "");
-        addHeaderCellToRow(row, name, nameWithChanges);
+        addHeaderCellToRow(table, row, name, nameWithChanges);
     }
     if (propertyNames.includes("maxPriceDataHistorical")) {
         let name = "Historical max. price";
         let nameWithChanges = name.replaceAll(" ", "").replaceAll(".", "");
-        addHeaderCellToRow(row, name, nameWithChanges);
+        addHeaderCellToRow(table, row, name, nameWithChanges);
     }
 }
 
@@ -138,14 +142,14 @@ function addCellsToTable(row, data) {
     cell.appendChild(text);
 }
 
-function addHeaderCellToRow(row, rowName, filterName) {
+function addHeaderCellToRow(table, row, rowName, filterName) {
     let arrowUpUnicode = String.fromCharCode("9650");
     let arrowDownUnicode = String.fromCharCode("9660");
     let th = document.createElement("th");
     let arrowUpButton = document.createElement("button");
     let arrowDownButton = document.createElement("button");
-    arrowUpButton.setAttribute("id", `${filterName}FilterArrowUp`);
-    arrowDownButton.setAttribute("id", `${filterName}FilterArrowDown`)
+    arrowUpButton.setAttribute("id", `${filterName}FilterArrowUp${table.id}`);
+    arrowDownButton.setAttribute("id", `${filterName}FilterArrowDown${table.id}`)
     let arrowUp = document.createTextNode(arrowUpUnicode);
     let arrowDown = document.createTextNode(arrowDownUnicode);
     let text = document.createTextNode(rowName);
@@ -158,7 +162,7 @@ function addHeaderCellToRow(row, rowName, filterName) {
     addEventListenerToSortFilter(arrowUpButton, arrowDownButton)
 }
 
-function generateTableRows(crypto) {
+function generateTableRows(table, crypto) {
     crypto.forEach((obj, i) => {
         let row = table.insertRow();
         row.addEventListener("click", addFavoritesFunc);
@@ -214,65 +218,78 @@ function generateTableRows(crypto) {
 }
 
 function addListenersToTable() {
-    favoritesContainer[0].addEventListener("mouseover", () => table.style.opacity = "0.3");
-    favoritesContainer[0].addEventListener("mouseleave", () => table.style.opacity = "0.9");
+    favoritesContainer[0].addEventListener("mouseover", () => mainTable.style.opacity = "0.3");
+    favoritesContainer[0].addEventListener("mouseleave", () => mainTable.style.opacity = "1");
 }
 
 function checkForFavorites(objId, row) {
-    favoriteCrypto.find(x => x === objId) ? row.style.backgroundColor = "green" : row.style.backgroundColor = "";
+    favoriteCryptoList.find(x => x.id === objId) ? row.style.backgroundColor = "green" : row.style.backgroundColor = "";
 }
 
 function addEventListenerToSortFilter(sortUp, sortDown) {
-    document.getElementById(`${sortUp.id}`).addEventListener("click", findTableColumnToSort);
-    document.getElementById(`${sortDown.id}`).addEventListener("click", findTableColumnToSort);
+    document.getElementById(sortUp.id).addEventListener("click", findTableColumnToSort);
+    document.getElementById(sortDown.id).addEventListener("click", findTableColumnToSort);
 }
 
 function findTableColumnToSort(event) {
     let rowNameToSort = event.target.id.toLowerCase();
-    rowNameToSort.includes("id") && rowNameToSort.includes("up") && sortUp("id");
-    rowNameToSort.includes("id") && rowNameToSort.includes("down") && sortDown("id");
-    rowNameToSort.includes("name") && rowNameToSort.includes("up") && sortUp("name");
-    rowNameToSort.includes("name") && rowNameToSort.includes("down") && sortDown("name");
-    rowNameToSort.includes("lowest") && rowNameToSort.includes("up") && sortUp("lowestPriceData", "price");
-    rowNameToSort.includes("lowest") && rowNameToSort.includes("down") && sortDown("lowestPriceData", "price");
-    rowNameToSort.includes("highest") && rowNameToSort.includes("up") && sortUp("highestPriceData", "price");
-    rowNameToSort.includes("highest") && rowNameToSort.includes("down") && sortDown("highestPriceData", "price");
-    rowNameToSort.includes("min") && rowNameToSort.includes("up") && sortUp("minPriceDataHistorical", "price");
-    rowNameToSort.includes("min") && rowNameToSort.includes("down") && sortDown("minPriceDataHistorical", "price");
-    rowNameToSort.includes("max") && rowNameToSort.includes("up") && sortUp("maxPriceDataHistorical", "price");
-    rowNameToSort.includes("max") && rowNameToSort.includes("down") && sortDown("maxPriceDataHistorical", "price");
-    rowNameToSort.includes("percent") && rowNameToSort.includes("up") && sortUp("percentChange");
-    rowNameToSort.includes("percent") && rowNameToSort.includes("down") && sortDown("percentChange");
+    rowNameToSort.includes("id") && rowNameToSort.includes("up") && sortUp(rowNameToSort, "id");
+    rowNameToSort.includes("id") && rowNameToSort.includes("down") && sortDown(rowNameToSort, "id");
+    rowNameToSort.includes("name") && rowNameToSort.includes("up") && sortUp(rowNameToSort, "name");
+    rowNameToSort.includes("name") && rowNameToSort.includes("down") && sortDown(rowNameToSort, "name");
+    rowNameToSort.includes("lowest") && rowNameToSort.includes("up") && sortUp(rowNameToSort, "lowestPriceData", "price");
+    rowNameToSort.includes("lowest") && rowNameToSort.includes("down") && sortDown(rowNameToSort, "lowestPriceData", "price");
+    rowNameToSort.includes("highest") && rowNameToSort.includes("up") && sortUp(rowNameToSort, "highestPriceData", "price");
+    rowNameToSort.includes("highest") && rowNameToSort.includes("down") && sortDown(rowNameToSort, "highestPriceData", "price");
+    rowNameToSort.includes("min") && rowNameToSort.includes("up") && sortUp(rowNameToSort, "minPriceDataHistorical", "price");
+    rowNameToSort.includes("min") && rowNameToSort.includes("down") && sortDown(rowNameToSort, "minPriceDataHistorical", "price");
+    rowNameToSort.includes("max") && rowNameToSort.includes("up") && sortUp(rowNameToSort, "maxPriceDataHistorical", "price");
+    rowNameToSort.includes("max") && rowNameToSort.includes("down") && sortDown(rowNameToSort, "maxPriceDataHistorical", "price");
+    rowNameToSort.includes("percent") && rowNameToSort.includes("up") && sortUp(rowNameToSort, "percentChange");
+    rowNameToSort.includes("percent") && rowNameToSort.includes("down") && sortDown(rowNameToSort, "percentChange");
 }
 
-function sortUp(cryptoKey, cryptoSecondKey) {
-    let sortFrom = searchedCrypto.length ? searchedCrypto: cryptoToSort;
+function sortUp(rowName, cryptoKey, cryptoSecondKey) {
+    let table = rowName.includes("modal") ? document.getElementById("modalTable") : document.getElementById("mainTable");
+    let dataToSort = sortFrom(table);
     if (cryptoKey === "id" || cryptoKey === "name") {
-        sortFrom.sort((a, b) => a[cryptoKey].localeCompare(b[cryptoKey]));
-        createAndDeleteTable(table, sortFrom);
+        dataToSort.sort((a, b) => a[cryptoKey].localeCompare(b[cryptoKey]));
+        createAndDeleteTable(table, dataToSort);
     } else if (cryptoKey === "percentChange") {
-        sortFrom.sort((a, b) => parseFloat(a[cryptoKey]) - parseFloat(b[cryptoKey]));
-        createAndDeleteTable(table, sortFrom);
+        dataToSort.sort((a, b) => parseFloat(a[cryptoKey]) - parseFloat(b[cryptoKey]));
+        createAndDeleteTable(table, dataToSort);
     } else {
-        sortFrom.sort((a, b) => parseFloat(a[cryptoKey][cryptoSecondKey]) - parseFloat(b[cryptoKey][cryptoSecondKey]));
-        createAndDeleteTable(table, sortFrom);
+        dataToSort.sort((a, b) => parseFloat(a[cryptoKey][cryptoSecondKey]) - parseFloat(b[cryptoKey][cryptoSecondKey]));
+        createAndDeleteTable(table, dataToSort);
     }
 }
 
-function sortDown(cryptoKey, cryptoSecondKey) {
-    let sortFrom = searchedCrypto.length ? searchedCrypto: cryptoToSort;
+function sortDown(rowName, cryptoKey, cryptoSecondKey) {
+    let table = rowName.includes("modal") ? document.getElementById("modalTable") : document.getElementById("mainTable");
+    let dataToSort = sortFrom(table);
     if (cryptoKey === "id" || cryptoKey === "name") {
-        sortFrom.sort((a, b) => b[cryptoKey].localeCompare(a[cryptoKey]));
-        createAndDeleteTable(table, sortFrom);
+        dataToSort.sort((a, b) => b[cryptoKey].localeCompare(a[cryptoKey]));
+        createAndDeleteTable(table, dataToSort);
     } else if (cryptoKey === "percentChange") {
-        sortFrom.sort((a, b) => parseFloat(b[cryptoKey]) - parseFloat(a[cryptoKey]));
-        createAndDeleteTable(table, sortFrom);
+        dataToSort.sort((a, b) => parseFloat(b[cryptoKey]) - parseFloat(a[cryptoKey]));
+        createAndDeleteTable(table, dataToSort);
     } else {
-        sortFrom.sort((a, b) => parseFloat(b[cryptoKey][cryptoSecondKey]) - parseFloat(a[cryptoKey][cryptoSecondKey]));
-        createAndDeleteTable(table, sortFrom);
+        dataToSort.sort((a, b) => parseFloat(b[cryptoKey][cryptoSecondKey]) - parseFloat(a[cryptoKey][cryptoSecondKey]));
+        createAndDeleteTable(table, dataToSort);
     }
 }
 
+function sortFrom(table) {
+    if (table.id === "mainTable") {
+        let cryptoToSort = searchedCrypto.length ? searchedCrypto : calculatedCryptoList;
+
+        return cryptoToSort;
+
+    } else {
+
+        return favoriteCryptoList;
+    }
+}
 
 function validateDateFilter() {
     let startSearch = startEndSearchDate.start;
@@ -530,8 +547,8 @@ function getStartEndDateInUnix(event) {
 }
 
 function addEventListenersToFileReader(reader) {
-    reader.addEventListener("loadstart", ()=> document.body.style.cursor = "wait");
-    reader.addEventListener("loadend", ()=> document.body.style.cursor = "default");
+    reader.addEventListener("loadstart", () => document.body.style.cursor = "wait");
+    reader.addEventListener("loadend", () => document.body.style.cursor = "default");
 }
 
 
@@ -550,12 +567,12 @@ function onCryptoUploaded(e) {
 function getSearchResults(event) {
     if (event.key === "Enter") {
         const searchedValue = event.target.value.toLowerCase();
-        let filteredCurrencies = cryptoToSort.filter(currencyData =>
+        let filteredCurrencies = calculatedCryptoList.filter(currencyData =>
             currencyData.name.toLowerCase().includes(searchedValue) || currencyData.id.toLowerCase().includes(searchedValue));
 
         if (filteredCurrencies.length) {
             searchedCrypto = [];
-            createAndDeleteTable(table, filteredCurrencies);
+            createAndDeleteTable(mainTable, filteredCurrencies);
             searchedCrypto.push(...filteredCurrencies);
         }
         else {
@@ -565,38 +582,58 @@ function getSearchResults(event) {
 }
 
 function addFavoritesFunc(e) {
-    changeRowColor(e);
+    checkFavorites(e);
     changefavoriteCounterValue();
 }
 
 
-function changeRowColor(event) {
-    event.path[1].style.backgroundColor === "" ? addCryptoToFavorites(event) : removeCryptoFromFavorites(event);
+function checkFavorites(event) {
+    let cryptoToAddOrRemove = event.path[1].cells[1].textContent;
+    favoriteCryptoList.find(x => x.id === cryptoToAddOrRemove) ? removeCryptoFromFavorites(event) : addCryptoToFavorites(event);
 }
 
 function addCryptoToFavorites(event) {
-    event.path[1].style.backgroundColor = "green";
-    let cryptoToAdd = event.path[1].cells[1].textContent;
-    favoriteCrypto.push(cryptoToAdd);
-    console.log(favoriteCrypto)
+    let addCrypto = true;
+    let cryptoIdToAdd = event.path[1].cells[1].textContent;
+    changeRowColorInTables(cryptoIdToAdd, addCrypto);
+    let cryptoToAdd = cryptoData.find(x => x.id === cryptoIdToAdd);
+    favoriteCryptoList.push(cryptoToAdd);
+    console.log(favoriteCryptoList)
 
 }
 
 function removeCryptoFromFavorites(event) {
-    event.path[1].style.backgroundColor = ""
+    let addCrypto = false;
     let cryptoToRemove = event.path[1].cells[1].textContent;
-    let index = favoriteCrypto.indexOf(cryptoToRemove);
-    index > -1 && favoriteCrypto.splice(index, 1);
-    console.log(favoriteCrypto)
+    changeRowColorInTables(cryptoToRemove, addCrypto);
+    let index = favoriteCryptoList.findIndex(x => x.id === cryptoToRemove);
+    index > -1 && favoriteCryptoList.splice(index, 1);
+    console.log(favoriteCryptoList)
 }
 
+function changeRowColorInTables(crypto, addCrypto) {
+    tableList.forEach(table => {
+        let tableRows = Array.from(table.rows);
+        let rowToChange = tableRows.find(x => x.cells[1].textContent === crypto);
+        if (rowToChange) {
+            if (addCrypto) {
+                rowToChange.style.backgroundColor = "green";
+            } else {
+                rowToChange.style.backgroundColor = "";
+            }
+        }
+    });
+}
+
+
 function changefavoriteCounterValue() {
-    favoriteCounter[0].textContent = favoriteCrypto.length;
+    favoriteCounter[0].textContent = favoriteCryptoList.length;
 }
 
 function showFavoritesInNewWindow() {
-    let modalForFavorites = createModal();
-    // createAndDeleteTable(modalForFavorites, favoriteCrypto) // poprawić funckję ponieważ wyrzuca modala przy użyciu
+    createModal();
+    let tableForModal = document.getElementById("modalTable");
+    createAndDeleteTable(tableForModal, favoriteCryptoList);
 }
 
 function createModal() {
@@ -613,21 +650,27 @@ function createModal() {
     modalCloseButton.appendChild(closeText);
     let headerText = document.createTextNode("Favorites list");
     modalHeader.appendChild(headerText);
+    let modalTable = document.createElement("table");
+    modalTable.setAttribute("id", "modalTable");
     modalHeader.appendChild(modalCloseButton);
     modalCard.appendChild(modalHeader);
+    modalCard.appendChild(modalTable);
     modalBackdrop.appendChild(modalCard);
     document.getElementsByTagName("section")[0].appendChild(modalBackdrop);
     modalBackdrop.addEventListener("click", () => document.getElementById("modal").remove());
     modalCard.addEventListener("click", (event) => event.stopPropagation());
     modalCloseButton.addEventListener("click", () => document.getElementById("modal").remove());
+    addTableToList(modalTable);
 
-    return modalBackdrop;
 }
 
+function addTableToList(table) {
+    tableList.push(table);
+}
 
 async function onDownloadAllCryptoButton() {
     let cryptoList = await fetchCryptoCurrenciesList();
-    let currenciesData = await fetchCyrptoCurrencies(cryptoList)
+    let currenciesData = await fetchCyrptoCurrencies(cryptoList);
     currenciesData.forEach(x => cryptoData.push(x));
     saveCryptoData(cryptoData);
 }

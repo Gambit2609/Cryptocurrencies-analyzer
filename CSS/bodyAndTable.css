@@ -75,7 +75,7 @@ tr:hover td{
     border-collapse: collapse;
 }
 
-#table button{
+#mainTable button{
     float: right;
     height: 15px;
     font-size: 10px;
