@@ -7,28 +7,59 @@
     <link rel="stylesheet" href="CSS/bodyAndTable.css">
     <link rel="stylesheet" href="CSS/topBar.css">
     <link rel="stylesheet" href="CSS/modal.css">
+    <link rel="stylesheet" href="CSS/switchButton.css">
 </head>
 
 <body>
     <section>
         <div class="sideBar">
-            <div>
+            <div class="upload">
                 <label for="uploadCryptoData">Upload cryptocurrencies data</label>
                 <input type="file" id="uploadCryptoData">
             </div>
-            <div class="filters">
-                <label for="dateFilterCheckbox">Search by date</label>
-                <input type="checkbox" id="dateFilterCheckbox">
-                <label for="bestPerformingCryptoFilterCheckBox">Search for best performing cryptocurrencies</label>
-                <input type="checkbox" id="bestPerformingCryptoFilterCheckBox">
-                <label for="worstPerformingCryptoFilterCheckBox">Search for worst performing cryptocurrencies</label>
-                <input type="checkbox" id="worstPerformingCryptoFilterCheckBox">
-                <label for="worthDolars">Crypto worth dolars on average</label>
-                <input type="checkbox" id="worthDolars">
-                <label for="worthCents">Crypto worth cents on average</label>
-                <input type="checkbox" id="worthCents">
-                <label for="token">Dont show token cryptocurrencies</label>
-                <input type="checkbox" id="token">
+            <div class="filterButtons">
+                <div class="filterCheckbox date">
+                    <p>Search by date</p>
+                    <label class="switch" for="dateFilterCheckbox">
+                        <input type="checkbox" id="dateFilterCheckbox">
+                        <span></span>
+                    </label>
+                </div>
+                <div class="filterCheckbox">
+                    <p>Search for best performing cryptocurrencies</p>
+                    <label class="switch" for="bestPerformingCryptoFilterCheckBox">
+                        <input type="checkbox" id="bestPerformingCryptoFilterCheckBox">
+                        <span></span>
+                    </label>
+                </div>
+                <div class="filterCheckbox">
+                    <p>Search for worst performing cryptocurrencies</p>
+                    <label class="switch" for="worstPerformingCryptoFilterCheckBox">
+                        <input type="checkbox" id="worstPerformingCryptoFilterCheckBox">
+                        <span></span>
+                    </label>
+                </div>
+                <div class="filterCheckbox">
+                    <p>Crypto worth dolars on average</p>
+                    <label class="switch" for="worthDolars">
+                        <input type="checkbox" id="worthDolars">
+                        <span></span>
+                    </label>
+                </div>
+                <div class="filterCheckbox">
+                    <p>Crypto worth cents on average</p>
+                    <label class="switch" for="worthCents">
+                        <input type="checkbox" id="worthCents">
+                        <span></span>
+                    </label>
+                </div>
+                <div class="filterCheckbox">
+                    <p>Dont show token cryptocurrencies</p>
+                    <label class="switch" for="token">
+                        <input type="checkbox" id="token">
+                        <span></span>
+                    </label>
+                </div>
             </div>
             <div id="startDateFilter">
                 <label for="startSearchDate">Start search date:</label>
@@ -58,8 +89,10 @@
         <div class="container">
             <div class="topBar">
                 <div class="favoritesContainer">
-                    <input type="image" src="Data/favoritesButton.png" id="favoriteButton">
-                    <span class="favoriteCounter">0</span>
+                    <div>
+                        <input type="image" src="Data/favoritesButton.png" id="favoriteButton">
+                        <span class="favoriteCounter">0</span>
+                    </div>
                     <input type="image" src="Data/showFavorites.png" id="showFavoriteButton">
                 </div>
                 <input type="search" id="cryptoSearch" placeholder="Search cryptocurrency">

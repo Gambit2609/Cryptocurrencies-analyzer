@@ -57,7 +57,6 @@ showHideFilters();
 // onDownloadAllCryptoButton();
 
 // 1.dodać zjdęcia do listy
-// 2. dodać nowe okno dla ulubionych kryptowalut
 // 3. dodać opis w inputach best / worst dla informacji użytkownika
 // 4. dodać filtr na wartość market cap
 // 5. dodać filtr na wolumen

@@ -18,12 +18,14 @@
     border: 2px gray;
     box-shadow: -10px 15px 21px grey;
     z-index: 20;
+    overflow: y;
 }
 
 .modalHeader {
     height: 50px;
     width: 100%;
-    position: relative;
+    position: sticky;
+    top: 0px;
     text-align: center;
 }
 
@@ -36,4 +38,10 @@
 .modalHeader span:hover{
     color:red;
     
+}
+
+#modal button{
+    float: right;
+    height: 15px;
+    font-size: 10px;
 }
