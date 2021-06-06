@@ -93,7 +93,7 @@ function generateTableHead(table, crypto) {
     let thead = table.createTHead();
     let row = thead.insertRow();
     let th = document.createElement("th");
-    let text = document.createTextNode("#");
+    let text = document.createTextNode("");
     th.appendChild(text);
     row.appendChild(th);
     let propertyNames = Object.keys(crypto[0]);
@@ -133,6 +133,11 @@ function generateTableHead(table, crypto) {
         let nameWithChanges = name.replaceAll(" ", "").replaceAll(".", "");
         addHeaderCellToRow(table, row, name, nameWithChanges);
     }
+    if (propertyNames.includes("averagePrice")) {
+        let name = "Average price";
+        let nameWithChanges = name.replaceAll(" ", "").replaceAll(".", "");
+        addHeaderCellToRow(table, row, name, nameWithChanges);
+    }
 }
 
 function addCellsToTable(row, data) {
@@ -162,12 +167,21 @@ function addHeaderCellToRow(table, row, rowName, filterName) {
 }
 
 function generateTableRows(table, crypto) {
-    crypto.forEach((obj, i) => {
+    let i = 0;
+    crypto.forEach((obj) => {
+        try {
+            if (Math.sign(parseFloat(obj.minPriceDataHistorical.price)) < 0) {
+                return;
+            }
+        } catch (error) {
+            console.log(error)
+        }
+        i++
         let row = table.insertRow();
         row.addEventListener("click", addFavoritesFunc);
         checkForFavorites(obj.id, row)
         let cell = row.insertCell();
-        let text = document.createTextNode(i + 1);
+        let text = document.createTextNode(i);
         cell.appendChild(text);
 
         if (obj.id) {
@@ -180,7 +194,7 @@ function generateTableRows(table, crypto) {
             addCellsToTable(row, rowData)
         }
 
-        if (obj.percentChange) {
+        if (obj.percentChange == 0 || obj.percentChange) {
             let rowData = `${obj.percentChange.toFixed(2)}%`;
             let parsedPercent = parseFloat(rowData);
             let cell = row.insertCell();
@@ -210,6 +224,10 @@ function generateTableRows(table, crypto) {
         }
         if (obj.maxPriceDataHistorical) {
             let rowData = obj.maxPriceDataHistorical.price;
+            addCellsToTable(row, rowData)
+        }
+        if (obj.averagePrice) {
+            let rowData = obj.averagePrice;
             addCellsToTable(row, rowData)
         }
 
@@ -246,6 +264,8 @@ function findTableColumnToSort(event) {
     rowNameToSort.includes("max") && rowNameToSort.includes("down") && sortDown(rowNameToSort, "maxPriceDataHistorical", "price");
     rowNameToSort.includes("percent") && rowNameToSort.includes("up") && sortUp(rowNameToSort, "percentChange");
     rowNameToSort.includes("percent") && rowNameToSort.includes("down") && sortDown(rowNameToSort, "percentChange");
+    rowNameToSort.includes("average") && rowNameToSort.includes("up") && sortUp(rowNameToSort, "averagePrice");
+    rowNameToSort.includes("average") && rowNameToSort.includes("down") && sortDown(rowNameToSort, "averagePrice");
 }
 
 function sortUp(rowName, cryptoKey, cryptoSecondKey) {
@@ -254,7 +274,7 @@ function sortUp(rowName, cryptoKey, cryptoSecondKey) {
     if (cryptoKey === "id" || cryptoKey === "name") {
         dataToSort.sort((a, b) => a[cryptoKey].localeCompare(b[cryptoKey]));
         createAndDeleteTable(table, dataToSort);
-    } else if (cryptoKey === "percentChange") {
+    } else if (cryptoKey === "percentChange" || cryptoKey === "averagePrice") {
         dataToSort.sort((a, b) => parseFloat(a[cryptoKey]) - parseFloat(b[cryptoKey]));
         createAndDeleteTable(table, dataToSort);
     } else {
@@ -269,7 +289,7 @@ function sortDown(rowName, cryptoKey, cryptoSecondKey) {
     if (cryptoKey === "id" || cryptoKey === "name") {
         dataToSort.sort((a, b) => b[cryptoKey].localeCompare(a[cryptoKey]));
         createAndDeleteTable(table, dataToSort);
-    } else if (cryptoKey === "percentChange") {
+    } else if (cryptoKey === "percentChange" || cryptoKey === "averagePrice") {
         dataToSort.sort((a, b) => parseFloat(b[cryptoKey]) - parseFloat(a[cryptoKey]));
         createAndDeleteTable(table, dataToSort);
     } else {
@@ -513,6 +533,8 @@ function getCryptoWorthMoreThenDolar(data) {
     let cryptoWorthDolars = data.filter(obj => {
         let sumOfAllCryptoPrices = obj.dailyStats.reduce((sum, val) => sum + parseFloat(val.price), 0);
         let averagePrice = sumOfAllCryptoPrices / obj.dailyStats.length;
+        let fixedAverage = averagePrice.toFixed(10);
+        obj.averagePrice = fixedAverage;
 
         return averagePrice > 1;
 
@@ -525,6 +547,8 @@ function getCryptoWorthLessThenDolar(data) {
     let cryptoWorthCents = data.filter(obj => {
         let sumOfAllCryptoPrices = obj.dailyStats.reduce((sum, val) => sum + parseFloat(val.price), 0);
         let averagePrice = sumOfAllCryptoPrices / obj.dailyStats.length;
+        let fixedAverage = averagePrice.toFixed(10);
+        obj.averagePrice = fixedAverage;
 
         return averagePrice < 1;
 
@@ -664,8 +688,17 @@ function createModal() {
 }
 
 function addTableToList(table) {
+    if (tableList.find(x => x.id === table.id)) {
+        let index = tableList.findIndex(x=> x.id === table.id);
+        tableList.splice(index, 1)
+    }
     tableList.push(table);
 }
+
+function getBiggestWinnerLooserFromLastDay(data) {
+    // let latestDay = 
+}
+
 
 async function onDownloadAllCryptoButton() {
     let cryptoList = await fetchCryptoCurrenciesList();

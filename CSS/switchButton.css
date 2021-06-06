@@ -20,6 +20,10 @@
     width: 120px;
 }
 
+.short p{
+  top:10px;
+}
+
 label.switch {  
     text-align: left;
     width: 45px;
@@ -86,3 +90,4 @@ label.switch {
   label.switch > input[type="checkbox"]:checked ~ span:after {
     transform: translate3d(100%, -50%, 0);
   }
+

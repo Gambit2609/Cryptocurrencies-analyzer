@@ -59,3 +59,16 @@ span{
     opacity: 0;
     z-index: 12;
 }
+
+.prompter{
+    position: absolute;
+    width: 30%;
+    top: 10px;
+    right: 400px;
+}
+
+#topBottomGainers{
+    outline: none;
+    font-size: 30px;
+    border: none;
+}

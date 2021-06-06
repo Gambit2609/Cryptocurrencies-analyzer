@@ -18,42 +18,42 @@
                 <input type="file" id="uploadCryptoData">
             </div>
             <div class="filterButtons">
-                <div class="filterCheckbox date">
+                <div class="filterCheckbox short date">
                     <p>Search by date</p>
                     <label class="switch" for="dateFilterCheckbox">
                         <input type="checkbox" id="dateFilterCheckbox">
                         <span></span>
                     </label>
                 </div>
-                <div class="filterCheckbox">
+                <div class="filterCheckbox long">
                     <p>Search for best performing cryptocurrencies</p>
                     <label class="switch" for="bestPerformingCryptoFilterCheckBox">
                         <input type="checkbox" id="bestPerformingCryptoFilterCheckBox">
                         <span></span>
                     </label>
                 </div>
-                <div class="filterCheckbox">
+                <div class="filterCheckbox long">
                     <p>Search for worst performing cryptocurrencies</p>
                     <label class="switch" for="worstPerformingCryptoFilterCheckBox">
                         <input type="checkbox" id="worstPerformingCryptoFilterCheckBox">
                         <span></span>
                     </label>
                 </div>
-                <div class="filterCheckbox">
+                <div class="filterCheckbox short">
                     <p>Crypto worth dolars on average</p>
                     <label class="switch" for="worthDolars">
                         <input type="checkbox" id="worthDolars">
                         <span></span>
                     </label>
                 </div>
-                <div class="filterCheckbox">
+                <div class="filterCheckbox short">
                     <p>Crypto worth cents on average</p>
                     <label class="switch" for="worthCents">
                         <input type="checkbox" id="worthCents">
                         <span></span>
                     </label>
                 </div>
-                <div class="filterCheckbox">
+                <div class="filterCheckbox short">
                     <p>Dont show token cryptocurrencies</p>
                     <label class="switch" for="token">
                         <input type="checkbox" id="token">
@@ -88,6 +88,9 @@
         </div>
         <div class="container">
             <div class="topBar">
+                <div class="prompter">
+                    <input type="text" id="topBottomGainers" readonly>
+                </div>
                 <div class="favoritesContainer">
                     <div>
                         <input type="image" src="Data/favoritesButton.png" id="favoriteButton">
