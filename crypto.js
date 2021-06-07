@@ -65,6 +65,7 @@ showHideFilters();
 
 function onCalculatePressed() {
     calculatedCryptoList = [];
+    searchedCrypto = [];
     let cryptoWithHistoricalMaxMin = getMaxMinValueHistorical(cryptoData);
     let tokenFiltered = tokenCheckBox.checked ? getCryptoFilteredByToken(cryptoWithHistoricalMaxMin) : cryptoWithHistoricalMaxMin;
     let timeFiltered = dateFilterCheckbox.checked ? getCryptoFilteredByTime(tokenFiltered) : tokenFiltered;
@@ -76,6 +77,7 @@ function onCalculatePressed() {
     createAndDeleteTable(mainTable, cryptoWorthCentsFiltered);
     addListenersToTable();
     addTableToList(mainTable);
+    getBiggestWinnerLooserFromLastDay()
     console.log(cryptoWorthCentsFiltered);
 }
 
@@ -167,21 +169,12 @@ function addHeaderCellToRow(table, row, rowName, filterName) {
 }
 
 function generateTableRows(table, crypto) {
-    let i = 0;
-    crypto.forEach((obj) => {
-        try {
-            if (Math.sign(parseFloat(obj.minPriceDataHistorical.price)) < 0) {
-                return;
-            }
-        } catch (error) {
-            console.log(error)
-        }
-        i++
+    crypto.forEach((obj, i) => {
         let row = table.insertRow();
         row.addEventListener("click", addFavoritesFunc);
         checkForFavorites(obj.id, row)
         let cell = row.insertCell();
-        let text = document.createTextNode(i);
+        let text = document.createTextNode(i + 1);
         cell.appendChild(text);
 
         if (obj.id) {
@@ -418,11 +411,21 @@ function getPercentValue() {
 function getMaxMinValueHistorical(data) {
     let historicalMinMaxData = data.map(crypto => {
         let cryptoWithHistoricalMaxMin = { ...crypto };
-        cryptoWithHistoricalMaxMin.minPriceDataHistorical = cryptoWithHistoricalMaxMin.dailyStats.reduce((acc, val) => parseFloat(acc.price) < parseFloat(val.price) ? acc : acc = val);
-        cryptoWithHistoricalMaxMin.maxPriceDataHistorical = cryptoWithHistoricalMaxMin.dailyStats.reduce((acc, val) => parseFloat(acc.price) > parseFloat(val.price) ? acc : acc = val);
+        let minPriceData = cryptoWithHistoricalMaxMin.dailyStats.reduce((acc, val) => {
+            if (parseFloat(acc.price) < 0) {
+
+                return acc.price = val.price;
+            } else {
+
+                return parseFloat(acc.price) < parseFloat(val.price) ? acc : acc = val;
+            }
+        });
+        cryptoWithHistoricalMaxMin.minPriceDataHistorical = { ...minPriceData };
+        let maxPriceData = cryptoWithHistoricalMaxMin.dailyStats.reduce((acc, val) => parseFloat(acc.price) > parseFloat(val.price) ? acc : acc = val);
+        cryptoWithHistoricalMaxMin.maxPriceDataHistorical = { ...maxPriceData };
         try {
-            cryptoWithHistoricalMaxMin.minPriceDataHistorical.price = parseFloat(cryptoWithHistoricalMaxMin.minPriceDataHistorical.price).toFixed(10);
-            cryptoWithHistoricalMaxMin.maxPriceDataHistorical.price = parseFloat(cryptoWithHistoricalMaxMin.maxPriceDataHistorical.price).toFixed(10);
+            cryptoWithHistoricalMaxMin.minPriceDataHistorical.price = parseFloat(cryptoWithHistoricalMaxMin.minPriceDataHistorical.price.toFixed(10));
+            cryptoWithHistoricalMaxMin.maxPriceDataHistorical.price = parseFloat(cryptoWithHistoricalMaxMin.maxPriceDataHistorical.price.toFixed(10));
         } catch (error) {
             console.error(error)
             console.log(cryptoWithHistoricalMaxMin)
@@ -440,7 +443,8 @@ function getPercentChangeValue(data) {
         if (crypto[`${historicalOrRangeMinDate}`].date > crypto[`${historicalOrRangeMaxDate}`].date) {
             let differenceBetweenMaxMin = (crypto[`${historicalOrRangeMinDate}`].price - crypto[`${historicalOrRangeMaxDate}`].price) / crypto[`${historicalOrRangeMaxDate}`].price;
             let changeDifferenceToPercent = -Math.abs(differenceBetweenMaxMin) * 100;
-            crypto.percentChange = changeDifferenceToPercent;
+
+            crypto.percentChange = !Number.isNaN(changeDifferenceToPercent) ? changeDifferenceToPercent : 0
 
             return crypto;
 
@@ -516,9 +520,11 @@ function getCryptoFilteredByTime(data) {
         }
 
         filteredCrypto.dailyStats.push(...startEndFilteredData);
-        filteredCrypto.lowestPriceData = filteredCrypto.dailyStats.reduce((acc, val) => parseFloat(acc.price) < parseFloat(val.price) ? acc : acc = val);
+        let lowestPrice = filteredCrypto.dailyStats.reduce((acc, val) => parseFloat(acc.price) < parseFloat(val.price) ? acc : acc = val);
+        filteredCrypto.lowestPriceData = {...lowestPrice};
         filteredCrypto.lowestPriceData.price = parseFloat(filteredCrypto.lowestPriceData.price).toFixed(10);
-        filteredCrypto.highestPriceData = filteredCrypto.dailyStats.reduce((acc, val) => parseFloat(acc.price) > parseFloat(val.price) ? acc : acc = val);
+        let highestPrice = filteredCrypto.dailyStats.reduce((acc, val) => parseFloat(acc.price) > parseFloat(val.price) ? acc : acc = val);
+        filteredCrypto.highestPriceData = {...highestPrice};
         filteredCrypto.highestPriceData.price = parseFloat(filteredCrypto.highestPriceData.price).toFixed(10);
         searchResults.push(filteredCrypto);
     });
@@ -558,7 +564,7 @@ function getCryptoWorthLessThenDolar(data) {
 }
 
 function getStartEndDateInUnix(event) {
-    let startOrEnd = event.target.id
+    let startOrEnd = event.target.id;
     let date = event.target.value;
     let unixDate = new Date(date).getTime();
 
@@ -689,14 +695,30 @@ function createModal() {
 
 function addTableToList(table) {
     if (tableList.find(x => x.id === table.id)) {
-        let index = tableList.findIndex(x=> x.id === table.id);
+        let index = tableList.findIndex(x => x.id === table.id);
         tableList.splice(index, 1)
     }
     tableList.push(table);
 }
 
-function getBiggestWinnerLooserFromLastDay(data) {
-    // let latestDay = 
+function getBiggestWinnerLooserFromLastDay() {
+    let cryptoWith24hPercentChange = cryptoData.map(crypto => {
+        let daysCount = crypto.dailyStats.length;
+        let yesterday = crypto.dailyStats[daysCount - 1]
+        let beforeYesterday = crypto.dailyStats[daysCount - 2];
+        try {
+            let priceChange24h = ((parseFloat(yesterday.price) - parseFloat(beforeYesterday.price)) / parseFloat(beforeYesterday.price)) * 100;
+            let cryptoWithLast24hPriceChange = { id: crypto.id, priceChange24h: priceChange24h };
+
+            return cryptoWithLast24hPriceChange;
+
+        } catch (error) {
+            console.log(error + crypto);
+        }
+    })
+    let biggestLoosers = cryptoWith24hPercentChange.sort((a, b) => a.priceChange24h - b.priceChange24h).splice(0, 5);
+    console.log(biggestLoosers);
+    console.log(cryptoData)
 }
 
 

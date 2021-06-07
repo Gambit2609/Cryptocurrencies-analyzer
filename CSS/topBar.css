@@ -41,7 +41,7 @@ hr{
     z-index: 1;
 }
 
-span{
+.favoritesContainer span{
     position: absolute;
     right: 39px;
     top: 31px;
