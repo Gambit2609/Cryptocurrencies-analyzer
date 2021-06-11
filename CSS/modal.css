@@ -18,7 +18,9 @@
     border: 2px gray;
     box-shadow: -10px 15px 21px grey;
     z-index: 20;
-    overflow: y;
+    overflow-y: auto;
+    overflow-x: hidden;
+    background-color: #f2f2f2;;
 }
 
 .modalHeader {
@@ -27,6 +29,11 @@
     position: sticky;
     top: 0px;
     text-align: center;
+    background-color: #f2f2f2;;
+    font-family: fantasy;
+    font-size: x-large;
+    z-index: 20;
+    cursor: default;
 }
 
 .modalHeader span{
@@ -34,11 +41,13 @@
     right: 10px;
     transition: 0.2s;
     position: absolute;
+    font-family: sans-serif;
+    font-size: large;
+    cursor: pointer;
 }
 
 .modalHeader span:hover{
     color:red;
-    
 }
 
 #modal button{
@@ -46,3 +55,55 @@
     height: 15px;
     font-size: 10px;
 }
+
+#modalTable th{
+    position: sticky;
+    top: 51px;
+    background-color: #f2f2f2;
+    z-index: 10;
+    padding-left: 40px;
+    font-size: larger;
+    font-family: fantasy;
+    font-weight: normal;
+}
+
+#modal-hr{
+    position: sticky;
+    top:50px;
+    background-color: darkgray;
+}
+
+#modal-filters-button{
+    width: 30px;
+    border: 1px solid black;
+    padding: 5px;
+    border-radius: 10px;
+    margin-bottom: 10px;
+}
+
+.button-container{
+    position: absolute;
+    top: 6px;
+    left: 8px;
+    width: 40px;
+}
+
+.button-container:hover #copy-main-table-filters-button{
+    height: 40px;
+    
+}
+.button-container:hover #modal-filters{
+    height: 40px;
+    
+}
+
+#copy-main-table-filters-button{
+    transition: 0.7s ease-in-out;
+    height: 0px;
+}
+
+#modal-filters{
+    transition: 0.7s ease-in-out;
+    height: 0px; 
+}
+

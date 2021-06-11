@@ -27,16 +27,17 @@ const worstPerFormingCryptoFilter = document.getElementById("worstPerFormingCryp
 const mainTable = document.getElementById("mainTable");
 const favoritesContainer = document.getElementsByClassName("favoritesContainer");
 const favoriteCounter = document.getElementsByClassName("favoriteCounter");
-const showFavoritesButton = document.getElementById("showFavoriteButton");
+const showFavoritesButton = document.getElementById("show-favorite-list");
+const bestWorstCryptoIn24HInput = document.getElementById('best-worst-crypto');
+const bestWorstCryptoLabel = document.getElementById("best-worst-crypto-label");
 let calculatedCryptoList = [];
 let searchedCrypto = [];
-let favoriteCrypto = [];
 
 function addListeners() {
     uploadCryptoButton.addEventListener("change", onCryptoUploaded);
     startSearchDateInput.addEventListener("change", getStartEndDateInUnix);
     endSearchDateInput.addEventListener("change", getStartEndDateInUnix);
-    calculateButton.addEventListener("click", onCalculatePressed);
+    calculateButton.addEventListener("click", ()=> {onCalculatePressed(cryptoData, mainTable)});
     dateFilterCheckbox.addEventListener("change", showHideFilters);
     bestPerformingCryptoFilterCheckBox.addEventListener("change", hideWorstPerformingFilter);
     worstPerformingCryptoFilterCheckBox.addEventListener("change", hideBestPerformingFilter);
@@ -49,7 +50,7 @@ function addListeners() {
     cryptoWorthDolarsCheckBox.addEventListener("change", disableCryptoWorthCentsCheckBox);
     cryptoWorthCentsCheckBox.addEventListener("change", disableCryptoWorthDolarsCheckBox);
     cryptoSearchInput.addEventListener("keydown", getSearchResults);
-    showFavoritesButton.addEventListener("click", showFavoritesInNewWindow)
+    showFavoritesButton.addEventListener("click", showFavoritesInNewWindow);
 }
 
 addListeners();
@@ -60,13 +61,14 @@ showHideFilters();
 // 3. dodać opis w inputach best / worst dla informacji użytkownika
 // 4. dodać filtr na wartość market cap
 // 5. dodać filtr na wolumen
-// 6. dodać top trending crypto
 
 
-function onCalculatePressed() {
-    calculatedCryptoList = [];
-    searchedCrypto = [];
-    let cryptoWithHistoricalMaxMin = getMaxMinValueHistorical(cryptoData);
+function onCalculatePressed(data, table) { 
+    if (data === cryptoData) {
+        calculatedCryptoList = [];
+        searchedCrypto = [];
+    }
+    let cryptoWithHistoricalMaxMin = getMaxMinValueHistorical(data);
     let tokenFiltered = tokenCheckBox.checked ? getCryptoFilteredByToken(cryptoWithHistoricalMaxMin) : cryptoWithHistoricalMaxMin;
     let timeFiltered = dateFilterCheckbox.checked ? getCryptoFilteredByTime(tokenFiltered) : tokenFiltered;
     let bestPerformingCryptoFiltered = bestPerformingCryptoFilterCheckBox.checked ? getBestPerformingCrypto(timeFiltered) : timeFiltered;
@@ -74,12 +76,13 @@ function onCalculatePressed() {
     let cryptoWorthDolarsFiltered = cryptoWorthDolarsCheckBox.checked ? getCryptoWorthMoreThenDolar(worstPerformingCryptoFiltered) : worstPerformingCryptoFiltered;
     let cryptoWorthCentsFiltered = cryptoWorthCentsCheckBox.checked ? getCryptoWorthLessThenDolar(cryptoWorthDolarsFiltered) : cryptoWorthDolarsFiltered;
     calculatedCryptoList.push(...cryptoWorthCentsFiltered);
-    createAndDeleteTable(mainTable, cryptoWorthCentsFiltered);
+    createAndDeleteTable(table, cryptoWorthCentsFiltered);
     addListenersToTable();
-    addTableToList(mainTable);
-    getBiggestWinnerLooserFromLastDay()
+    addTableToList(table);
     console.log(cryptoWorthCentsFiltered);
 }
+
+
 
 function createAndDeleteTable(table, cryptoToTable) {
     deleteTable(table);
@@ -101,7 +104,7 @@ function generateTableHead(table, crypto) {
     let propertyNames = Object.keys(crypto[0]);
 
     if (propertyNames.includes("id")) {
-        let name = "Crypto ID";
+        let name = "Symbol"; // zmienić CryptoID na Symbol
         let nameWithChanges = name.replaceAll(" ", "").replaceAll(".", "");
         addHeaderCellToRow(table, row, name, nameWithChanges);
     }
@@ -172,7 +175,7 @@ function generateTableRows(table, crypto) {
     crypto.forEach((obj, i) => {
         let row = table.insertRow();
         row.addEventListener("click", addFavoritesFunc);
-        checkForFavorites(obj.id, row)
+        checkForFavorites(obj.name, row)
         let cell = row.insertCell();
         let text = document.createTextNode(i + 1);
         cell.appendChild(text);
@@ -232,8 +235,8 @@ function addListenersToTable() {
     favoritesContainer[0].addEventListener("mouseleave", () => mainTable.style.opacity = "1");
 }
 
-function checkForFavorites(objId, row) {
-    favoriteCryptoList.find(x => x.id === objId) ? row.style.backgroundColor = "green" : row.style.backgroundColor = "";
+function checkForFavorites(objName, row) {
+    favoriteCryptoList.find(x => x.name === objName) ? row.style.backgroundColor = "green" : row.style.backgroundColor = "";
 }
 
 function addEventListenerToSortFilter(sortUp, sortDown) {
@@ -243,8 +246,8 @@ function addEventListenerToSortFilter(sortUp, sortDown) {
 
 function findTableColumnToSort(event) {
     let rowNameToSort = event.target.id.toLowerCase();
-    rowNameToSort.includes("id") && rowNameToSort.includes("up") && sortUp(rowNameToSort, "id");
-    rowNameToSort.includes("id") && rowNameToSort.includes("down") && sortDown(rowNameToSort, "id");
+    rowNameToSort.includes("symbol") && rowNameToSort.includes("up") && sortUp(rowNameToSort, "id");
+    rowNameToSort.includes("symbol") && rowNameToSort.includes("down") && sortDown(rowNameToSort, "id");
     rowNameToSort.includes("name") && rowNameToSort.includes("up") && sortUp(rowNameToSort, "name");
     rowNameToSort.includes("name") && rowNameToSort.includes("down") && sortDown(rowNameToSort, "name");
     rowNameToSort.includes("lowest") && rowNameToSort.includes("up") && sortUp(rowNameToSort, "lowestPriceData", "price");
@@ -409,7 +412,7 @@ function getPercentValue() {
 }
 
 function getMaxMinValueHistorical(data) {
-    let historicalMinMaxData = data.map(crypto => {
+    let cryptoWithHistoricalMinMaxData = data.map(crypto => {
         let cryptoWithHistoricalMaxMin = { ...crypto };
         let minPriceData = cryptoWithHistoricalMaxMin.dailyStats.reduce((acc, val) => {
             if (parseFloat(acc.price) < 0) {
@@ -424,16 +427,19 @@ function getMaxMinValueHistorical(data) {
         let maxPriceData = cryptoWithHistoricalMaxMin.dailyStats.reduce((acc, val) => parseFloat(acc.price) > parseFloat(val.price) ? acc : acc = val);
         cryptoWithHistoricalMaxMin.maxPriceDataHistorical = { ...maxPriceData };
         try {
-            cryptoWithHistoricalMaxMin.minPriceDataHistorical.price = parseFloat(cryptoWithHistoricalMaxMin.minPriceDataHistorical.price.toFixed(10));
-            cryptoWithHistoricalMaxMin.maxPriceDataHistorical.price = parseFloat(cryptoWithHistoricalMaxMin.maxPriceDataHistorical.price.toFixed(10));
+            cryptoWithHistoricalMaxMin.minPriceDataHistorical.price = parseFloat(cryptoWithHistoricalMaxMin.minPriceDataHistorical.price).toFixed(10);
+            cryptoWithHistoricalMaxMin.maxPriceDataHistorical.price = parseFloat(cryptoWithHistoricalMaxMin.maxPriceDataHistorical.price).toFixed(10);
         } catch (error) {
             console.error(error)
             console.log(cryptoWithHistoricalMaxMin)
         }
+
         return cryptoWithHistoricalMaxMin;
     });
 
-    return historicalMinMaxData;
+    let dataWithoutDefaultedCrypto = cryptoWithHistoricalMinMaxData.filter(x=> x.minPriceDataHistorical.price > 0);
+
+    return dataWithoutDefaultedCrypto;
 }
 
 function getPercentChangeValue(data) {
@@ -521,10 +527,10 @@ function getCryptoFilteredByTime(data) {
 
         filteredCrypto.dailyStats.push(...startEndFilteredData);
         let lowestPrice = filteredCrypto.dailyStats.reduce((acc, val) => parseFloat(acc.price) < parseFloat(val.price) ? acc : acc = val);
-        filteredCrypto.lowestPriceData = {...lowestPrice};
+        filteredCrypto.lowestPriceData = { ...lowestPrice };
         filteredCrypto.lowestPriceData.price = parseFloat(filteredCrypto.lowestPriceData.price).toFixed(10);
         let highestPrice = filteredCrypto.dailyStats.reduce((acc, val) => parseFloat(acc.price) > parseFloat(val.price) ? acc : acc = val);
-        filteredCrypto.highestPriceData = {...highestPrice};
+        filteredCrypto.highestPriceData = { ...highestPrice };
         filteredCrypto.highestPriceData.price = parseFloat(filteredCrypto.highestPriceData.price).toFixed(10);
         searchResults.push(filteredCrypto);
     });
@@ -577,7 +583,11 @@ function getStartEndDateInUnix(event) {
 
 function addEventListenersToFileReader(reader) {
     reader.addEventListener("loadstart", () => document.body.style.cursor = "wait");
-    reader.addEventListener("loadend", () => document.body.style.cursor = "default");
+    reader.addEventListener("loadend", () => {
+        document.body.style.cursor = "default";
+        showBiggestWinnersAndLoosers();
+    }
+    );
 }
 
 
@@ -617,15 +627,15 @@ function addFavoritesFunc(e) {
 
 
 function checkFavorites(event) {
-    let cryptoToAddOrRemove = event.path[1].cells[1].textContent;
-    favoriteCryptoList.find(x => x.id === cryptoToAddOrRemove) ? removeCryptoFromFavorites(event) : addCryptoToFavorites(event);
+    let cryptoToAddOrRemove = event.path[1].cells[2].textContent;
+    favoriteCryptoList.find(x => x.name === cryptoToAddOrRemove) ? removeCryptoFromFavorites(event) : addCryptoToFavorites(event);
 }
 
 function addCryptoToFavorites(event) {
     let addCrypto = true;
-    let cryptoIdToAdd = event.path[1].cells[1].textContent;
-    changeRowColorInTables(cryptoIdToAdd, addCrypto);
-    let cryptoToAdd = cryptoData.find(x => x.id === cryptoIdToAdd);
+    let cryptoName = event.path[1].cells[2].textContent;
+    changeRowColorInTables(cryptoName, addCrypto);
+    let cryptoToAdd = cryptoData.find(x => x.name === cryptoName);
     favoriteCryptoList.push(cryptoToAdd);
     console.log(favoriteCryptoList)
 
@@ -633,9 +643,9 @@ function addCryptoToFavorites(event) {
 
 function removeCryptoFromFavorites(event) {
     let addCrypto = false;
-    let cryptoToRemove = event.path[1].cells[1].textContent;
+    let cryptoToRemove = event.path[1].cells[2].textContent;
     changeRowColorInTables(cryptoToRemove, addCrypto);
-    let index = favoriteCryptoList.findIndex(x => x.id === cryptoToRemove);
+    let index = favoriteCryptoList.findIndex(x => x.name === cryptoToRemove);
     index > -1 && favoriteCryptoList.splice(index, 1);
     console.log(favoriteCryptoList)
 }
@@ -643,7 +653,7 @@ function removeCryptoFromFavorites(event) {
 function changeRowColorInTables(crypto, addCrypto) {
     tableList.forEach(table => {
         let tableRows = Array.from(table.rows);
-        let rowToChange = tableRows.find(x => x.cells[1].textContent === crypto);
+        let rowToChange = tableRows.find(x => x.cells[2].textContent === crypto);
         if (rowToChange) {
             if (addCrypto) {
                 rowToChange.style.backgroundColor = "green";
@@ -663,6 +673,8 @@ function showFavoritesInNewWindow() {
     createModal();
     let tableForModal = document.getElementById("modalTable");
     createAndDeleteTable(tableForModal, favoriteCryptoList);
+    let copyMainTableFilterButton = document.getElementById("copy-main-table-filters-button");
+    copyMainTableFilterButton.addEventListener("click", ()=> {onCalculatePressed(favoriteCryptoList, modalTable)});
 }
 
 function createModal() {
@@ -679,18 +691,43 @@ function createModal() {
     modalCloseButton.appendChild(closeText);
     let headerText = document.createTextNode("Favorites list");
     modalHeader.appendChild(headerText);
+    let modalHr = document.createElement("hr");
+    modalHr.setAttribute("id", "modal-hr");
     let modalTable = document.createElement("table");
     modalTable.setAttribute("id", "modalTable");
     modalHeader.appendChild(modalCloseButton);
     modalCard.appendChild(modalHeader);
+    modalCard.appendChild(modalHr);
     modalCard.appendChild(modalTable);
     modalBackdrop.appendChild(modalCard);
+    createModalButtons(modalHeader);
     document.getElementsByTagName("section")[0].appendChild(modalBackdrop);
     modalBackdrop.addEventListener("click", () => document.getElementById("modal").remove());
     modalCard.addEventListener("click", (event) => event.stopPropagation());
     modalCloseButton.addEventListener("click", () => document.getElementById("modal").remove());
     addTableToList(modalTable);
 
+}
+
+function createModalButtons(node) {
+let buttonContainer = document.createElement("div");
+buttonContainer.setAttribute("class", "button-container");
+let modalFiltersButton = document.createElement("input");
+modalFiltersButton.setAttribute("id", "modal-filters-button");
+modalFiltersButton.setAttribute("type", "image");
+modalFiltersButton.setAttribute("src", "Data/filterModal.png");
+let applyFiltersFromMainTableButton = document.createElement("input");
+applyFiltersFromMainTableButton.setAttribute("id", "copy-main-table-filters-button");
+applyFiltersFromMainTableButton.setAttribute("type", "image");
+applyFiltersFromMainTableButton.setAttribute("src", "Data/filterModal.png");
+let applyNewFiltersInModalButton = document.createElement("input");
+applyNewFiltersInModalButton.setAttribute("id", "modal-filters");
+applyNewFiltersInModalButton.setAttribute("type", "image");
+applyNewFiltersInModalButton.setAttribute("src", "Data/filterModal.png");
+buttonContainer.appendChild(modalFiltersButton);
+buttonContainer.appendChild(applyFiltersFromMainTableButton);
+buttonContainer.appendChild(applyNewFiltersInModalButton);
+node.appendChild(buttonContainer);
 }
 
 function addTableToList(table) {
@@ -701,25 +738,55 @@ function addTableToList(table) {
     tableList.push(table);
 }
 
+function showBiggestWinnersAndLoosers() {
+    let winnersAndLoosers = getBiggestWinnerLooserFromLastDay();
+    winnersAndLoosers.counter = 0;
+    setInterval(() => { showWinnersAndLoosers(winnersAndLoosers) }, 3000)
+
+}
+
 function getBiggestWinnerLooserFromLastDay() {
     let cryptoWith24hPercentChange = cryptoData.map(crypto => {
         let daysCount = crypto.dailyStats.length;
-        let yesterday = crypto.dailyStats[daysCount - 1]
+        let yesterday = crypto.dailyStats[daysCount - 1];
         let beforeYesterday = crypto.dailyStats[daysCount - 2];
         try {
             let priceChange24h = ((parseFloat(yesterday.price) - parseFloat(beforeYesterday.price)) / parseFloat(beforeYesterday.price)) * 100;
-            let cryptoWithLast24hPriceChange = { id: crypto.id, priceChange24h: priceChange24h };
-
+            let cryptoWithLast24hPriceChange = { id: crypto.name, priceChange24h: priceChange24h };
             return cryptoWithLast24hPriceChange;
 
         } catch (error) {
-            console.log(error + crypto);
+            console.log(error + crypto.id);
         }
     })
     let biggestLoosers = cryptoWith24hPercentChange.sort((a, b) => a.priceChange24h - b.priceChange24h).splice(0, 5);
-    console.log(biggestLoosers);
-    console.log(cryptoData)
+    let biggestWinners = cryptoWith24hPercentChange.sort((a, b) => b.priceChange24h - a.priceChange24h).splice(0, 5);
+    let lastDayWinnerLooser = { biggestWinner: biggestWinners, biggestLoosers: biggestLoosers };
+    for (let key in lastDayWinnerLooser) {
+        lastDayWinnerLooser[key].forEach(x => x.priceChange24h = `${x.priceChange24h.toFixed(2)}%`);
+    }
+    console.log(lastDayWinnerLooser);
+
+    return lastDayWinnerLooser;
 }
+
+function showWinnersAndLoosers(winnersAndLoosers) {
+    if (winnersAndLoosers.counter > 9) {
+        winnersAndLoosers.counter = 0;
+    }
+    if (winnersAndLoosers.counter > 4) {
+        bestWorstCryptoIn24HInput.value = `${winnersAndLoosers.biggestLoosers[winnersAndLoosers.counter - 5].id}: ${winnersAndLoosers.biggestLoosers[winnersAndLoosers.counter - 5].priceChange24h}`;
+        bestWorstCryptoIn24HInput.style.color = "red";
+        winnersAndLoosers.counter++;
+        bestWorstCryptoLabel.textContent = "LAST DAY TOP LOSERS:";
+    } else {
+        bestWorstCryptoIn24HInput.value = `${winnersAndLoosers.biggestWinner[winnersAndLoosers.counter].id}: ${winnersAndLoosers.biggestWinner[winnersAndLoosers.counter].priceChange24h}`;
+        bestWorstCryptoIn24HInput.style.color = "green";
+        winnersAndLoosers.counter++;
+        bestWorstCryptoLabel.textContent = "LAST DAY TOP GAINERS:"
+    }
+}
+
 
 
 async function onDownloadAllCryptoButton() {
@@ -747,14 +814,14 @@ async function fetchCyrptoCurrencies(cryptoList) {
             let inquiry = `https://api.coingecko.com/api/v3/coins/${cryptoID}/market_chart?vs_currency=USD&days=max&interval=daily`
             let dailyDataResponse = await fetch(inquiry);
             let dailyData = await dailyDataResponse.json();
-            let ignore = ignoreDefaultCrypto(dailyData, 1620770400000);
+            let ignore = ignoreDefaultCrypto(dailyData, 1622502000000);
 
             if (dailyData.error) {
                 console.log(`${cryptoID} - ${cryptoName} data doesnt exists`);
                 continue;
 
             } else if (ignore) {
-                defaultedCryptocurrencies.push({ cryptoID: cryptoID, cryptoName: cryptoName });
+                defaultedCryptocurrencies.push({ cryptoSymbol: cryptoSymbol, cryptoName: cryptoName });
                 continue;
             }
 
@@ -809,10 +876,14 @@ function convertCurrencyDataToNewFormat(data, name, symbol) {
         let dailyStats = {};
 
         try {
+            if (x[1] < 0 || x[1] === 0) {
+                console.log(name, "-", "Cena:", x[1])
+                return;
+            }
             dailyStats.date = x[0];
-            dailyStats.price = x[1]
+            dailyStats.price = parseFloat(x[1]);
             dailyStats.volume = parseInt(data.total_volumes[i][1]);
-            dailyStats.marketCap = data.market_caps[i][1].toFixed(8);
+            dailyStats.marketCap = data.market_caps[i][1];
             cryptoObj.dailyStats.push(dailyStats);
         } catch (error) {
             console.error(error);

@@ -78,7 +78,8 @@ tr:hover td{
 
 .container{
     height:100vh;
-    overflow-y: scroll;
+    overflow-y: auto;
+    overflow-x: hidden;
     margin: 0;
     border: 3px;
     box-sizing: border-box;

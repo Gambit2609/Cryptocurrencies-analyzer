@@ -27,9 +27,10 @@ hr{
     z-index: 11;
     position: absolute;
     right: 7px;
+    top:0px;
 }
 
-.favoritesContainer:hover #showFavoriteButton{
+.favoritesContainer:hover #show-favorite-list{
     height: 48px;
     opacity: 1;
     transform: scale(1.1);
@@ -51,7 +52,7 @@ hr{
     z-index: 2;
 }
 
-#showFavoriteButton{
+#show-favorite-list{
     transition: 0.7s ease-in-out;
     transform: translateZ(0);
     margin-top: 8px;
@@ -60,15 +61,25 @@ hr{
     z-index: 12;
 }
 
-.prompter{
-    position: absolute;
-    width: 30%;
-    top: 10px;
-    right: 400px;
+#showFilter{
+    width: 0px;
+    height: 0px;
 }
 
-#topBottomGainers{
+.prompter{
+    width: 40%;
+    padding: 5px;
+    margin-left: 50px;
+}
+
+#best-worst-crypto{
     outline: none;
     font-size: 30px;
     border: none;
+    background-color: #f2f2f2;
+    font-weight: bold;
+}
+
+#best-worst-crypto-label{
+    font-family: fantasy;
 }
