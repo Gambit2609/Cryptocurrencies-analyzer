@@ -31,7 +31,7 @@
     text-align: center;
     background-color: #f2f2f2;;
     font-family: fantasy;
-    font-size: x-large;
+    font-size: xx-large;
     z-index: 20;
     cursor: default;
 }
@@ -75,35 +75,79 @@
 
 #modal-filters-button{
     width: 30px;
-    border: 1px solid black;
+    border: 2px solid black;
     padding: 5px;
     border-radius: 10px;
     margin-bottom: 10px;
+    transition: 0.7s;
 }
 
 .button-container{
     position: absolute;
     top: 6px;
     left: 8px;
-    width: 40px;
+    width: 50px;
+    height: 50px;
+}
+
+#modal-filters-button:hover{
+    background-color: gainsboro;
 }
 
 .button-container:hover #copy-main-table-filters-button{
-    height: 40px;
-    
+    height: 50px;
+    width: 50px;
+    opacity: 1;
 }
-.button-container:hover #modal-filters{
-    height: 40px;
-    
+
+.button-container:hover #modal-add-filters{
+    height: 50px;
+    width: 50px;
+    opacity: 1; 
+}
+.button-container:hover #modal-delete-filters{
+    height: 50px;
+    width: 50px;
+    opacity: 1; 
 }
 
 #copy-main-table-filters-button{
     transition: 0.7s ease-in-out;
     height: 0px;
+    opacity: 0;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    backface-visibility: hidden;
 }
 
-#modal-filters{
+
+#modal-add-filters{
     transition: 0.7s ease-in-out;
-    height: 0px; 
+    height: 0px;
+    opacity: 0;
+    backface-visibility: hidden;
+    margin-bottom: 5px;
+    margin-top: 5px;
 }
 
+#modal-add-filters:hover{
+    transform: scale(1.2);
+    transition: 0.3s;
+}
+
+#copy-main-table-filters-button:hover{
+    transform: scale(1.2);
+    transition: 0.3s;
+}
+
+#modal-delete-filters{
+    transition: 0.7s ease-in-out;
+    height: 0px;
+    opacity: 0;
+    backface-visibility: hidden;
+}
+
+#modal-delete-filters:hover{
+    transform: scale(1.2);
+    transition: 0.3s;
+}

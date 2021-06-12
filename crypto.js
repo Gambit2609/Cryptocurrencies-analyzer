@@ -653,6 +653,9 @@ function removeCryptoFromFavorites(event) {
 function changeRowColorInTables(crypto, addCrypto) {
     tableList.forEach(table => {
         let tableRows = Array.from(table.rows);
+        if(tableRows.length < 2) { 
+            return;
+        }
         let rowToChange = tableRows.find(x => x.cells[2].textContent === crypto);
         if (rowToChange) {
             if (addCrypto) {
@@ -719,14 +722,22 @@ modalFiltersButton.setAttribute("src", "Data/filterModal.png");
 let applyFiltersFromMainTableButton = document.createElement("input");
 applyFiltersFromMainTableButton.setAttribute("id", "copy-main-table-filters-button");
 applyFiltersFromMainTableButton.setAttribute("type", "image");
-applyFiltersFromMainTableButton.setAttribute("src", "Data/filterModal.png");
+applyFiltersFromMainTableButton.setAttribute("src", "Data/copyFilterModal.png");
+applyFiltersFromMainTableButton.setAttribute("title", "Copy filters from main table");
 let applyNewFiltersInModalButton = document.createElement("input");
-applyNewFiltersInModalButton.setAttribute("id", "modal-filters");
+applyNewFiltersInModalButton.setAttribute("id", "modal-add-filters");
 applyNewFiltersInModalButton.setAttribute("type", "image");
-applyNewFiltersInModalButton.setAttribute("src", "Data/filterModal.png");
+applyNewFiltersInModalButton.setAttribute("src", "Data/changeFiltersModal.png");
+applyNewFiltersInModalButton.setAttribute("title", "Add or change filters");
+let removeAllFiltersModalButton = document.createElement("input");
+removeAllFiltersModalButton.setAttribute("id", "modal-delete-filters");
+removeAllFiltersModalButton.setAttribute("type", "image");
+removeAllFiltersModalButton.setAttribute("src", "Data/removeFilterModal.png");
+removeAllFiltersModalButton.setAttribute("title", "Remove all filters");
 buttonContainer.appendChild(modalFiltersButton);
 buttonContainer.appendChild(applyFiltersFromMainTableButton);
 buttonContainer.appendChild(applyNewFiltersInModalButton);
+buttonContainer.appendChild(removeAllFiltersModalButton);
 node.appendChild(buttonContainer);
 }
 

@@ -59,6 +59,7 @@ hr{
     height: 0px;
     opacity: 0;
     z-index: 12;
+    backface-visibility: hidden;
 }
 
 #showFilter{
