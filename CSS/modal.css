@@ -56,9 +56,18 @@
     font-size: 10px;
 }
 
+.modal-container{
+    height: 85%;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding-left: 5px;
+    padding-right: 5px;
+    transition: 0.7s;
+}
+
 #modalTable th{
     position: sticky;
-    top: 51px;
+    top: 0px;
     background-color: #f2f2f2;
     z-index: 10;
     padding-left: 40px;
@@ -78,7 +87,6 @@
     border: 2px solid black;
     padding: 5px;
     border-radius: 10px;
-    margin-bottom: 10px;
     transition: 0.7s;
 }
 
@@ -87,7 +95,6 @@
     top: 6px;
     left: 8px;
     width: 50px;
-    height: 50px;
 }
 
 #modal-filters-button:hover{
@@ -98,25 +105,29 @@
     height: 50px;
     width: 50px;
     opacity: 1;
+    margin-top: 15px;
+    margin-bottom: 10px;
 }
 
 .button-container:hover #modal-add-filters{
     height: 50px;
     width: 50px;
     opacity: 1; 
+    margin-top: 5px;
+    margin-bottom: 10px;
 }
 .button-container:hover #modal-delete-filters{
     height: 50px;
     width: 50px;
     opacity: 1; 
+    margin-top: 5px;
+    margin-bottom: 10px;
 }
 
 #copy-main-table-filters-button{
     transition: 0.7s ease-in-out;
     height: 0px;
     opacity: 0;
-    margin-top: 5px;
-    margin-bottom: 5px;
     backface-visibility: hidden;
 }
 
@@ -126,8 +137,6 @@
     height: 0px;
     opacity: 0;
     backface-visibility: hidden;
-    margin-bottom: 5px;
-    margin-top: 5px;
 }
 
 #modal-add-filters:hover{

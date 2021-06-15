@@ -32,6 +32,7 @@ const bestWorstCryptoIn24HInput = document.getElementById('best-worst-crypto');
 const bestWorstCryptoLabel = document.getElementById("best-worst-crypto-label");
 let calculatedCryptoList = [];
 let searchedCrypto = [];
+let favoriteListFiltered = [];
 
 function addListeners() {
     uploadCryptoButton.addEventListener("change", onCryptoUploaded);
@@ -76,6 +77,9 @@ function onCalculatePressed(data, table) {
     let cryptoWorthDolarsFiltered = cryptoWorthDolarsCheckBox.checked ? getCryptoWorthMoreThenDolar(worstPerformingCryptoFiltered) : worstPerformingCryptoFiltered;
     let cryptoWorthCentsFiltered = cryptoWorthCentsCheckBox.checked ? getCryptoWorthLessThenDolar(cryptoWorthDolarsFiltered) : cryptoWorthDolarsFiltered;
     calculatedCryptoList.push(...cryptoWorthCentsFiltered);
+    if(data === favoriteCryptoList){
+        favoriteListFiltered = [...cryptoWorthCentsFiltered];
+    }
     createAndDeleteTable(table, cryptoWorthCentsFiltered);
     addListenersToTable();
     addTableToList(table);
@@ -104,7 +108,7 @@ function generateTableHead(table, crypto) {
     let propertyNames = Object.keys(crypto[0]);
 
     if (propertyNames.includes("id")) {
-        let name = "Symbol"; // zmienić CryptoID na Symbol
+        let name = "Symbol";
         let nameWithChanges = name.replaceAll(" ", "").replaceAll(".", "");
         addHeaderCellToRow(table, row, name, nameWithChanges);
     }
@@ -302,7 +306,9 @@ function sortFrom(table) {
 
     } else {
 
-        return favoriteCryptoList;
+        let cryptoToSort = table.tHead.firstChild.childElementCount > 3 ? favoriteListFiltered: favoriteCryptoList;
+
+        return cryptoToSort;
     }
 }
 
@@ -673,11 +679,10 @@ function changefavoriteCounterValue() {
 }
 
 function showFavoritesInNewWindow() {
-    createModal();
-    let tableForModal = document.getElementById("modalTable");
+    favoriteListFiltered = [];
+    let tableForModal = createModal();
     createAndDeleteTable(tableForModal, favoriteCryptoList);
-    let copyMainTableFilterButton = document.getElementById("copy-main-table-filters-button");
-    copyMainTableFilterButton.addEventListener("click", ()=> {onCalculatePressed(favoriteCryptoList, modalTable)});
+    addListenersToModal(tableForModal);
 }
 
 function createModal() {
@@ -696,12 +701,15 @@ function createModal() {
     modalHeader.appendChild(headerText);
     let modalHr = document.createElement("hr");
     modalHr.setAttribute("id", "modal-hr");
+    let modalContainer = document.createElement("div");
+    modalContainer.setAttribute("class", "modal-container");
     let modalTable = document.createElement("table");
     modalTable.setAttribute("id", "modalTable");
+    modalContainer.appendChild(modalTable);
     modalHeader.appendChild(modalCloseButton);
     modalCard.appendChild(modalHeader);
     modalCard.appendChild(modalHr);
-    modalCard.appendChild(modalTable);
+    modalCard.appendChild(modalContainer);
     modalBackdrop.appendChild(modalCard);
     createModalButtons(modalHeader);
     document.getElementsByTagName("section")[0].appendChild(modalBackdrop);
@@ -710,6 +718,7 @@ function createModal() {
     modalCloseButton.addEventListener("click", () => document.getElementById("modal").remove());
     addTableToList(modalTable);
 
+    return modalTable;
 }
 
 function createModalButtons(node) {
@@ -739,6 +748,17 @@ buttonContainer.appendChild(applyFiltersFromMainTableButton);
 buttonContainer.appendChild(applyNewFiltersInModalButton);
 buttonContainer.appendChild(removeAllFiltersModalButton);
 node.appendChild(buttonContainer);
+}
+
+function addListenersToModal(table){
+    let copyMainTableFilterButton = document.getElementById("copy-main-table-filters-button");
+    copyMainTableFilterButton.addEventListener("click", ()=> {onCalculatePressed(favoriteCryptoList, table)});
+    let removeFiltersModal = document.getElementById("modal-delete-filters");
+    removeFiltersModal.addEventListener("click", ()=> {createAndDeleteTable(table, favoriteCryptoList)});
+    let modalTableHeadButtonContainer = document.querySelector(".button-container");
+    let modalContainer = document.querySelector(".modal-container");
+    modalTableHeadButtonContainer.addEventListener("mouseover", ()=> modalContainer.style.opacity = "0.3");
+    modalTableHeadButtonContainer.addEventListener("mouseleave", ()=> modalContainer.style.opacity = "1");
 }
 
 function addTableToList(table) {
