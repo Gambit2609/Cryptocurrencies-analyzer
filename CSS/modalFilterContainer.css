@@ -1,0 +1,176 @@
+.modal-filter-container{
+height: 70%;
+width: 170px;
+background: #f2f2f2;
+border-radius: 20px;
+border: 2px gray;
+box-shadow: -10px 15px 21px grey;
+}
+
+.modal-filter-button-and-checkbox-container{
+    height: 70%;
+    width: 100%;
+    float: left;
+    background-color: #f2f2f2;
+    display: flex;
+    align-content: space-around;
+    justify-content: space-around;
+    flex-direction: column;
+    align-items: center;
+    border-top-right-radius: 20px;
+    border-top-left-radius: 20px;
+    border-bottom: 2px solid black;
+}
+
+.modal-checkbox-container{
+    width: 50%;
+    height: 100%;
+    float: right;
+}
+
+.modal-inputs-container{
+    height: 28%;
+    width: 100%;
+    background-color: #f2f2f2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border-radius: 15px;
+    padding-top: 5px;
+
+}
+
+.modal-button-filters{
+    position: relative;
+    height: 55px;
+    width: 55px;
+    
+}
+
+.modal-button-filters label{
+    border: 3px solid #f2f2f2;;
+    padding: 5px;
+    padding-bottom: 2px;
+    transition: 0.5s;
+    border-radius: 15px;
+}
+
+.modal-button-filters:hover label{
+    border: 3px solid yellowgreen;
+}
+
+.modal-button-filters input[type="checkbox"]:checked + label {
+    border: 3px solid green;
+}
+
+
+.modal-filter-checkbox{
+    border: none;
+}
+
+.modal-filter-image{
+    width: 100%;
+    height: 100%;
+}
+
+.modal-button-filters input[type="checkbox"]{
+    display: none;
+}
+
+.modal-button-span {
+    position: absolute;
+    left: -100px;
+    top: 15px;
+    z-index: 50;
+}
+
+.modal-button-information-input{
+    display: block;
+    position: absolute;
+    right: 55px;
+    top:15px;
+    outline: none;
+    z-index: 50;
+    width: 0px;
+    opacity: 0;
+    transition: 0.5s;
+}
+
+
+.modal-button-filters:hover .modalDateFilter-width{
+    opacity: 1;
+    width: 90px;
+}
+
+.modal-button-filters:hover .modalBestFilter-width{
+    opacity: 1;
+    width: 260px;
+}
+
+.modal-button-filters:hover .modalWorstFilter-width{
+    opacity: 1;
+    width: 267px;
+}
+.modal-button-filters:hover .modalDolarFilter-width{
+    opacity: 1;
+    width: 188px;
+}
+.modal-button-filters:hover .modalCentFilter-width{
+    opacity: 1;
+    width: 181px;
+}
+.modal-button-filters:hover .modalTokenFilter-width{
+    opacity: 1;
+    width: 200px;
+}
+
+.modal-filter-inputs-wrapper{
+    position: relative;
+    width: 95%;
+}
+
+.modal-filter-inputs-wrapper input:first-child{
+width: 100%;
+box-sizing: border-box;
+border-radius: 5px;
+margin-bottom: 5px;
+text-align: center;
+}
+
+.modal-filter-text-input{
+position: absolute;
+right: 165px;
+top:0px;
+z-index: 50;
+outline: none;
+width: 0px;
+opacity: 0;
+transition: 0.5s;
+cursor: default;
+}
+
+.modal-filter-inputs-wrapper:hover .modalStartDateFilter-text-input{
+    width: 102px;
+    opacity: 1;
+}
+
+.modal-filter-inputs-wrapper:hover .modalEndDateFilter-text-input{
+    width: 100px;
+    opacity: 1;
+}
+.modal-filter-inputs-wrapper:hover .modalBestPerformingCryptoGrowMore-text-input{
+    width: 265px;
+    opacity: 1;
+}
+.modal-filter-inputs-wrapper:hover .modalBestPerformingCryptoGrowLess-text-input{
+    width: 257px;
+    opacity: 1;
+}
+.modal-filter-inputs-wrapper:hover .modalWorstPerformingCryptoShrinkMore-text-input{
+    width: 263px;
+    opacity: 1;
+}
+.modal-filter-inputs-wrapper:hover .modalWorstPerformingCryptoShrinkLess-text-input{
+    width: 263px;
+    opacity: 1;
+}

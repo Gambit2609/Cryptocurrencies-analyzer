@@ -91,3 +91,13 @@ label.switch {
     transform: translate3d(100%, -50%, 0);
   }
 
+  label.modal-switch > span:before {
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+    background-color: darkgray;
+    border-radius: 60px;
+    transition: opacity .2s ease-out .1s, transform .2s ease-out .1s;
+    transform: scale(1);
+    opacity: 1;
+  }

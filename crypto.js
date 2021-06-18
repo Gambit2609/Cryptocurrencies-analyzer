@@ -38,7 +38,7 @@ function addListeners() {
     uploadCryptoButton.addEventListener("change", onCryptoUploaded);
     startSearchDateInput.addEventListener("change", getStartEndDateInUnix);
     endSearchDateInput.addEventListener("change", getStartEndDateInUnix);
-    calculateButton.addEventListener("click", ()=> {onCalculatePressed(cryptoData, mainTable)});
+    calculateButton.addEventListener("click", () => { onCalculatePressed(cryptoData, mainTable) });
     dateFilterCheckbox.addEventListener("change", showHideFilters);
     bestPerformingCryptoFilterCheckBox.addEventListener("change", hideWorstPerformingFilter);
     worstPerformingCryptoFilterCheckBox.addEventListener("change", hideBestPerformingFilter);
@@ -58,13 +58,14 @@ addListeners();
 showHideFilters();
 // onDownloadAllCryptoButton();
 
-// 1.dodać zjdęcia do listy
-// 3. dodać opis w inputach best / worst dla informacji użytkownika
-// 4. dodać filtr na wartość market cap
-// 5. dodać filtr na wolumen
+//dodać opis w inputach best / worst dla informacji użytkownika
+//dodać footer z możliwością wysłania maila
+//podpiąć przyciski filtrów w modalu
 
 
-function onCalculatePressed(data, table) { 
+
+
+function onCalculatePressed(data, table) {
     if (data === cryptoData) {
         calculatedCryptoList = [];
         searchedCrypto = [];
@@ -77,7 +78,7 @@ function onCalculatePressed(data, table) {
     let cryptoWorthDolarsFiltered = cryptoWorthDolarsCheckBox.checked ? getCryptoWorthMoreThenDolar(worstPerformingCryptoFiltered) : worstPerformingCryptoFiltered;
     let cryptoWorthCentsFiltered = cryptoWorthCentsCheckBox.checked ? getCryptoWorthLessThenDolar(cryptoWorthDolarsFiltered) : cryptoWorthDolarsFiltered;
     calculatedCryptoList.push(...cryptoWorthCentsFiltered);
-    if(data === favoriteCryptoList){
+    if (data === favoriteCryptoList) {
         favoriteListFiltered = [...cryptoWorthCentsFiltered];
     }
     createAndDeleteTable(table, cryptoWorthCentsFiltered);
@@ -306,7 +307,7 @@ function sortFrom(table) {
 
     } else {
 
-        let cryptoToSort = table.tHead.firstChild.childElementCount > 3 ? favoriteListFiltered: favoriteCryptoList;
+        let cryptoToSort = table.tHead.firstChild.childElementCount > 3 ? favoriteListFiltered : favoriteCryptoList;
 
         return cryptoToSort;
     }
@@ -361,6 +362,9 @@ function disableCryptoWorthDolarsCheckBox() {
 };
 
 function getCryptoFilteredByToken(data) {
+    if (data.length === favoriteCryptoList.length) {
+        return data;
+    }
     let filteredByToken = data.filter(obj => !obj.name.toLowerCase().includes("token"));
 
     return filteredByToken;
@@ -387,10 +391,26 @@ function hideBestPerformingFilter() {
 }
 
 function showHideFilters() {
-    dateFilterCheckbox.checked ? startDateFilter.style.display = "" : startDateFilter.style.display = "none";
-    dateFilterCheckbox.checked ? endDateFilter.style.display = "" : endDateFilter.style.display = "none";
-    bestPerformingCryptoFilterCheckBox.checked ? bestPerFormingCryptoFilter.style.display = "" : bestPerFormingCryptoFilter.style.display = "none";
-    worstPerformingCryptoFilterCheckBox.checked ? worstPerFormingCryptoFilter.style.display = "" : worstPerFormingCryptoFilter.style.display = "none";
+    try {
+        const modalStartDateFilter = document.getElementById("modalStartDateFilter");
+        const modalEndDateFilter = document.getElementById("modalEndDateFilter");
+        const modalBestPerformingCryptoGrowMore = document.getElementById("modalBestPerformingCryptoGrowMore");
+        const modalBestPerformingCryptoGrowLess = document.getElementById("modalBestPerformingCryptoGrowLess");
+        const modalWorstPerformingCryptoShrinkMore = document.getElementById("modalWorstPerformingCryptoShrinkMore");
+        const modalWorstPerformingCryptoShrinkLess = document.getElementById("modalWorstPerformingCryptoShrinkLess");
+
+        document.getElementById("modalDateFilter").checked ? modalStartDateFilter.style.display = "" : modalStartDateFilter.style.display = "none"
+        document.getElementById("modalDateFilter").checked ? modalEndDateFilter.style.display = "" : modalEndDateFilter.style.display = "none";
+        document.getElementById("modalBestFilter").checked ? modalBestPerformingCryptoGrowMore.style.display = "" : modalBestPerformingCryptoGrowMore.style.display = "none";
+        document.getElementById("modalBestFilter").checked ? modalBestPerformingCryptoGrowLess.style.display = "" : modalBestPerformingCryptoGrowLess.style.display = "none";
+        document.getElementById("modalWorstFilter").checked ? modalWorstPerformingCryptoShrinkMore.style.display = "" : modalWorstPerformingCryptoShrinkMore.style.display = "none";
+        document.getElementById("modalWorstFilter").checked ? modalWorstPerformingCryptoShrinkLess.style.display = "" : modalWorstPerformingCryptoShrinkLess.style.display = "none";
+    }catch (error) {
+}
+dateFilterCheckbox.checked ? startDateFilter.style.display = "" : startDateFilter.style.display = "none";
+dateFilterCheckbox.checked ? endDateFilter.style.display = "" : endDateFilter.style.display = "none";
+bestPerformingCryptoFilterCheckBox.checked ? bestPerFormingCryptoFilter.style.display = "" : bestPerFormingCryptoFilter.style.display = "none";
+worstPerformingCryptoFilterCheckBox.checked ? worstPerFormingCryptoFilter.style.display = "" : worstPerFormingCryptoFilter.style.display = "none";
 
 }
 
@@ -443,7 +463,7 @@ function getMaxMinValueHistorical(data) {
         return cryptoWithHistoricalMaxMin;
     });
 
-    let dataWithoutDefaultedCrypto = cryptoWithHistoricalMinMaxData.filter(x=> x.minPriceDataHistorical.price > 0);
+    let dataWithoutDefaultedCrypto = cryptoWithHistoricalMinMaxData.filter(x => x.minPriceDataHistorical.price > 0);
 
     return dataWithoutDefaultedCrypto;
 }
@@ -591,7 +611,7 @@ function addEventListenersToFileReader(reader) {
     reader.addEventListener("loadstart", () => document.body.style.cursor = "wait");
     reader.addEventListener("loadend", () => {
         document.body.style.cursor = "default";
-        showBiggestWinnersAndLoosers();
+        showBiggestWinnersAndLoosers(3000);
     }
     );
 }
@@ -659,7 +679,7 @@ function removeCryptoFromFavorites(event) {
 function changeRowColorInTables(crypto, addCrypto) {
     tableList.forEach(table => {
         let tableRows = Array.from(table.rows);
-        if(tableRows.length < 2) { 
+        if (tableRows.length < 2) {
             return;
         }
         let rowToChange = tableRows.find(x => x.cells[2].textContent === crypto);
@@ -679,6 +699,10 @@ function changefavoriteCounterValue() {
 }
 
 function showFavoritesInNewWindow() {
+    if (favoriteCryptoList.length === 0) {
+        alert("Add some crypto to favorites");
+        throw new Error;
+    }
     favoriteListFiltered = [];
     let tableForModal = createModal();
     createAndDeleteTable(tableForModal, favoriteCryptoList);
@@ -722,44 +746,139 @@ function createModal() {
 }
 
 function createModalButtons(node) {
-let buttonContainer = document.createElement("div");
-buttonContainer.setAttribute("class", "button-container");
-let modalFiltersButton = document.createElement("input");
-modalFiltersButton.setAttribute("id", "modal-filters-button");
-modalFiltersButton.setAttribute("type", "image");
-modalFiltersButton.setAttribute("src", "Data/filterModal.png");
-let applyFiltersFromMainTableButton = document.createElement("input");
-applyFiltersFromMainTableButton.setAttribute("id", "copy-main-table-filters-button");
-applyFiltersFromMainTableButton.setAttribute("type", "image");
-applyFiltersFromMainTableButton.setAttribute("src", "Data/copyFilterModal.png");
-applyFiltersFromMainTableButton.setAttribute("title", "Copy filters from main table");
-let applyNewFiltersInModalButton = document.createElement("input");
-applyNewFiltersInModalButton.setAttribute("id", "modal-add-filters");
-applyNewFiltersInModalButton.setAttribute("type", "image");
-applyNewFiltersInModalButton.setAttribute("src", "Data/changeFiltersModal.png");
-applyNewFiltersInModalButton.setAttribute("title", "Add or change filters");
-let removeAllFiltersModalButton = document.createElement("input");
-removeAllFiltersModalButton.setAttribute("id", "modal-delete-filters");
-removeAllFiltersModalButton.setAttribute("type", "image");
-removeAllFiltersModalButton.setAttribute("src", "Data/removeFilterModal.png");
-removeAllFiltersModalButton.setAttribute("title", "Remove all filters");
-buttonContainer.appendChild(modalFiltersButton);
-buttonContainer.appendChild(applyFiltersFromMainTableButton);
-buttonContainer.appendChild(applyNewFiltersInModalButton);
-buttonContainer.appendChild(removeAllFiltersModalButton);
-node.appendChild(buttonContainer);
+    let buttonContainer = document.createElement("div");
+    buttonContainer.setAttribute("class", "button-container");
+    let modalFiltersButton = document.createElement("input");
+    modalFiltersButton.setAttribute("id", "modal-filters-button");
+    modalFiltersButton.setAttribute("type", "image");
+    modalFiltersButton.setAttribute("src", "Data/filterModal.png");
+    let applyFiltersFromMainTableButton = document.createElement("input");
+    applyFiltersFromMainTableButton.setAttribute("id", "copy-main-table-filters-button");
+    applyFiltersFromMainTableButton.setAttribute("type", "image");
+    applyFiltersFromMainTableButton.setAttribute("src", "Data/copyFilterModal.png");
+    applyFiltersFromMainTableButton.setAttribute("title", "Copy filters from main table");
+    let applyNewFiltersInModalButton = document.createElement("input");
+    applyNewFiltersInModalButton.setAttribute("id", "modal-add-filters");
+    applyNewFiltersInModalButton.setAttribute("type", "image");
+    applyNewFiltersInModalButton.setAttribute("src", "Data/changeFiltersModal.png");
+    applyNewFiltersInModalButton.setAttribute("title", "Add or change filters");
+    let removeAllFiltersModalButton = document.createElement("input");
+    removeAllFiltersModalButton.setAttribute("id", "modal-delete-filters");
+    removeAllFiltersModalButton.setAttribute("type", "image");
+    removeAllFiltersModalButton.setAttribute("src", "Data/removeFilterModal.png");
+    removeAllFiltersModalButton.setAttribute("title", "Remove all filters");
+    buttonContainer.appendChild(modalFiltersButton);
+    buttonContainer.appendChild(applyFiltersFromMainTableButton);
+    buttonContainer.appendChild(applyNewFiltersInModalButton);
+    buttonContainer.appendChild(removeAllFiltersModalButton);
+    node.appendChild(buttonContainer);
 }
 
-function addListenersToModal(table){
+function addListenersToModal(table) {
     let copyMainTableFilterButton = document.getElementById("copy-main-table-filters-button");
-    copyMainTableFilterButton.addEventListener("click", ()=> {onCalculatePressed(favoriteCryptoList, table)});
+    copyMainTableFilterButton.addEventListener("click", () => { onCalculatePressed(favoriteCryptoList, table) });
     let removeFiltersModal = document.getElementById("modal-delete-filters");
-    removeFiltersModal.addEventListener("click", ()=> {createAndDeleteTable(table, favoriteCryptoList)});
+    removeFiltersModal.addEventListener("click", () => { createAndDeleteTable(table, favoriteCryptoList) });
     let modalTableHeadButtonContainer = document.querySelector(".button-container");
     let modalContainer = document.querySelector(".modal-container");
-    modalTableHeadButtonContainer.addEventListener("mouseover", ()=> modalContainer.style.opacity = "0.3");
-    modalTableHeadButtonContainer.addEventListener("mouseleave", ()=> modalContainer.style.opacity = "1");
+    modalTableHeadButtonContainer.addEventListener("mouseover", () => modalContainer.style.opacity = "0.3");
+    modalTableHeadButtonContainer.addEventListener("mouseleave", () => modalContainer.style.opacity = "1");
+    let modalAddFilters = document.querySelector("#modal-add-filters");
+    modalAddFilters.addEventListener("click", addFiltersToModal)
 }
+
+function addFiltersToModal() {
+    if (document.querySelector(".modal-filter-container")) {
+        throw new Error("There is already one modal filter container")
+    }
+    let modalBackdrop = document.querySelector(".modalBackdrop")
+    let containerForModalFilters = document.createElement("div");
+    containerForModalFilters.setAttribute("class", "modal-filter-container");
+    let modalFiltersButtonAndCheckboxContainer = document.createElement("div");
+    modalFiltersButtonAndCheckboxContainer.setAttribute("class", "modal-filter-button-and-checkbox-container");
+    let modalInputsContainer = document.createElement("div");
+    modalInputsContainer.setAttribute("class", "modal-inputs-container");
+    containerForModalFilters.appendChild(modalFiltersButtonAndCheckboxContainer);
+    containerForModalFilters.appendChild(modalInputsContainer);
+    modalBackdrop.appendChild(containerForModalFilters);
+    containerForModalFilters.addEventListener("click", (event) => event.stopPropagation());
+    addButtonsToFilterContainer(modalFiltersButtonAndCheckboxContainer);
+    addInputsToFilterContainer(modalInputsContainer);
+    addEventListenersToModalFilterContainer()
+}
+
+function addButtonsToFilterContainer(container) {
+    createFilterButton(container, "modalDateFilter", "Data/modalDateFilter.png", "Search by date");
+    createFilterButton(container, "modalBestFilter", "Data/modalBestFilter.png", "Search for best performing cryptocurrencies");
+    createFilterButton(container, "modalWorstFilter", "Data/modalWorstFilter.png", "Search for worst performing cryptocurrencies");
+    createFilterButton(container, "modalDolarFilter", "Data/modalDolarFilter.png", "Crypto worth dolars on average");
+    createFilterButton(container, "modalCentFilter", "Data/modalCentFilter.png", "Crypto worth cents on average");
+    createFilterButton(container, "modalTokenFilter", "Data/modalTokenFilter.png", "Dont show token cryptocurrencies");
+}
+
+function createFilterButton(container, filterName, imgSrc, text) {
+    let checkbox = { [filterName]: null }
+    let wrapper = document.createElement("div");
+    wrapper.setAttribute("class", "modal-button-filters");
+    let label = document.createElement("label");
+    label.setAttribute("for", filterName);
+    label.setAttribute("id", `label${filterName}`);
+    let image = document.createElement('img');
+    image.setAttribute("src", `${imgSrc}`);
+    image.setAttribute("class", "modal-filter-image");
+    let informationInput = document.createElement("input");
+    informationInput.setAttribute("class", `modal-button-information-input ${filterName}-width`);
+    informationInput.setAttribute("type", "text");
+    informationInput.setAttribute("readonly", "true");
+    informationInput.value = text;
+    label.appendChild(image);
+    checkbox[filterName] = document.createElement("input");
+    checkbox[filterName].setAttribute("id", `${filterName}`);
+    checkbox[filterName].setAttribute("type", "checkbox");
+    label.appendChild(informationInput);
+    wrapper.appendChild(checkbox[filterName]);
+    wrapper.appendChild(label);
+    container.appendChild(wrapper);
+}
+
+function addInputsToFilterContainer(container) {
+    createInputs(container, "modalStartDateFilter", "date", "Start search date")
+    createInputs(container, "modalEndDateFilter", "date", "End search date")
+    createInputs(container, "modalBestPerformingCryptoGrowMore", "number", "Show crypto that grown more then x percent", "Crypto grown more");
+    createInputs(container, "modalBestPerformingCryptoGrowLess", "number", "Show crypto that grown less then x percent", "Crypto grow less");
+    createInputs(container, "modalWorstPerformingCryptoShrinkMore", "number", "Show crypto that shrink more then x percent", "Crypto shrink more");
+    createInputs(container, "modalWorstPerformingCryptoShrinkLess", "number", "Show crypto that shrink less then x percent", "Crypto shrink less");
+}
+
+function createInputs(container, inputName, inputType, text, placeholder) {
+    let input = { [inputName]: null };
+    let wrapper = document.createElement("div");
+    wrapper.setAttribute("class", "modal-filter-inputs-wrapper");
+    let textInput = document.createElement("input");
+    textInput.setAttribute("type", "text");
+    textInput.setAttribute("class", `modal-filter-text-input ${inputName}-text-input`);
+    textInput.setAttribute("readonly", "true");
+    textInput.value = text;
+    input[inputName] = document.createElement("input");
+    input[inputName].setAttribute("id", `${inputName}`);
+    input[inputName].setAttribute("type", `${inputType}`);
+    input[inputName].setAttribute("placeholder", placeholder);
+    wrapper.appendChild(input[inputName]);
+    wrapper.appendChild(textInput);
+    container.appendChild(wrapper);
+}
+
+function addEventListenersToModalFilterContainer() {
+    const modalDateFilterCheckbox = document.getElementById("modalDateFilter");
+    const modalBestFilterCheckbox = document.getElementById("modalBestFilter");
+    const modalWorstFilterCheckbox = document.getElementById("modalWorstFilter");
+    modalDateFilterCheckbox.addEventListener("click", showHideFilters);
+    modalBestFilterCheckbox.addEventListener("click", showHideFilters);
+    modalWorstFilterCheckbox.addEventListener("click", showHideFilters);
+    showHideFilters()
+
+}
+
 
 function addTableToList(table) {
     if (tableList.find(x => x.id === table.id)) {
@@ -769,10 +888,10 @@ function addTableToList(table) {
     tableList.push(table);
 }
 
-function showBiggestWinnersAndLoosers() {
+function showBiggestWinnersAndLoosers(timer) {
     let winnersAndLoosers = getBiggestWinnerLooserFromLastDay();
     winnersAndLoosers.counter = 0;
-    setInterval(() => { showWinnersAndLoosers(winnersAndLoosers) }, 3000)
+    setInterval(() => { showWinnersAndLoosers(winnersAndLoosers) }, timer)
 
 }
 
@@ -840,7 +959,7 @@ async function fetchCyrptoCurrencies(cryptoList) {
         try {
             await delayFetch(700);
             let cryptoID = cryptoList[i].id;
-            let cryptoSymbol = cryptoList[i].symbol /// do sprawdzenia czy działa poprawnie
+            let cryptoSymbol = cryptoList[i].symbol;
             let cryptoName = cryptoList[i].name;
             let inquiry = `https://api.coingecko.com/api/v3/coins/${cryptoID}/market_chart?vs_currency=USD&days=max&interval=daily`
             let dailyDataResponse = await fetch(inquiry);

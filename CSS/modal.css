@@ -1,17 +1,19 @@
 .modalBackdrop {
     z-index: 15;
-    display: grid;
-    place-items: center;
     width: 100vw;
     height: 100vh;
     position: absolute;
     top: 0;
     left: 0;
     background: #cececed1;
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+    flex-direction: row;
 }
 
 .modalCard {
-    width: 80%;
+    width: 1000px;
     height: 70%;
     background: white;
     border-radius: 20px;
@@ -83,11 +85,12 @@
 }
 
 #modal-filters-button{
-    width: 30px;
+    width: 25px;
     border: 2px solid black;
     padding: 5px;
     border-radius: 10px;
     transition: 0.7s;
+    float: left;
 }
 
 .button-container{
