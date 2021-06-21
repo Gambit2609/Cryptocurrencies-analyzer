@@ -707,7 +707,11 @@ function getStartEndDateInUnix(event) {
 
 function addEventListenersToFileReader(reader) {
     reader.addEventListener("loadstart", () => document.body.style.cursor = "wait");
+    reader.addEventListener("loadstart", () => document.getElementsByClassName("loader-animation-background")[0].style.display = "flex");
     reader.addEventListener("loadend", () => {
+        document.getElementsByClassName("loader-text")[0].style.textShadow = "  0 0 25px #49ff18, 0 0 30px #49FF18, 0 0 35px #49FF18";
+        document.getElementsByClassName("loader-text")[0].textContent = "Done!";
+        setTimeout(()=>document.getElementsByClassName("welcome-header-background")[0].remove(), 1500);
         document.body.style.cursor = "default";
         showBiggestWinnersAndLoosers(3000);
     }

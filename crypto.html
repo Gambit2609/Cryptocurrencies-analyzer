@@ -9,15 +9,30 @@
     <link rel="stylesheet" href="CSS/modal.css">
     <link rel="stylesheet" href="CSS/switchButton.css">
     <link rel="stylesheet" href="CSS/modalFilterContainer.css">
+    <link rel="stylesheet" href="CSS/welcomeHeader.css">
+
 </head>
 
 <body>
+
     <section>
-        <div class="sideBar">
-            <div class="upload">
-                <label for="uploadCryptoData">Upload cryptocurrencies data</label>
-                <input type="file" id="uploadCryptoData">
+        <div class="welcome-header-background">
+            <div class="welcome-main">
+                <div class="loader-animation-background">
+                    <div class="loader-animation-container">
+                        <div class="loader-text">Loading</div>
+                        <div class="loader-sector loader-sector-red"></div>
+                        <div class="loader-sector loader-sector-blue"></div>
+                        <div class="loader-sector loader-sector-green"></div>
+                    </div>
+                </div>
+                <div class="upload">
+                    <label for="uploadCryptoData">Upload cryptocurrencies data</label>
+                    <input type="file" id="uploadCryptoData">
+                </div>
             </div>
+        </div>
+        <div class="sideBar">
             <div class="filterButtons">
                 <div class="filterCheckbox short date">
                     <p>Search by date</p>
