@@ -37,7 +37,7 @@ box-shadow: -10px 15px 21px grey;
     align-items: center;
     border-radius: 15px;
     padding-top: 5px;
-
+    position: relative;
 }
 
 .modal-button-filters{
@@ -94,6 +94,7 @@ box-shadow: -10px 15px 21px grey;
     width: 0px;
     opacity: 0;
     transition: 0.5s;
+    pointer-events: none;
 }
 
 
@@ -172,5 +173,57 @@ cursor: default;
 }
 .modal-filter-inputs-wrapper:hover .modalWorstPerformingCryptoShrinkLess-text-input{
     width: 263px;
+    opacity: 1;
+}
+
+#modal-calculate-button{
+height: 20px;
+position: absolute;
+bottom: -4px;
+width: 100%;
+border-bottom-left-radius: 10px;
+border-bottom-right-radius: 10px;
+margin: 0px;
+padding: 0px;
+border: none;
+background: darkgray;
+}
+
+.wrapper-modal-filters-buttons input[type="text"]{
+width: 0px;
+pointer-events: none;
+position: absolute;
+opacity: 0;
+transition: 0.5s;
+}
+
+#applyFiltersFromMainTable-text{
+    bottom: 155px;
+    left:55px;
+}
+
+#applyNewFilters-text{
+    bottom: 88px;
+    left:55px;
+}
+
+#removeAllFilters-text{
+    bottom: 25px;
+    left: 55px;
+}
+
+
+.wrapper-modal-filters-buttons:hover #applyFiltersFromMainTable-text{
+    width: 165px;
+    opacity: 1;
+}
+
+.wrapper-modal-filters-buttons:hover #applyNewFilters-text{
+    width: 123px;
+    opacity: 1;
+}
+
+.wrapper-modal-filters-buttons:hover #removeAllFilters-text{
+    width: 102px;
     opacity: 1;
 }

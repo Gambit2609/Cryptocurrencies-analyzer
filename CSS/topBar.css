@@ -84,3 +84,21 @@ hr{
 #best-worst-crypto-label{
     font-family: fantasy;
 }
+
+#show-favorites-list-text{
+position: absolute;
+top:80px;
+right: 0px;
+width: 0px;
+height: 0px;
+transition: 0.5s ease-in;
+opacity: 0;
+cursor: default;
+}
+
+.favoritesContainer:hover #show-favorites-list-text{
+    width: 110px;
+    height: auto;
+    right: 65px;
+    opacity: 1;
+}
