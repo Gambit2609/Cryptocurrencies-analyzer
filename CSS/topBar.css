@@ -11,6 +11,7 @@ hr{
     position: sticky;
     top: 60px;
     margin: 0px;
+    z-index: 1;
 }
 
 #cryptoSearch{

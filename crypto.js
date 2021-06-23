@@ -31,6 +31,11 @@ const favoriteCounter = document.getElementsByClassName("favoriteCounter");
 const showFavoritesButton = document.getElementById("show-favorite-list");
 const bestWorstCryptoIn24HInput = document.getElementById('best-worst-crypto');
 const bestWorstCryptoLabel = document.getElementById("best-worst-crypto-label");
+const footerSideBar = document.querySelector(".footer-side-bar");
+const footerMailImage = document.getElementById("footer-mail-image");
+const footerEmail = document.querySelector(".email-background");
+const emailSubmitButton = document.getElementById("email-submit-button");
+const emailForm = document.getElementById("footer-email-form");
 let calculatedCryptoList = [];
 let searchedCrypto = [];
 let favoriteListFiltered = [];
@@ -53,6 +58,11 @@ function addListeners() {
     cryptoWorthCentsCheckBox.addEventListener("change", disableCryptoWorthDolarsCheckBox);
     cryptoSearchInput.addEventListener("keydown", getSearchResults);
     showFavoritesButton.addEventListener("click", showFavoritesInNewWindow);
+    footerSideBar.addEventListener("mouseover", () => mainTable.style.opacity = "0.3");
+    footerSideBar.addEventListener("mouseleave", () => mainTable.style.opacity = "1");
+    footerMailImage.addEventListener("click", () => footerEmail.style.display = "flex");
+    emailForm.addEventListener("submit", () => footerEmail.style.display = "none");
+    
 }
 
 addListeners();
@@ -60,8 +70,6 @@ showHideFilters();
 // onDownloadAllCryptoButton();
 
 //dodać footer z możliwością wysłania maila
-//dodać przycisk ładowania pliku crypto
-//dodać ekran główny z możliwością dodania pliku
 
 
 
@@ -96,10 +104,11 @@ function onCalculatePressed(data, table, modalCalculation) {
     let cryptoWorthDolarsFiltered = cryptoWorthDolarsFilter.checked ? getCryptoWorthMoreThenDolar(worstPerformingCryptoFiltered) : worstPerformingCryptoFiltered;
     let cryptoWorthCentsFiltered = cryptoWorthCentsFilter.checked ? getCryptoWorthLessThenDolar(cryptoWorthDolarsFiltered) : cryptoWorthDolarsFiltered;
     modalCalculation && askUserForConfirmationAppliedFilters(cryptoWorthCentsFiltered);
-    calculatedCryptoList.push(...cryptoWorthCentsFiltered);
 
     if (data === favoriteCryptoList) {
         favoriteListFiltered = [...cryptoWorthCentsFiltered];
+    }else{
+        calculatedCryptoList.push(...cryptoWorthCentsFiltered);
     }
     createAndDeleteTable(table, cryptoWorthCentsFiltered);
     addListenersToTable();
@@ -177,6 +186,8 @@ function addCellsToTable(row, data) {
 }
 
 function addHeaderCellToRow(table, row, rowName, filterName) {
+    let arrowWrapper = document.createElement("div");
+    arrowWrapper.setAttribute("class", "arrow-wrapper");
     let arrowUpUnicode = String.fromCharCode("9650");
     let arrowDownUnicode = String.fromCharCode("9660");
     let th = document.createElement("th");
@@ -190,8 +201,9 @@ function addHeaderCellToRow(table, row, rowName, filterName) {
     arrowUpButton.appendChild(arrowUp);
     arrowDownButton.appendChild(arrowDown);
     th.appendChild(text);
-    th.appendChild(arrowUpButton);
-    th.appendChild(arrowDownButton);
+    th.appendChild(arrowWrapper);
+    arrowWrapper.appendChild(arrowUpButton);
+    arrowWrapper.appendChild(arrowDownButton);
     row.appendChild(th);
     addEventListenerToSortFilter(arrowUpButton, arrowDownButton)
 }
@@ -261,7 +273,7 @@ function addListenersToTable() {
 }
 
 function checkForFavorites(objName, row) {
-    favoriteCryptoList.find(x => x.name === objName) ? row.style.backgroundColor = "green" : row.style.backgroundColor = "";
+    favoriteCryptoList.find(x => x.name === objName) ? row.style.backgroundColor = "lightgreen" : row.style.backgroundColor = "";
 }
 
 function addEventListenerToSortFilter(sortUp, sortDown) {
@@ -327,7 +339,7 @@ function sortFrom(table) {
 
     } else {
 
-        let cryptoToSort = table.tHead.firstChild.childElementCount > 3 ? favoriteListFiltered : favoriteCryptoList;
+        let cryptoToSort = favoriteListFiltered.length ? favoriteListFiltered : favoriteCryptoList;
 
         return cryptoToSort;
     }
@@ -732,7 +744,12 @@ function onCryptoUploaded(e) {
 }
 
 function getSearchResults(event) {
+
     if (event.key === "Enter") {
+        if (calculatedCryptoList.length === 0){
+            alert("Calculate your crypto first");
+            throw new Error("Calculate crypto before searching");
+        }
         const searchedValue = event.target.value.toLowerCase();
         let filteredCurrencies = calculatedCryptoList.filter(currencyData =>
             currencyData.name.toLowerCase().includes(searchedValue) || currencyData.id.toLowerCase().includes(searchedValue));
@@ -743,7 +760,7 @@ function getSearchResults(event) {
             searchedCrypto.push(...filteredCurrencies);
         }
         else {
-            alert("0 cryptocurrencies with this id or name");
+            alert("0 cryptocurrencies with this symbol or name");
         }
     }
 }
@@ -788,7 +805,7 @@ function changeRowColorInTables(crypto, addCrypto) {
         let rowToChange = tableRows.find(x => x.cells[2].textContent === crypto);
         if (rowToChange) {
             if (addCrypto) {
-                rowToChange.style.backgroundColor = "green";
+                rowToChange.style.backgroundColor = "lightgreen";
             } else {
                 rowToChange.style.backgroundColor = "";
             }

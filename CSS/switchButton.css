@@ -26,8 +26,8 @@
 
 label.switch {  
     text-align: left;
-    width: 45px;
-    height: 20px;
+    width: 32px;
+    height: 12px;
     border-radius:60px;    
     background-color:#4ed164;
     position: relative;
@@ -74,8 +74,8 @@ label.switch {
     top: 50%;
     z-index: 3;
     transition: transform .4s cubic-bezier(0.44,-0.12, 0.07, 1.15);
-    width: 23px;
-    height: 23px;
+    width: 17px;
+    height: 17px;
     transform: translate3d(0, -50%, 0);
     background-color: #fff;
     border-radius: 100%;
