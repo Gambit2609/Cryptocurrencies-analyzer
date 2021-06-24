@@ -143,3 +143,18 @@ transition: 0.5s;
     background-color: hsla(201, 100%, 10%,0.6);
     border-color: hsla(201, 100%, 50%);
 }
+
+#mail-close-button{
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    margin: 10px;
+    color: darkgray;
+    cursor: pointer;
+    font-size: large;
+    transition: 0.5s;
+}
+
+#mail-close-button:hover{
+color: white;
+}

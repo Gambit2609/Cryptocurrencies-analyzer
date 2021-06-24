@@ -36,6 +36,7 @@ const footerMailImage = document.getElementById("footer-mail-image");
 const footerEmail = document.querySelector(".email-background");
 const emailSubmitButton = document.getElementById("email-submit-button");
 const emailForm = document.getElementById("footer-email-form");
+const mailCloseButton = document.getElementById("mail-close-button");
 let calculatedCryptoList = [];
 let searchedCrypto = [];
 let favoriteListFiltered = [];
@@ -62,6 +63,7 @@ function addListeners() {
     footerSideBar.addEventListener("mouseleave", () => mainTable.style.opacity = "1");
     footerMailImage.addEventListener("click", () => footerEmail.style.display = "flex");
     emailForm.addEventListener("submit", () => footerEmail.style.display = "none");
+    mailCloseButton.addEventListener("click", () => footerEmail.style.display = "none");
     
 }
 

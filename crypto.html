@@ -127,14 +127,15 @@
     <footer class="footer">
         <div class="email-background">
             <div class="email-form-background">
-                <form action="https://formsubmit.co/thecryptocurrenciesproject@gmail.com" target="_blank" method="POST" 
-                onsubmit="return false" id="footer-email-form">
+                <span id="mail-close-button">Close</span>
+                <form action="https://formsubmit.co/a0cd83d5a979f35e2d7326b8fffe986c" target="_blank" method="POST" id="footer-email-form">
                     <label for="user-email-input">Your email</label>
+                    <input type="hidden" name="_next" value="http://127.0.0.1:8080/thankYou.html">
                     <input type="email" name="email" id="user-email-input" autocomplete="off" required>
                     <input type="hidden" name="_captcha" value="false">
                     <label for="email-message-input">Your message</label>
                     <textarea type="text" name="message" id="email-message-input" rows="6" cols="50" spellcheck="false" required></textarea>
-                    <button type="submit" id="email-submit-button">Submit and send </button>
+                    <button type="submit" id="email-submit-button">Submit and send</button>
                 </form>
 
             </div>
