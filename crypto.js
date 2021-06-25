@@ -37,9 +37,11 @@ const footerEmail = document.querySelector(".email-background");
 const emailSubmitButton = document.getElementById("email-submit-button");
 const emailForm = document.getElementById("footer-email-form");
 const mailCloseButton = document.getElementById("mail-close-button");
+const iconSideBar = document.querySelector(".icon-side-bar");
 let calculatedCryptoList = [];
 let searchedCrypto = [];
 let favoriteListFiltered = [];
+
 
 function addListeners() {
     uploadCryptoButton.addEventListener("change", onCryptoUploaded);
@@ -64,14 +66,17 @@ function addListeners() {
     footerMailImage.addEventListener("click", () => footerEmail.style.display = "flex");
     emailForm.addEventListener("submit", () => footerEmail.style.display = "none");
     mailCloseButton.addEventListener("click", () => footerEmail.style.display = "none");
-    
+    iconSideBar.addEventListener("mouseover", ()=> sideBar[0].style.transform = "translate(160px)")
+    iconSideBar.addEventListener("mouseleave", ()=> sideBar[0].style.transform = "translate(0px)")
+    sideBar[0].addEventListener("mouseleave", ()=> sideBar[0].style.transform = "translate(0px)")
+    sideBar[0].addEventListener("mouseover", ()=> sideBar[0].style.transform = "translate(160px)")
+
 }
 
 addListeners();
 showHideFilters();
 // onDownloadAllCryptoButton();
 
-//dodać footer z możliwością wysłania maila
 
 
 

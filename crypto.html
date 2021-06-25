@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="CSS/modalFilterContainer.css">
     <link rel="stylesheet" href="CSS/welcomeHeader.css">
     <link rel="stylesheet" href="CSS/footer.css">
+    <link rel="stylesheet" href="CSS/iconSideBar.css">
 
 
 </head>
@@ -34,6 +35,53 @@
             </div>
         </div>
     </header>
+    <section class="left-icon-section">
+        <div class="icon-side-bar">
+            <div class="icon-side-bar-filters">
+                <div class="icon-side-bar-filters-wrapper">
+                    <input type="checkbox" id="icon-date-filter">
+                    <label for="icon-date-filter">
+                        <input type="image" src="Data/modalDateFilter.png">
+                    </label>
+                </div>
+                <div class="icon-side-bar-filters-wrapper">
+                    <input type="checkbox" id="icon-best-performing-filter">
+                    <label for="icon-best-performing-filter">
+                        <input type="image" src="Data/modalBestFilter.png">
+                    </label>
+                </div>
+                <div class="icon-side-bar-filters-wrapper">
+                    <input type="checkbox" id="icon-worst-performing-filter">
+                    <label for="icon-worst-performing-filter">
+                        <input type="image" src="Data/modalWorstFilter.png">
+                    </label>
+                </div>
+                <div class="icon-side-bar-filters-wrapper">
+                    <input type="checkbox" id="icon-dolar-worth-filter">
+                    <label for="icon-dolar-worth-filter">
+                        <input type="image" src="Data/modalDolarFilter.png">
+                    </label>
+                </div>
+                <div class="icon-side-bar-filters-wrapper">
+                    <input type="checkbox" id="icon-cent-worth-filter">
+                    <label for="icon-cent-worth-filter">
+                        <input type="image" src="Data/modalCentFilter.png">
+                    </label>
+                </div>
+                <div class="icon-side-bar-filters-wrapper">
+                    <input type="checkbox" id="icon-token-filter">
+                    <label for="icon-token-filter">
+                        <input type="image" src="Data/modalTokenFilter.png">
+                    </label>
+                </div>
+            </div>
+            <div class="icon-side-bar-calculate-button">
+                <div id="buttonCalculate">
+                    <button type="button" id="calculate">Calculate</button>
+                </div>
+            </div>
+        </div>
+    </section>
     <section>
         <div class="sideBar">
             <div class="filterButtons">
@@ -80,29 +128,27 @@
                     </label>
                 </div>
             </div>
-            <div id="startDateFilter">
-                <label for="startSearchDate">Start search date:</label>
-                <input type="date" id="startSearchDate">
-            </div>
-            <div id="endDateFilter">
-                <label for="endSearchDate">End search date:</label>
-                <input type="date" id="endSearchDate">
-            </div>
-            <div id="bestPerFormingCryptoFilter">
-                <label for="growMoreThen">Show crypto that grown more then x percent</label>
-                <input type="number" id="growMoreThen">
-                <label for="growLessThen">Show crypto that grown less then x percent</label>
-                <input type="number" id="growLessThen">
-            </div>
-            <div id="worstPerFormingCryptoFilter">
-                <label for="shrinkMoreThen">Show crypto that shrink more then x percent</label>
-                <input type="number" id="shrinkMoreThen">
-                <label for="shrinkLessThen">Show crypto that shrink less then x percent</label>
-                <input type="number" id="shrinkLessThen">
-
-            </div>
-            <div id="buttonCalculate">
-                <button type="button" id="calculate">Calculate</button>
+            <div>
+                <div id="startDateFilter">
+                    <label for="startSearchDate">Start search date:</label>
+                    <input type="date" id="startSearchDate">
+                </div>
+                <div id="endDateFilter">
+                    <label for="endSearchDate">End search date:</label>
+                    <input type="date" id="endSearchDate">
+                </div>
+                <div id="bestPerFormingCryptoFilter">
+                    <label for="growMoreThen">Show crypto that grown more then x percent</label>
+                    <input type="number" id="growMoreThen">
+                    <label for="growLessThen">Show crypto that grown less then x percent</label>
+                    <input type="number" id="growLessThen">
+                </div>
+                <div id="worstPerFormingCryptoFilter">
+                    <label for="shrinkMoreThen">Show crypto that shrink more then x percent</label>
+                    <input type="number" id="shrinkMoreThen">
+                    <label for="shrinkLessThen">Show crypto that shrink less then x percent</label>
+                    <input type="number" id="shrinkLessThen">
+                </div>
             </div>
         </div>
         <div class="container">
@@ -114,8 +160,7 @@
                 <div class="favoritesContainer">
                     <input type="image" src="Data/favoritesButton.png" id="favoriteButton">
                     <span class="favoriteCounter">0</span>
-                    <input type="image" src="Data/showFavorites.png" id="show-favorite-list"
-                        title="Show favorites list">
+                    <input type="image" src="Data/showFavorites.png" id="show-favorite-list">
                     <input type="text" id="show-favorites-list-text" value="Show favorites list" readonly>
                 </div>
                 <input type="search" id="cryptoSearch" placeholder="Search cryptocurrency">
@@ -128,13 +173,15 @@
         <div class="email-background">
             <div class="email-form-background">
                 <span id="mail-close-button">Close</span>
-                <form action="https://formsubmit.co/a0cd83d5a979f35e2d7326b8fffe986c" target="_blank" method="POST" id="footer-email-form">
+                <form action="https://formsubmit.co/a0cd83d5a979f35e2d7326b8fffe986c" target="_blank" method="POST"
+                    id="footer-email-form">
                     <label for="user-email-input">Your email</label>
                     <input type="hidden" name="_next" value="http://127.0.0.1:8080/thankYou.html">
                     <input type="email" name="email" id="user-email-input" autocomplete="off" required>
                     <input type="hidden" name="_captcha" value="false">
                     <label for="email-message-input">Your message</label>
-                    <textarea type="text" name="message" id="email-message-input" rows="6" cols="50" spellcheck="false" required></textarea>
+                    <textarea type="text" name="message" id="email-message-input" rows="6" cols="50" spellcheck="false"
+                        required></textarea>
                     <button type="submit" id="email-submit-button">Submit and send</button>
                 </form>
 
@@ -143,7 +190,8 @@
         <div class="footer-side-bar">
             <div class="footer-mail-image-wrapper">
                 <input type="image" src="./Data/email.png" id="footer-mail-image">
-                <input type="text" readonly value="Have any sugestions or found bugs? I will appreciate your feedback" id="footer-mail-information">
+                <input type="text" readonly value="Have any sugestions or found bugs? I will appreciate your feedback"
+                    id="footer-mail-information">
             </div>
             <div class="footer-image-wrapper">
                 <input type="image" src="./Data/footer1.png" id="footer-side-bar-button">

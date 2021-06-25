@@ -87,17 +87,18 @@ hr{
 }
 
 #show-favorites-list-text{
-position: absolute;
-top:80px;
-right: 0px;
-width: 0px;
-height: 0px;
-transition: 0.5s ease-in;
-opacity: 0;
-cursor: default;
+    position: absolute;
+    top: 80px;
+    right: 55px;
+    width: 0px;
+    height: 0px;
+    transition: 0.5s;
+    opacity: 0;
+    cursor: default;
+    pointer-events: none;
 }
 
-.favoritesContainer:hover #show-favorites-list-text{
+#show-favorite-list:hover + #show-favorites-list-text{
     width: 110px;
     height: auto;
     right: 65px;
