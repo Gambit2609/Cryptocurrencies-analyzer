@@ -24,6 +24,9 @@ body, html{
     z-index: 15;
     min-height: 700px;
     transition: 0.5s;
+    border-right: 1px solid;
+    box-sizing: border-box;
+    opacity: 0.9;
 }
 
 input{

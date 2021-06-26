@@ -38,9 +38,17 @@ const emailSubmitButton = document.getElementById("email-submit-button");
 const emailForm = document.getElementById("footer-email-form");
 const mailCloseButton = document.getElementById("mail-close-button");
 const iconSideBar = document.querySelector(".icon-side-bar");
+const dateFilterIconCheckbox = document.getElementById("icon-date-filter");
+const bestPerformingCryptoIconCheckbox = document.getElementById("icon-best-performing-filter");
+const worstPerformingCryptoIconCheckbox = document.getElementById("icon-worst-performing-filter");
+const dolarWorthIconCheckbox = document.getElementById("icon-dolar-worth-filter");
+const centsWorthIconCheckbox = document.getElementById("icon-cent-worth-filter");
+const tokenIconCheckbox = document.getElementById("icon-token-filter");
+
 let calculatedCryptoList = [];
 let searchedCrypto = [];
 let favoriteListFiltered = [];
+
 
 
 function addListeners() {
@@ -66,17 +74,22 @@ function addListeners() {
     footerMailImage.addEventListener("click", () => footerEmail.style.display = "flex");
     emailForm.addEventListener("submit", () => footerEmail.style.display = "none");
     mailCloseButton.addEventListener("click", () => footerEmail.style.display = "none");
-    iconSideBar.addEventListener("mouseover", ()=> sideBar[0].style.transform = "translate(160px)")
-    iconSideBar.addEventListener("mouseleave", ()=> sideBar[0].style.transform = "translate(0px)")
-    sideBar[0].addEventListener("mouseleave", ()=> sideBar[0].style.transform = "translate(0px)")
-    sideBar[0].addEventListener("mouseover", ()=> sideBar[0].style.transform = "translate(160px)")
-
+    iconSideBar.addEventListener("mouseover", () => sideBar[0].style.transform = "translate(160px)");
+    iconSideBar.addEventListener("mouseleave", () => sideBar[0].style.transform = "translate(0px)");
+    sideBar[0].addEventListener("mouseleave", () => sideBar[0].style.transform = "translate(0px)");
+    sideBar[0].addEventListener("mouseover", () => sideBar[0].style.transform = "translate(160px)");
+    dateFilterIconCheckbox.addEventListener("change", changeCheckboxes);
+    bestPerformingCryptoIconCheckbox.addEventListener("change", changeBestPerformingCheckboxes);
+    worstPerformingCryptoIconCheckbox.addEventListener("change", changeWorstPerformingCheckboxes);
+    dolarWorthIconCheckbox.addEventListener("change", changeDolarWorthCheckboxes);
+    centsWorthIconCheckbox.addEventListener("change", changeCentsWorthCheckboxes);
+    tokenIconCheckbox.addEventListener("change", changeTokenCheckboxes);
+    tokenCheckBox.addEventListener("change", changeTokenCheckboxes);
 }
 
 addListeners();
 showHideFilters();
 // onDownloadAllCryptoButton();
-
 
 
 
@@ -114,7 +127,7 @@ function onCalculatePressed(data, table, modalCalculation) {
 
     if (data === favoriteCryptoList) {
         favoriteListFiltered = [...cryptoWorthCentsFiltered];
-    }else{
+    } else {
         calculatedCryptoList.push(...cryptoWorthCentsFiltered);
     }
     createAndDeleteTable(table, cryptoWorthCentsFiltered);
@@ -410,7 +423,11 @@ function disableEnableGrowMoreThenInput(modalGrowMore, modalGrowLess) {
 
 function disableCryptoWorthCentsCheckBox(modalCheckBoxDolar, modalCheckBoxCents) {
     if (cryptoWorthDolarsCheckBox.checked) {
+        dolarWorthIconCheckbox.checked = true;
         cryptoWorthCentsCheckBox.checked = false;
+        centsWorthIconCheckbox.checked = false;
+    }else{
+        dolarWorthIconCheckbox.checked = false;
     }
     try {
         if (modalCheckBoxDolar.checked) {
@@ -423,7 +440,11 @@ function disableCryptoWorthCentsCheckBox(modalCheckBoxDolar, modalCheckBoxCents)
 
 function disableCryptoWorthDolarsCheckBox(modalCheckBoxDolar, modalCheckBoxCents) {
     if (cryptoWorthCentsCheckBox.checked) {
+        centsWorthIconCheckbox.checked = true;
         cryptoWorthDolarsCheckBox.checked = false;
+        dolarWorthIconCheckbox.checked = false;
+    }else{
+        centsWorthIconCheckbox.checked = false;
     }
     try {
         if (modalCheckBoxCents.checked) {
@@ -441,8 +462,9 @@ function getCryptoFilteredByToken(data) {
 }
 
 function hideWorstPerformingFilter(modalBestPerformingCheckbox, modalWorstPerformingCheckbox, modalShrinkMoreInput, modalShrinkLessInput) {
-    if (bestPerformingCryptoFilterCheckBox.checked) {
+    if (bestPerformingCryptoFilterCheckBox.checked || bestPerformingCryptoIconCheckbox.checked) {
         worstPerformingCryptoFilterCheckBox.checked = false;
+        worstPerformingCryptoIconCheckbox.checked = false;
         shrinkLessThenInput.value = null;
         shrinkMoreThenInput.value = null;
         disableEnableShrinkMoreThenInput();
@@ -461,8 +483,9 @@ function hideWorstPerformingFilter(modalBestPerformingCheckbox, modalWorstPerfor
 }
 
 function hideBestPerformingFilter(modalBestPerformingCheckbox, modalWorstPerformingCheckbox, modalGrowMoreInput, modalGrowLessInput) {
-    if (worstPerformingCryptoFilterCheckBox.checked) {
+    if (worstPerformingCryptoFilterCheckBox.checked || worstPerformingCryptoIconCheckbox.checked) {
         bestPerformingCryptoFilterCheckBox.checked = false;
+        bestPerformingCryptoIconCheckbox.checked = false;
         growLessThenInput.value = null;
         growMoreThenInput.value = null;
         disableEnableGrowLessThenInput();
@@ -497,12 +520,84 @@ function showHideFilters() {
         document.getElementById("modalWorstFilter").checked ? modalWorstPerformingCryptoShrinkLess.style.display = "" : modalWorstPerformingCryptoShrinkLess.style.display = "none";
     } catch (error) {
     }
+    
+    bestPerformingCryptoFilterCheckBox.checked ? bestPerformingCryptoIconCheckbox.checked = true : bestPerformingCryptoIconCheckbox.checked = false;
+    worstPerformingCryptoFilterCheckBox.checked ? worstPerformingCryptoIconCheckbox.checked = true : worstPerformingCryptoIconCheckbox.checked = false;
+    dateFilterCheckbox.checked ? dateFilterIconCheckbox.checked = true : dateFilterIconCheckbox.checked = false;
     dateFilterCheckbox.checked ? startDateFilter.style.display = "" : startDateFilter.style.display = "none";
     dateFilterCheckbox.checked ? endDateFilter.style.display = "" : endDateFilter.style.display = "none";
     bestPerformingCryptoFilterCheckBox.checked ? bestPerFormingCryptoFilter.style.display = "" : bestPerFormingCryptoFilter.style.display = "none";
     worstPerformingCryptoFilterCheckBox.checked ? worstPerFormingCryptoFilter.style.display = "" : worstPerFormingCryptoFilter.style.display = "none";
-
 }
+
+function changeCheckboxes(){
+    if (dateFilterIconCheckbox.checked) {
+        dateFilterCheckbox.checked = true;
+        showHideFilters()
+    }else{
+        dateFilterCheckbox.checked = false;
+        showHideFilters();
+    }
+}
+
+function changeBestPerformingCheckboxes(){
+    if(bestPerformingCryptoIconCheckbox.checked){
+        bestPerformingCryptoFilterCheckBox.checked = true;
+        hideWorstPerformingFilter();
+        showHideFilters();
+    }else{
+        bestPerformingCryptoFilterCheckBox.checked = false;
+        hideWorstPerformingFilter();
+        showHideFilters();
+    }
+}
+
+function changeWorstPerformingCheckboxes(){
+    if(worstPerformingCryptoIconCheckbox.checked){
+        worstPerformingCryptoFilterCheckBox.checked = true;
+        hideBestPerformingFilter();
+        showHideFilters();
+    }else{
+        worstPerformingCryptoFilterCheckBox.checked = false;
+        hideBestPerformingFilter();
+        showHideFilters();
+    }
+}
+
+function changeDolarWorthCheckboxes(){
+    if(dolarWorthIconCheckbox.checked){
+        cryptoWorthDolarsCheckBox.checked = true;
+        disableCryptoWorthCentsCheckBox();
+    }else{
+        cryptoWorthDolarsCheckBox.checked = false;
+        disableCryptoWorthCentsCheckBox();
+    }
+}
+function changeCentsWorthCheckboxes(){
+    if(centsWorthIconCheckbox.checked){
+        cryptoWorthCentsCheckBox.checked = true;
+        disableCryptoWorthDolarsCheckBox();
+    }else{
+        cryptoWorthCentsCheckBox.checked = false;
+        disableCryptoWorthDolarsCheckBox();
+    }
+}
+function changeTokenCheckboxes(event){
+    if (event.target.id.includes("icon")) {
+    if(tokenIconCheckbox.checked){
+        tokenCheckBox.checked = true;
+    }else{
+        tokenCheckBox.checked = false; 
+    }
+}else{
+    if(tokenCheckBox.checked){
+        tokenIconCheckbox.checked = true;
+    }else{
+        tokenIconCheckbox.checked = false; 
+    }
+}
+}
+
 
 function getPercentValue(modalCalculation) {
     let counter = {};
@@ -730,7 +825,7 @@ function addEventListenersToFileReader(reader) {
     reader.addEventListener("loadend", () => {
         document.getElementsByClassName("loader-text")[0].style.textShadow = "  0 0 25px #49ff18, 0 0 30px #49FF18, 0 0 35px #49FF18";
         document.getElementsByClassName("loader-text")[0].textContent = "Done!";
-        setTimeout(()=>document.getElementsByClassName("welcome-header-background")[0].remove(), 1500);
+        setTimeout(() => document.getElementsByClassName("welcome-header-background")[0].remove(), 1500);
         document.body.style.cursor = "default";
         showBiggestWinnersAndLoosers(3000);
     }
@@ -753,7 +848,7 @@ function onCryptoUploaded(e) {
 function getSearchResults(event) {
 
     if (event.key === "Enter") {
-        if (calculatedCryptoList.length === 0){
+        if (calculatedCryptoList.length === 0) {
             alert("Calculate your crypto first");
             throw new Error("Calculate crypto before searching");
         }
@@ -919,8 +1014,8 @@ function createModalButtons(node) {
     node.appendChild(buttonContainer);
 }
 
-function addInformationTextToButton(wrapper, inputName, text){
-    let textInput = {[inputName]: null};
+function addInformationTextToButton(wrapper, inputName, text) {
+    let textInput = { [inputName]: null };
     textInput[inputName] = document.createElement("input");
     textInput[inputName].setAttribute("type", "text");
     textInput[inputName].setAttribute("readonly", "true");
@@ -928,7 +1023,7 @@ function addInformationTextToButton(wrapper, inputName, text){
     textInput[inputName].setAttribute("id", `${inputName}-text`);
 
     wrapper.appendChild(textInput[inputName]);
-    
+
 }
 
 function addListenersToModal(table) {
