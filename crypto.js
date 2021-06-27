@@ -74,10 +74,10 @@ function addListeners() {
     footerMailImage.addEventListener("click", () => footerEmail.style.display = "flex");
     emailForm.addEventListener("submit", () => footerEmail.style.display = "none");
     mailCloseButton.addEventListener("click", () => footerEmail.style.display = "none");
-    iconSideBar.addEventListener("mouseover", () => sideBar[0].style.transform = "translate(160px)");
+    iconSideBar.addEventListener("mouseover", () => sideBar[0].style.transform = "translate(180px)");
     iconSideBar.addEventListener("mouseleave", () => sideBar[0].style.transform = "translate(0px)");
     sideBar[0].addEventListener("mouseleave", () => sideBar[0].style.transform = "translate(0px)");
-    sideBar[0].addEventListener("mouseover", () => sideBar[0].style.transform = "translate(160px)");
+    sideBar[0].addEventListener("mouseover", () => sideBar[0].style.transform = "translate(180px)");
     dateFilterIconCheckbox.addEventListener("change", changeCheckboxes);
     bestPerformingCryptoIconCheckbox.addEventListener("change", changeBestPerformingCheckboxes);
     worstPerformingCryptoIconCheckbox.addEventListener("change", changeWorstPerformingCheckboxes);
@@ -621,10 +621,10 @@ function getPercentValue(modalCalculation) {
         alert(`Percent value cannot be negative`);
         throw new Error;
     } else if (counter.growLess == 0 || counter.growMore == 0 || counter.shrinkLess == 0 || counter.shrinkMore == 0) {
-        alert(`Percent value cannot has 0 value. Un match filter checkbox in case you don't want to use it`);
+        alert(`Percent value cannot has 0 value. Unmatch filter checkbox in case you don't want to use it`);
         throw new Error;
     } else if (counter.growLess == undefined && counter.growMore == undefined && counter.shrinkMore == undefined && counter.shrinkLess == undefined) {
-        alert(`Percent value cannot be empty. Un match filter checkbox in case you don't want to use it`);
+        alert(`Percent value cannot be empty. Unmatch filter checkbox in case you don't want to use it`);
         throw new Error;
     } else if (counter.shrinkMore > 100) {
         alert(`Its not possible to shrink more then 100%. Correct "shrink more then" value.`);
@@ -1066,12 +1066,12 @@ function addFiltersToModal() {
 }
 
 function addButtonsToFilterContainer(container) {
-    createFilterButton(container, "modalDateFilter", "Data/modalDateFilter.png", "Search by date");
-    createFilterButton(container, "modalBestFilter", "Data/modalBestFilter.png", "Search for best performing cryptocurrencies");
-    createFilterButton(container, "modalWorstFilter", "Data/modalWorstFilter.png", "Search for worst performing cryptocurrencies");
-    createFilterButton(container, "modalDolarFilter", "Data/modalDolarFilter.png", "Crypto worth dolars on average");
-    createFilterButton(container, "modalCentFilter", "Data/modalCentFilter.png", "Crypto worth cents on average");
-    createFilterButton(container, "modalTokenFilter", "Data/modalTokenFilter.png", "Dont show token cryptocurrencies");
+    createFilterButton(container, "modalDateFilter", "Data/modalDateFilterWhite.png", "Search by date");
+    createFilterButton(container, "modalBestFilter", "Data/modalBestFilterWhite.png", "Search for best performing cryptocurrencies");
+    createFilterButton(container, "modalWorstFilter", "Data/modalWorstFilterWhite.png", "Search for worst performing cryptocurrencies");
+    createFilterButton(container, "modalDolarFilter", "Data/modalDolarFilterWhite.png", "Crypto worth dolars on average");
+    createFilterButton(container, "modalCentFilter", "Data/modalCentFilterWhite.png", "Crypto worth cents on average");
+    createFilterButton(container, "modalTokenFilter", "Data/modalTokenFilterWhite.png", "Dont show token cryptocurrencies");
 }
 
 function createFilterButton(container, filterName, imgSrc, text) {
@@ -1102,8 +1102,8 @@ function createFilterButton(container, filterName, imgSrc, text) {
 function addInputsToFilterContainer(container) {
     createInputs(container, "modalStartDateFilter", "date", "Start search date")
     createInputs(container, "modalEndDateFilter", "date", "End search date")
-    createInputs(container, "modalBestPerformingCryptoGrowMore", "number", "Show crypto that grown more then x percent", "Crypto grown more");
-    createInputs(container, "modalBestPerformingCryptoGrowLess", "number", "Show crypto that grown less then x percent", "Crypto grow less");
+    createInputs(container, "modalBestPerformingCryptoGrowMore", "number", "Show crypto that grown more then x percent", "crypto grown more");
+    createInputs(container, "modalBestPerformingCryptoGrowLess", "number", "Show crypto that grown less then x percent", "crypto grow less");
     createInputs(container, "modalWorstPerformingCryptoShrinkMore", "number", "Show crypto that shrink more then x percent", "Crypto shrink more");
     createInputs(container, "modalWorstPerformingCryptoShrinkLess", "number", "Show crypto that shrink less then x percent", "Crypto shrink less");
 }

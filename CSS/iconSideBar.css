@@ -8,14 +8,17 @@
 .icon-side-bar-filters-wrapper label{
     width: 60px;
     height: 60px;
-    border: 1px solid gray;
+    border: 3px solid darkslategray;
     box-sizing: border-box;
     padding: 5px;
     border-radius: 15px;
 }
+.icon-side-bar-filters-wrapper label:hover{
+    border: 3px solid yellowgreen;
+}
 
 .icon-side-bar-filters-wrapper input[type="checkbox"]:checked + label{
-    border: 1px solid green;   
+    border: 3px solid #4ed164;   
 }
 .icon-side-bar-filters-wrapper input[type="checkbox"]{
     display: none;
@@ -24,7 +27,7 @@
 .icon-side-bar{
     height: 100vh;
     width: 100px;
-    background-color: gray;
+    background-color: darkslategray;
     margin: 0px;
     box-sizing: border-box;
     z-index: 20;
@@ -43,10 +46,44 @@
 }
 
 .icon-side-bar-filters-wrapper{
-    border-bottom: 1px solid black;
+    border-bottom: 1px solid darkgray;
     width: 100%;
     display: flex;
     justify-content: center;
     box-sizing: border-box;
     padding: 10px 0;
+}
+
+.icon-side-bar-calculate-button{
+    height: 30%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: center;
+}
+
+#calculate{
+    width: 90%;
+    padding: 10px 5px;
+    border-radius: 5px;
+    background: hsla(201, 100%, 50%,0.1);
+    border: 1px solid gray;
+    color: white;
+    outline: none;
+    font-size: large;
+    cursor: pointer;
+    transition: 0.5s;
+}
+
+#calculate:hover{
+    background-color: hsla(201, 100%, 10%,0.6);
+    border-color: hsla(201, 100%, 50%);
+}
+
+#buttonCalculate{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    margin-bottom: 30px;
 }

@@ -1,7 +1,7 @@
 .modal-filter-container{
 height: 70%;
 width: 170px;
-background: #f2f2f2;
+background: darkslategray;
 border-radius: 20px;
 border: 2px gray;
 box-shadow: -10px 15px 21px grey;
@@ -11,7 +11,7 @@ box-shadow: -10px 15px 21px grey;
     height: 70%;
     width: 100%;
     float: left;
-    background-color: #f2f2f2;
+    background-color: darkslategray ;
     display: flex;
     align-content: space-around;
     justify-content: space-around;
@@ -19,7 +19,7 @@ box-shadow: -10px 15px 21px grey;
     align-items: center;
     border-top-right-radius: 20px;
     border-top-left-radius: 20px;
-    border-bottom: 2px solid black;
+    border-bottom: 2px solid darkgray;
 }
 
 .modal-checkbox-container{
@@ -31,7 +31,7 @@ box-shadow: -10px 15px 21px grey;
 .modal-inputs-container{
     height: 28%;
     width: 100%;
-    background-color: #f2f2f2;
+    background-color: darkslategray;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -48,7 +48,7 @@ box-shadow: -10px 15px 21px grey;
 }
 
 .modal-button-filters label{
-    border: 3px solid #f2f2f2;;
+    border: 3px solid darkslategray;;
     padding: 5px;
     padding-bottom: 2px;
     transition: 0.5s;
@@ -60,7 +60,7 @@ box-shadow: -10px 15px 21px grey;
 }
 
 .modal-button-filters input[type="checkbox"]:checked + label {
-    border: 3px solid green;
+    border: 3px solid #4ed164;
 }
 
 
@@ -177,16 +177,24 @@ cursor: default;
 }
 
 #modal-calculate-button{
-height: 20px;
-position: absolute;
-bottom: -4px;
 width: 100%;
-border-bottom-left-radius: 10px;
-border-bottom-right-radius: 10px;
-margin: 0px;
-padding: 0px;
-border: none;
-background: darkgray;
+    padding: 10px 5px;
+    background: hsla(201, 100%, 50%,0.1);
+    border: 1px solid gray;
+    color: white;
+    outline: none;
+    font-size: large;
+    cursor: pointer;
+    transition: 0.5s;
+    border-bottom-left-radius: 15px;
+    border-bottom-right-radius: 15px;
+    position: absolute;
+    bottom: -4px;
+}
+
+#modal-calculate-button:hover{
+background-color: hsla(201, 100%, 10%,0.6);
+    border-color: hsla(201, 100%, 50%);
 }
 
 .wrapper-modal-filters-buttons input[type="text"]{

@@ -80,6 +80,7 @@ hr{
     border: none;
     background-color: #f2f2f2;
     font-weight: bold;
+    pointer-events: none;
 }
 
 #best-worst-crypto-label{
