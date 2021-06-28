@@ -1,0 +1,237 @@
+.modal-filter-container{
+height: 70%;
+width: 170px;
+background: darkslategray;
+border-radius: 20px;
+border: 2px gray;
+box-shadow: -10px 15px 21px grey;
+}
+
+.modal-filter-button-and-checkbox-container{
+    height: 70%;
+    width: 100%;
+    float: left;
+    background-color: darkslategray ;
+    display: flex;
+    align-content: space-around;
+    justify-content: space-around;
+    flex-direction: column;
+    align-items: center;
+    border-top-right-radius: 20px;
+    border-top-left-radius: 20px;
+    border-bottom: 2px solid darkgray;
+}
+
+.modal-checkbox-container{
+    width: 50%;
+    height: 100%;
+    float: right;
+}
+
+.modal-inputs-container{
+    height: 28%;
+    width: 100%;
+    background-color: darkslategray;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border-radius: 15px;
+    padding-top: 5px;
+    position: relative;
+}
+
+.modal-button-filters{
+    position: relative;
+    height: 55px;
+    width: 55px;
+    
+}
+
+.modal-button-filters label{
+    border: 3px solid darkslategray;;
+    padding: 5px;
+    padding-bottom: 2px;
+    transition: 0.5s;
+    border-radius: 15px;
+}
+
+.modal-button-filters:hover label{
+    border: 3px solid yellowgreen;
+}
+
+.modal-button-filters input[type="checkbox"]:checked + label {
+    border: 3px solid #4ed164;
+}
+
+
+.modal-filter-checkbox{
+    border: none;
+}
+
+.modal-filter-image{
+    width: 100%;
+    height: 100%;
+}
+
+.modal-button-filters input[type="checkbox"]{
+    display: none;
+}
+
+.modal-button-span {
+    position: absolute;
+    left: -100px;
+    top: 15px;
+    z-index: 50;
+}
+
+.modal-button-information-input{
+    display: block;
+    position: absolute;
+    right: 55px;
+    top:15px;
+    outline: none;
+    z-index: 50;
+    width: 0px;
+    opacity: 0;
+    transition: 0.5s;
+    pointer-events: none;
+}
+
+
+.modal-button-filters:hover .modalDateFilter-width{
+    opacity: 1;
+    width: 90px;
+}
+
+.modal-button-filters:hover .modalBestFilter-width{
+    opacity: 1;
+    width: 260px;
+}
+
+.modal-button-filters:hover .modalWorstFilter-width{
+    opacity: 1;
+    width: 267px;
+}
+.modal-button-filters:hover .modalDolarFilter-width{
+    opacity: 1;
+    width: 188px;
+}
+.modal-button-filters:hover .modalCentFilter-width{
+    opacity: 1;
+    width: 181px;
+}
+.modal-button-filters:hover .modalTokenFilter-width{
+    opacity: 1;
+    width: 200px;
+}
+
+.modal-filter-inputs-wrapper{
+    position: relative;
+    width: 95%;
+}
+
+.modal-filter-inputs-wrapper input:first-child{
+width: 100%;
+box-sizing: border-box;
+border-radius: 5px;
+margin-bottom: 5px;
+text-align: center;
+}
+
+.modal-filter-text-input{
+position: absolute;
+right: 165px;
+top:0px;
+z-index: 50;
+outline: none;
+width: 0px;
+opacity: 0;
+transition: 0.5s;
+cursor: default;
+}
+
+.modal-filter-inputs-wrapper:hover .modalStartDateFilter-text-input{
+    width: 102px;
+    opacity: 1;
+}
+
+.modal-filter-inputs-wrapper:hover .modalEndDateFilter-text-input{
+    width: 100px;
+    opacity: 1;
+}
+.modal-filter-inputs-wrapper:hover .modalBestPerformingCryptoGrowMore-text-input{
+    width: 265px;
+    opacity: 1;
+}
+.modal-filter-inputs-wrapper:hover .modalBestPerformingCryptoGrowLess-text-input{
+    width: 257px;
+    opacity: 1;
+}
+.modal-filter-inputs-wrapper:hover .modalWorstPerformingCryptoShrinkMore-text-input{
+    width: 263px;
+    opacity: 1;
+}
+.modal-filter-inputs-wrapper:hover .modalWorstPerformingCryptoShrinkLess-text-input{
+    width: 263px;
+    opacity: 1;
+}
+
+#modal-calculate-button{
+width: 100%;
+    padding: 10px 5px;
+    background: hsla(201, 100%, 50%,0.1);
+    border: 1px solid gray;
+    color: white;
+    outline: none;
+    font-size: large;
+    cursor: pointer;
+    transition: 0.5s;
+    border-bottom-left-radius: 15px;
+    border-bottom-right-radius: 15px;
+    position: absolute;
+    bottom: -4px;
+}
+
+#modal-calculate-button:hover{
+background-color: hsla(201, 100%, 10%,0.6);
+    border-color: hsla(201, 100%, 50%);
+}
+
+.wrapper-modal-filters-buttons input[type="text"]{
+width: 0px;
+pointer-events: none;
+position: absolute;
+opacity: 0;
+transition: 0.5s;
+}
+
+#applyFiltersFromMainTable-text{
+    bottom: 155px;
+    left:55px;
+}
+
+#applyNewFilters-text{
+    bottom: 88px;
+    left:55px;
+}
+
+#removeAllFilters-text{
+    bottom: 25px;
+    left: 55px;
+}
+
+
+.wrapper-modal-filters-buttons:hover #applyFiltersFromMainTable-text{
+    width: 165px;
+    opacity: 1;
+}
+
+.wrapper-modal-filters-buttons:hover #applyNewFilters-text{
+    width: 123px;
+    opacity: 1;
+}
+
+.wrapper-modal-filters-buttons:hover #removeAllFilters-text{
+    width: 102px;
+    opacity: 1;
+}

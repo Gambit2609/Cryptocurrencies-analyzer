@@ -1,0 +1,160 @@
+.footer-side-bar{
+    position: fixed;
+    bottom: 100px;
+    right: -90px;
+    width: 110px;
+    height: 100px;
+    background-color: darkslategray;
+    transition: 0.5s;
+    border-bottom-left-radius: 5px;
+    border-top-left-radius: 5px;
+}
+.footer-side-bar:hover{
+    transform: translateX(-90px)
+}
+
+#footer-side-bar-button{
+    height: 25px;
+    width: 12px;
+    backface-visibility: hidden;
+}
+
+.footer-image-wrapper{
+    display: flex;
+    height: 100%;
+    align-items: center;
+    width: 20px;
+    justify-content: center;
+}
+
+.footer-mail-image-wrapper{
+    height: 100%;
+    width: 90px;
+    float: right;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+
+#footer-mail-image{
+   height: 45px;
+   width: 60px;
+   transition: 0.5s;
+   backface-visibility: hidden;
+}
+
+#footer-mail-image:hover{
+    transform: scale(1.2);
+}
+
+#footer-mail-information{
+position: absolute;
+right: 85px;
+width: 0px;
+outline: none;
+pointer-events: none;
+cursor: default;
+opacity: 0;
+transition: 0.5s;
+}
+
+#footer-mail-image:hover + #footer-mail-information{
+    width: 400px;
+    opacity: 1;
+}
+
+.email-background{
+    height: 100vh;
+    width: 100vw;
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    background-color: hsla(201, 100%, 0%,0.6);
+    z-index: 100;
+    align-items: center;
+    justify-content: center;
+    display: none;
+}
+
+.email-form-background{
+    background-color: hsla(201, 100%, 10%,0.7);
+    width: 50%;
+    min-width: 500px;
+    max-width: 600px;
+    min-height: 400px;
+    max-height: 500px;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+#footer-email-form{
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+    width: 80%;
+}
+
+#footer-email-form label{
+    padding: 8px 0px;
+    color: white;
+    font-size: large;
+}
+
+#footer-email-form input, textarea{
+    box-sizing: border-box;
+    border: none;
+    background-color: hsla(201, 100%, 91%,0.3);
+    outline: none;
+    border: 1px solid hsla(201, 100%, 6%);
+    border-radius: 3px;
+    color: white;
+    font-size: 15px;
+    padding: 5px;
+    resize: none;
+    width: 100%;
+}
+
+#footer-email-form input:focus {
+    border: 1px solid hsla(201, 100%, 50%);
+}
+
+#footer-email-form textarea:focus {
+    border: 1px solid hsla(201, 100%, 50%);
+}
+
+#email-submit-button{
+    padding: 10px 30px;
+    border-radius: 5px;
+    background: hsla(201, 100%, 50%,0.1);
+    border: 1px solid gray;
+    color: white;
+    outline: none;
+    font-size: large;
+    cursor: pointer;
+    transition: 0.5s;
+    margin-top: 50px;
+}
+
+#email-submit-button:hover{
+    background-color: hsla(201, 100%, 10%,0.6);
+    border-color: hsla(201, 100%, 50%);
+}
+
+#mail-close-button{
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    margin: 10px;
+    color: darkgray;
+    cursor: pointer;
+    font-size: large;
+    transition: 0.5s;
+}
+
+#mail-close-button:hover{
+color: white;
+}
