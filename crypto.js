@@ -69,8 +69,8 @@ function addListeners() {
     cryptoWorthCentsCheckBox.addEventListener("change", disableCryptoWorthDolarsCheckBox);
     cryptoSearchInput.addEventListener("keydown", getSearchResults);
     showFavoritesButton.addEventListener("click", showFavoritesInNewWindow);
-    footerSideBar.addEventListener("mouseover", () => mainTable.style.opacity = "0.3");
-    footerSideBar.addEventListener("mouseleave", () => mainTable.style.opacity = "1");
+    // footerSideBar.addEventListener("mouseover", () => mainTable.style.opacity = "0.3");
+    // footerSideBar.addEventListener("mouseleave", () => mainTable.style.opacity = "1");
     footerMailImage.addEventListener("click", () => footerEmail.style.display = "flex");
     emailForm.addEventListener("submit", () => footerEmail.style.display = "none");
     mailCloseButton.addEventListener("click", () => footerEmail.style.display = "none");
@@ -626,7 +626,7 @@ function getPercentValue(modalCalculation) {
     } else if (counter.growLess == undefined && counter.growMore == undefined && counter.shrinkMore == undefined && counter.shrinkLess == undefined) {
         alert(`Percent value cannot be empty. Unmatch filter checkbox in case you don't want to use it`);
         throw new Error;
-    } else if (counter.shrinkMore > 100) {
+    } else if (counter.shrinkMore >= 100) {
         alert(`Its not possible to shrink more then 100%. Correct "shrink more then" value.`);
         throw new Error;
     }

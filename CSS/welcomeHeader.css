@@ -46,6 +46,7 @@
     font-size: large;
     cursor: pointer;
     transition: 0.5s;
+    font-family: sans-serif;
 }
 
 .upload label:hover{
@@ -57,7 +58,7 @@
     width: 0px;
     pointer-events: none;
     position: absolute;
-    left: 278px;
+    left: 300px;
     bottom: 14px;
     opacity: 0;
     transition: 0.5s;
@@ -135,6 +136,7 @@ width: 278px;
     font-size: large;
     cursor: pointer;
     transition: 0.5s;
+    font-family: sans-serif;
 }
 
 #download-sample-button:hover{
