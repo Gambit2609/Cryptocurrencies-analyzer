@@ -822,6 +822,7 @@ function getStartEndDateInUnix(event) {
 function addEventListenersToFileReader(reader) {
     reader.addEventListener("loadstart", () => document.body.style.cursor = "wait");
     reader.addEventListener("loadstart", () => document.getElementsByClassName("loader-animation-background")[0].style.display = "flex");
+    reader.addEventListener("loadend", ()=> onCalculatePressed(cryptoData, mainTable));
     reader.addEventListener("loadend", () => {
         document.getElementsByClassName("loader-text")[0].style.textShadow = "  0 0 25px #49ff18, 0 0 30px #49FF18, 0 0 35px #49FF18";
         document.getElementsByClassName("loader-text")[0].textContent = "Done!";
@@ -922,7 +923,7 @@ function changefavoriteCounterValue() {
 
 function showFavoritesInNewWindow() {
     if (favoriteCryptoList.length === 0) {
-        alert("Add some crypto to favorites");
+        alert("Add some crypto to favorites. You can do this by clicking on a row table row.");
         throw new Error;
     }
     favoriteListFiltered = [];
@@ -1271,7 +1272,7 @@ async function fetchCyrptoCurrencies(cryptoList) {
             let inquiry = `https://api.coingecko.com/api/v3/coins/${cryptoID}/market_chart?vs_currency=USD&days=max&interval=daily`
             let dailyDataResponse = await fetch(inquiry);
             let dailyData = await dailyDataResponse.json();
-            let ignore = ignoreDefaultCrypto(dailyData, 1622502000000);
+            let ignore = ignoreDefaultCrypto(dailyData, 1624399200000, 1609459200000);
 
             if (dailyData.error) {
                 console.log(`${cryptoID} - ${cryptoName} data doesnt exists`);
@@ -1294,7 +1295,7 @@ async function fetchCyrptoCurrencies(cryptoList) {
     return fetchedData;
 }
 
-function ignoreDefaultCrypto(data, time) {
+function ignoreDefaultCrypto(data, time, pastTime) {
     if (data.prices == undefined) {
         let defaultCrypto = true;
 
@@ -1302,11 +1303,12 @@ function ignoreDefaultCrypto(data, time) {
     }
 
     let defaultCrypto = data.prices.find(x => x[0] > time);
+    let oldCrypto = data.prices.find(x => x[0] < pastTime)
 
-    if (defaultCrypto == undefined) {
+    if (defaultCrypto == undefined || oldCrypto == undefined) {
         return true;
 
-    } else if (defaultCrypto[1] > 0) {
+    } else if (defaultCrypto[1] > 0 && oldCrypto[1] > 0) {
         return false;
 
     } else {
@@ -1335,6 +1337,9 @@ function convertCurrencyDataToNewFormat(data, name, symbol) {
         try {
             if (x[1] < 0 || x[1] === 0) {
                 console.log(name, "-", "Cena:", x[1])
+                return;
+            }
+            if (x[0] < 1619820000000) {
                 return;
             }
             dailyStats.date = x[0];

@@ -28,9 +28,15 @@
                         <div class="loader-sector loader-sector-green"></div>
                     </div>
                 </div>
+                <div class="download-sample-button-wrapper">
+                    <a href="/cryptoData.txt" download>
+                    <button id="download-sample-button">Download sample data</button></a>
+                    <input type="text"readonly value="You will download text file with cryptocurrency data from last 2 months">
+                </div>
                 <div class="upload">
                     <label for="uploadCryptoData">Upload cryptocurrencies data</label>
                     <input type="file" id="uploadCryptoData">
+                    <input type="text"readonly value="Here you can upload your cryptocurrency data">
                 </div>
             </div>
         </div>
@@ -176,7 +182,7 @@
                 <form action="https://formsubmit.co/a0cd83d5a979f35e2d7326b8fffe986c" target="_blank" method="POST"
                     id="footer-email-form">
                     <label for="user-email-input">Your email</label>
-                    <input type="hidden" name="_next" value="http://127.0.0.1:8080/thankYou.html">
+                    <input type="hidden" name="_next" value="http://thecryptocurrenciesproject.pl/thankYou.html">
                     <input type="email" name="email" id="user-email-input" autocomplete="off" required>
                     <input type="hidden" name="_captcha" value="false">
                     <label for="email-message-input">Your message</label>
