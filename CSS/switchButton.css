@@ -1,27 +1,4 @@
-.filterCheckbox{
-  position: relative;
-    display: flex;
-    height: 60px;
-    border-bottom: 1px solid black;
-    align-items: center;
-    justify-content: space-evenly;
-    padding: 10px 0;
-}
 
-
-.filterCheckbox p{
-    margin: 0px;
-    padding: 0px;
-    z-index: 1;
-    width: 120px;
-}
-
-.filterButtons{
-  display: flex;
-  flex-direction: column;
-  justify-content: space-evenly;
-  height: 70%;
-}
 
 .short p{
   top:10px;

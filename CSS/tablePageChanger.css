@@ -1,0 +1,41 @@
+.table-page-changer-container{
+    position: fixed;
+    bottom: 0px;
+    width: 100%;
+    background: #f2f2f2;
+    height: 30px;
+    display: none;
+}
+
+#prev-page{
+    border-radius: 5px;
+    background: darkslategray;
+    border: 1px solid gray;
+    color: white;
+    outline: none;
+    font-size: large;
+    cursor: pointer;
+    transition: 0.5s;
+    margin: 0px 5px 0px;
+}
+
+#next-page{
+    border-radius: 5px;
+    background: darkslategray;
+    border: 1px solid gray;
+    color: white;
+    outline: none;
+    font-size: large;
+    cursor: pointer;
+    transition: 0.5s;
+}
+
+#next-page:disabled{
+    background:gray;
+    pointer-events: none;
+}
+
+#prev-page:disabled{
+    background:gray;
+    pointer-events: none;
+}

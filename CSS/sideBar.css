@@ -1,0 +1,150 @@
+.sidebar-date-filter:hover .date-filter-container{
+opacity: 1;
+pointer-events: unset;
+}
+
+
+.date-filter-container{
+    position: absolute;
+    bottom: -1px;
+    right: -180px;
+    height: 90px;
+    width: 178px;
+    background: darkslategray;
+    opacity: 0;
+    border: 1px solid black;
+    pointer-events: none;
+    transition: 0.5s;
+}
+
+.date-filter-container input[type="date"]{
+    box-sizing: border-box;
+}
+
+#bestPerFormingCryptoFilter{
+    width: 180px;
+    padding: 0px;
+    margin: 0px;
+    box-sizing: border-box;
+    display: flex;
+    position: absolute;
+    bottom: 0px;
+    left: 179px;
+    height: 90px;
+    background-color: darkslategray;
+    flex-direction: column;
+    justify-content: space-evenly;
+    align-items: center;
+    border: 1px solid black;
+    opacity: 0;
+    pointer-events: none;
+    transition: 0.5s;
+}
+
+#worstPerFormingCryptoFilter{
+    width: 180px;
+    padding: 0px;
+    margin: 0px;
+    box-sizing: border-box;
+    display: flex;
+    position: absolute;
+    bottom: 0px;
+    left: 179px;
+    height: 90px;
+    background-color: darkslategray;
+    flex-direction: column;
+    justify-content: space-evenly;
+    align-items: center;
+    border: 1px solid black;
+    opacity: 0;
+    pointer-events: none;
+    transition: 0.5s;
+}
+
+#input-shrink-more{
+    position: absolute;
+    left: 180px;
+    top: 16px;
+    width: 0px;
+    pointer-events: none;
+    opacity: 0;
+    transition: 0.5s;
+    font-size: 16px;
+}
+#input-grow-more{
+    position: absolute;
+    left: 180px;
+    top: 16px;
+    width: 0px;
+    pointer-events: none;
+    opacity: 0;
+    transition: 0.5s;
+    font-size: 16px;
+}
+
+#input-shrink-less{
+    position: absolute;
+    left: 180px;
+    bottom: 11px;
+    width: 0px;
+    pointer-events: none;
+    opacity: 0;
+    transition: 0.5s;
+    font-size: 16px;
+}
+#input-grow-less{
+    position: absolute;
+    left: 180px;
+    bottom: 11px;
+    width: 0px;
+    pointer-events: none;
+    opacity: 0;
+    transition: 0.5s;
+    font-size: 16px;
+}
+
+#bestPerFormingCryptoFilter:hover #input-grow-more{
+    opacity: 1;
+    width: 317px;
+    }
+    
+#bestPerFormingCryptoFilter:hover #input-grow-less{
+    opacity: 1;
+    width: 307px;
+    }
+
+#worstPerFormingCryptoFilter:hover #input-shrink-more{
+    opacity: 1;
+    width: 317px;
+    }
+
+#worstPerFormingCryptoFilter:hover #input-shrink-less{
+    opacity: 1;
+    width: 307px;
+    }
+
+.filterButtons{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    height: 70%;
+    min-height: 550px;
+  }
+
+  .filterCheckbox input[type="number"]{
+    box-sizing: border-box;
+    text-align: center;
+    width: 90%;
+    border-radius: 5px;
+    height: 26px;
+  }
+
+  .best-performing-crypto:hover #bestPerFormingCryptoFilter{
+    opacity: 1;
+    pointer-events: unset;
+  }
+
+  .worst-performing-crypto:hover #worstPerFormingCryptoFilter{
+    opacity: 1;
+    pointer-events: unset;
+  }
