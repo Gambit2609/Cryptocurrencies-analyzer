@@ -45,7 +45,10 @@ const dolarWorthIconCheckbox = document.getElementById("icon-dolar-worth-filter"
 const centsWorthIconCheckbox = document.getElementById("icon-cent-worth-filter");
 const tokenIconCheckbox = document.getElementById("icon-token-filter");
 const dateFilterContainer = document.querySelector(".date-filter-container");
-
+const nextPageButton = document.getElementById("next-page");
+const prevPageButton = document.getElementById("prev-page");
+const tablePageChangerButtonContainer = document.querySelector(".table-page-changer-container");
+let currentPage = 1;
 let calculatedCryptoList = [];
 let searchedCrypto = [];
 let favoriteListFiltered = [];
@@ -86,6 +89,8 @@ function addListeners() {
     centsWorthIconCheckbox.addEventListener("change", changeCentsWorthCheckboxes);
     tokenIconCheckbox.addEventListener("change", changeTokenCheckboxes);
     tokenCheckBox.addEventListener("change", changeTokenCheckboxes);
+    nextPageButton.addEventListener("click", changeCurrentPage);
+    prevPageButton.addEventListener("click", changeCurrentPage);
 }
 
 addListeners();
@@ -96,6 +101,7 @@ showHideFilters();
 
 
 function onCalculatePressed(data, table, modalCalculation) {
+    currentPage = 1;
     let token = tokenCheckBox;
     let dateFilter = dateFilterCheckbox;
     let bestPerformingCryptoFilter = bestPerformingCryptoFilterCheckBox;
@@ -134,6 +140,7 @@ function onCalculatePressed(data, table, modalCalculation) {
     createAndDeleteTable(table, cryptoWorthCentsFiltered);
     addListenersToTable();
     addTableToList(table);
+    enableOrDisablePageButtons(currentPage)
     console.log(cryptoWorthCentsFiltered);
 }
 
@@ -231,6 +238,7 @@ function addHeaderCellToRow(table, row, rowName, filterName) {
 
 function generateTableRows(table, crypto) {
     crypto.forEach((obj, i) => {
+        if(currentPage > 1? i>=`${currentPage -1}000`&& i<`${currentPage}000`: i<=999){
         let row = table.insertRow();
         row.addEventListener("click", addFavoritesFunc);
         checkForFavorites(obj.name, row)
@@ -284,6 +292,7 @@ function generateTableRows(table, crypto) {
             let rowData = obj.averagePrice;
             addCellsToTable(row, rowData)
         }
+    }
 
     });
 }
@@ -1244,6 +1253,37 @@ function showWinnersAndLoosers(winnersAndLoosers) {
         bestWorstCryptoLabel.textContent = "LAST DAY TOP GAINERS:"
     }
 }
+
+function changeCurrentPage (e){
+    if (e.target.id.includes("next")){
+        currentPage++
+    }else{
+        currentPage--
+    }
+    enableOrDisablePageButtons(currentPage);
+    createAndDeleteTable(mainTable, calculatedCryptoList)
+}
+
+function enableOrDisablePageButtons(page){
+    let pageCounter = Math.ceil(calculatedCryptoList.length/1000);
+    if (page === 1 && pageCounter === 1) {
+        tablePageChangerButtonContainer.style.display = "none";
+        prevPageButton.disabled = false;
+        nextPageButton.disabled = false;
+    }else if (page === 1) {
+        tablePageChangerButtonContainer.style.display = "block";
+        prevPageButton.disabled = true;
+        nextPageButton.disabled = false;
+    }else if(page > 1 && page<pageCounter){
+        tablePageChangerButtonContainer.style.display = "block";
+        nextPageButton.disabled = false;
+        prevPageButton.disabled = false;
+    }else{
+        tablePageChangerButtonContainer.style.display = "block";
+        nextPageButton.disabled = true;
+    }
+}
+
 
 
 
