@@ -44,6 +44,7 @@ const worstPerformingCryptoIconCheckbox = document.getElementById("icon-worst-pe
 const dolarWorthIconCheckbox = document.getElementById("icon-dolar-worth-filter");
 const centsWorthIconCheckbox = document.getElementById("icon-cent-worth-filter");
 const tokenIconCheckbox = document.getElementById("icon-token-filter");
+const dateFilterContainer = document.querySelector(".date-filter-container");
 
 let calculatedCryptoList = [];
 let searchedCrypto = [];
@@ -524,8 +525,7 @@ function showHideFilters() {
     bestPerformingCryptoFilterCheckBox.checked ? bestPerformingCryptoIconCheckbox.checked = true : bestPerformingCryptoIconCheckbox.checked = false;
     worstPerformingCryptoFilterCheckBox.checked ? worstPerformingCryptoIconCheckbox.checked = true : worstPerformingCryptoIconCheckbox.checked = false;
     dateFilterCheckbox.checked ? dateFilterIconCheckbox.checked = true : dateFilterIconCheckbox.checked = false;
-    dateFilterCheckbox.checked ? startDateFilter.style.display = "" : startDateFilter.style.display = "none";
-    dateFilterCheckbox.checked ? endDateFilter.style.display = "" : endDateFilter.style.display = "none";
+    dateFilterCheckbox.checked ? dateFilterContainer.style.display = "" : dateFilterContainer.style.display = "none";
     bestPerformingCryptoFilterCheckBox.checked ? bestPerFormingCryptoFilter.style.display = "" : bestPerFormingCryptoFilter.style.display = "none";
     worstPerformingCryptoFilterCheckBox.checked ? worstPerFormingCryptoFilter.style.display = "" : worstPerFormingCryptoFilter.style.display = "none";
 }
@@ -923,7 +923,7 @@ function changefavoriteCounterValue() {
 
 function showFavoritesInNewWindow() {
     if (favoriteCryptoList.length === 0) {
-        alert("Add some crypto to favorites. You can do this by clicking on a row table row.");
+        alert("Add some crypto to favorites. You can do this by clicking on the table row.");
         throw new Error;
     }
     favoriteListFiltered = [];

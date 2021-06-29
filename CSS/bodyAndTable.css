@@ -125,7 +125,7 @@ tr:hover td{
     padding: 0px;
     margin: 0px;
     box-sizing: border-box;
-    height: 50px;
+    height: 45px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -135,32 +135,29 @@ tr:hover td{
     padding: 0px;
     margin: 0px;
     box-sizing: border-box;
-    height: 50px;
+    height: 45px;
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin-bottom: 10px;
 
 }
-#bestPerFormingCryptoFilter{
-    width: 100%;
-    padding: 0px;
-    margin: 0px;
-    box-sizing: border-box;
-    height: 50px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-#worstPerFormingCryptoFilter{
-    width: 100%;
-    padding: 0px;
-    margin: 0px;
-    box-sizing: border-box;
-    height: 50px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
+
+.filterCheckbox{
+    position: relative;
+      display: flex;
+      height: 60px;
+      border-bottom: 1px solid black;
+      align-items: center;
+      justify-content: space-evenly;
+      padding: 10px 0;
+  }
+  
+  
+  .filterCheckbox p{
+      margin: 0px;
+      padding: 0px;
+      z-index: 1;
+      width: 120px;
+  }
 
 
