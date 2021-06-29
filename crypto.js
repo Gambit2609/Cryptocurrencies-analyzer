@@ -39,6 +39,7 @@ const emailForm = document.getElementById("footer-email-form");
 const mailCloseButton = document.getElementById("mail-close-button");
 const iconSideBar = document.querySelector(".icon-side-bar");
 const dateFilterIconCheckbox = document.getElementById("icon-date-filter");
+const iconDateFilter = document.querySelector(".icon-side-bar-date-filter");
 const bestPerformingCryptoIconCheckbox = document.getElementById("icon-best-performing-filter");
 const worstPerformingCryptoIconCheckbox = document.getElementById("icon-worst-performing-filter");
 const dolarWorthIconCheckbox = document.getElementById("icon-dolar-worth-filter");
@@ -48,6 +49,7 @@ const dateFilterContainer = document.querySelector(".date-filter-container");
 const nextPageButton = document.getElementById("next-page");
 const prevPageButton = document.getElementById("prev-page");
 const tablePageChangerButtonContainer = document.querySelector(".table-page-changer-container");
+
 let currentPage = 1;
 let calculatedCryptoList = [];
 let searchedCrypto = [];
@@ -237,8 +239,9 @@ function addHeaderCellToRow(table, row, rowName, filterName) {
 }
 
 function generateTableRows(table, crypto) {
+    let pageToShow = table.id.includes("modal")? 1: currentPage
     crypto.forEach((obj, i) => {
-        if(currentPage > 1? i>=`${currentPage -1}000`&& i<`${currentPage}000`: i<=999){
+        if(pageToShow > 1? i>=`${pageToShow -1}000`&& i<`${pageToShow}000`: i<=999){
         let row = table.insertRow();
         row.addEventListener("click", addFavoritesFunc);
         checkForFavorites(obj.name, row)
@@ -1280,6 +1283,7 @@ function enableOrDisablePageButtons(page){
         prevPageButton.disabled = false;
     }else{
         tablePageChangerButtonContainer.style.display = "block";
+        prevPageButton.disabled = false;
         nextPageButton.disabled = true;
     }
 }
