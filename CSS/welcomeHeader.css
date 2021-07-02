@@ -21,9 +21,10 @@
     max-height: 400px;
     border-radius: 5px;
     display: flex;
-    align-items: center;
-    justify-content: center;
+    justify-content: space-evenly;
     position: relative;
+    flex-direction: column;
+    align-items: center;
 }
 
 #uploadCryptoData{
@@ -32,6 +33,7 @@
 
 .upload{
     border: none;
+    position: relative;
 }
 
 .upload label{
@@ -44,11 +46,26 @@
     font-size: large;
     cursor: pointer;
     transition: 0.5s;
+    font-family: sans-serif;
 }
 
 .upload label:hover{
     background-color: hsla(201, 100%, 10%,0.6);
     border-color: hsla(201, 100%, 50%);
+}
+
+.upload input[type="text"]{
+    width: 0px;
+    pointer-events: none;
+    position: absolute;
+    left: 5px;
+    bottom: -17px;
+    opacity: 0;
+    transition: 0.5s;
+}
+.upload:hover input[type="text"]{
+width: 278px;
+    opacity: 1;
 }
 
 .loader-animation-background {
@@ -62,6 +79,7 @@
     align-items: center;
     justify-content: center;
     background-color: hsla(201, 100%, 10%,0.9);
+    z-index: 1;
 }
 
 .loader-animation-container{
@@ -106,4 +124,89 @@
 @keyframes loader-animation{
     from{transform: rotate(0);}
     to{transform: rotate(360deg);}
+}
+
+.download-button-container{
+    display: flex;
+    width: 100%;
+    flex-direction: row;
+    justify-content: space-evenly;
+}
+
+#download-sample-button{
+    padding: 10px 30px;
+    border-radius: 5px;
+    background: hsla(201, 100%, 50%,0.1);
+    border: 1px solid gray;
+    color: white;
+    outline: none;
+    font-size: large;
+    cursor: pointer;
+    transition: 0.5s;
+    font-family: sans-serif;
+    width: 100%
+}
+
+#download-sample-button:hover{
+    background-color: hsla(201, 100%, 10%,0.6);
+    border-color: hsla(201, 100%, 50%);
+}
+
+.download-sample-button-wrapper{
+    position: relative;
+    width: 45%;
+}
+
+.download-sample-button-wrapper input[type="text"]{
+    width: 0px;
+    pointer-events: none;
+    position: absolute;
+    left: 0px;
+    bottom: -23px;
+    opacity: 0;
+    transition: 0.5s;
+}
+
+.download-sample-button-wrapper:hover input[type="text"]{
+    width: 219px;
+    opacity: 1;
+}
+
+.download-full-data-button-wrapper{
+    position: relative;
+    width: 45%;
+}
+
+#download-full-data-button{
+    padding: 10px 30px;
+    border-radius: 5px;
+    background: hsla(201, 100%, 50%,0.1);
+    border: 1px solid gray;
+    color: white;
+    outline: none;
+    font-size: large;
+    cursor: pointer;
+    transition: 0.5s;
+    font-family: sans-serif;
+    width: 100%;
+}
+
+.download-full-data-button-wrapper input[type="text"]{
+    width: 0px;
+    pointer-events: none;
+    position: absolute;
+    left: 0px;
+    bottom: -23px;
+    opacity: 0;
+    transition: 0.5s;
+}
+
+#download-full-data-button:hover{
+    background-color: hsla(201, 100%, 10%,0.6);
+    border-color: hsla(201, 100%, 50%);
+}
+
+.download-full-data-button-wrapper:hover input[type="text"]{
+    width: 241px;
+    opacity: 1;
 }

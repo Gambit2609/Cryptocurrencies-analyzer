@@ -1,0 +1,103 @@
+.table-page-changer-container{
+    position: fixed;
+    bottom: 0px;
+    left: 0px;
+    width: 100%;
+    background: #f2f2f2;
+    height: 30px;
+    display: none;
+}
+
+#prev-page{
+    border-radius: 5px;
+    background: darkslategray;
+    border: 1px solid gray;
+    color: white;
+    outline: none;
+    font-size: large;
+    cursor: pointer;
+    transition: 0.5s;
+    margin: 0px 5px 0px 105px;
+}
+
+#next-page{
+    border-radius: 5px;
+    background: darkslategray;
+    border: 1px solid gray;
+    color: white;
+    outline: none;
+    font-size: large;
+    cursor: pointer;
+    transition: 0.5s;
+}
+
+#next-page:disabled{
+    background:gray;
+    pointer-events: none;
+}
+
+#prev-page:disabled{
+    background:gray;
+    pointer-events: none;
+}
+
+.settings-container{
+    position: relative;
+    float: right;
+    margin-right: 15px;
+}
+
+#settings-button{
+    width: 25px;
+    height: 25px;
+    transition: 1s;
+    backface-visibility: hidden;
+    outline: none;
+    border-radius: 50%;
+}
+
+#settings-button:hover{
+    transform: rotate(360deg);
+}
+
+#settings-button-info{
+    width: 0px;
+    position: absolute;
+    right: 28px;
+    bottom: 2px;
+    opacity: 0;
+    pointer-events: none;
+    transition: 0.5s;
+}
+
+.settings-container:hover #settings-button-info{
+    width: 138px;
+    opacity: 1;
+}
+
+.selector-page-changer-container{
+    position: absolute;
+    bottom: 50px;
+    right: -205px;
+    width: 200px;
+    height: 100px;
+    background-color: darkslategray;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    color: white;
+    border-radius: 5px;
+    transition: 0.5s;
+}
+
+.selector-page-changer-container label{
+    padding: 15px 0px;
+}
+
+#row-display-changer{
+    border-radius: 5px;
+    outline: none;
+    width: 55px;
+    height: 25px;
+}

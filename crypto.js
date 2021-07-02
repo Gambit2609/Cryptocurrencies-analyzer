@@ -26,9 +26,8 @@ const bestPerFormingCryptoFilter = document.getElementById("bestPerFormingCrypto
 const worstPerformingCryptoFilterCheckBox = document.getElementById("worstPerformingCryptoFilterCheckBox");
 const worstPerFormingCryptoFilter = document.getElementById("worstPerFormingCryptoFilter");
 const mainTable = document.getElementById("mainTable");
-const favoritesContainer = document.getElementsByClassName("favoritesContainer");
+const favoritesContainer = document.querySelector(".favoritesContainer");
 const favoriteCounter = document.getElementsByClassName("favoriteCounter");
-const showFavoritesButton = document.getElementById("show-favorite-list");
 const bestWorstCryptoIn24HInput = document.getElementById('best-worst-crypto');
 const bestWorstCryptoLabel = document.getElementById("best-worst-crypto-label");
 const footerSideBar = document.querySelector(".footer-side-bar");
@@ -37,6 +36,22 @@ const footerEmail = document.querySelector(".email-background");
 const emailSubmitButton = document.getElementById("email-submit-button");
 const emailForm = document.getElementById("footer-email-form");
 const mailCloseButton = document.getElementById("mail-close-button");
+const iconSideBar = document.querySelector(".icon-side-bar");
+const dateFilterIconCheckbox = document.getElementById("icon-date-filter");
+const iconDateFilter = document.querySelector(".icon-side-bar-date-filter");
+const bestPerformingCryptoIconCheckbox = document.getElementById("icon-best-performing-filter");
+const worstPerformingCryptoIconCheckbox = document.getElementById("icon-worst-performing-filter");
+const dolarWorthIconCheckbox = document.getElementById("icon-dolar-worth-filter");
+const centsWorthIconCheckbox = document.getElementById("icon-cent-worth-filter");
+const tokenIconCheckbox = document.getElementById("icon-token-filter");
+const dateFilterContainer = document.querySelector(".date-filter-container");
+const nextPageButton = document.getElementById("next-page");
+const prevPageButton = document.getElementById("prev-page");
+const tablePageChangerButtonContainer = document.querySelector(".table-page-changer-container");
+const settingsContainer = document.querySelector(".settings-container");
+const selectorPageChangerContainer = document.querySelector(".selector-page-changer-container");
+const rowDisplayChanger = document.getElementById("row-display-changer");
+let currentPage = 1;
 let calculatedCryptoList = [];
 let searchedCrypto = [];
 let favoriteListFiltered = [];
@@ -58,31 +73,47 @@ function addListeners() {
     cryptoWorthDolarsCheckBox.addEventListener("change", disableCryptoWorthCentsCheckBox);
     cryptoWorthCentsCheckBox.addEventListener("change", disableCryptoWorthDolarsCheckBox);
     cryptoSearchInput.addEventListener("keydown", getSearchResults);
-    showFavoritesButton.addEventListener("click", showFavoritesInNewWindow);
-    footerSideBar.addEventListener("mouseover", () => mainTable.style.opacity = "0.3");
-    footerSideBar.addEventListener("mouseleave", () => mainTable.style.opacity = "1");
+    favoritesContainer.addEventListener("click", showFavoritesInNewWindow);
     footerMailImage.addEventListener("click", () => footerEmail.style.display = "flex");
     emailForm.addEventListener("submit", () => footerEmail.style.display = "none");
     mailCloseButton.addEventListener("click", () => footerEmail.style.display = "none");
+    iconSideBar.addEventListener("mouseover", () => sideBar[0].style.transform = "translate(180px)");
+    iconSideBar.addEventListener("mouseleave", () => sideBar[0].style.transform = "translate(0px)");
+    sideBar[0].addEventListener("mouseleave", () => sideBar[0].style.transform = "translate(0px)");
+    sideBar[0].addEventListener("mouseover", () => sideBar[0].style.transform = "translate(180px)");
+    dateFilterIconCheckbox.addEventListener("change", changeCheckboxes);
+    bestPerformingCryptoIconCheckbox.addEventListener("change", changeBestPerformingCheckboxes);
+    worstPerformingCryptoIconCheckbox.addEventListener("change", changeWorstPerformingCheckboxes);
+    dolarWorthIconCheckbox.addEventListener("change", changeDolarWorthCheckboxes);
+    centsWorthIconCheckbox.addEventListener("change", changeCentsWorthCheckboxes);
+    tokenIconCheckbox.addEventListener("change", changeTokenCheckboxes);
+    tokenCheckBox.addEventListener("change", changeTokenCheckboxes);
+    nextPageButton.addEventListener("click", changeCurrentPage);
+    prevPageButton.addEventListener("click", changeCurrentPage);
+    settingsContainer.addEventListener("click", showHideRowSettings);
+    rowDisplayChanger.addEventListener("change", ()=> {
+        currentPage = 1;
+        createAndDeleteTable(mainTable,calculatedCryptoList);
+        enableOrDisablePageButtons(currentPage);
+    });
     
 }
-
+clearAllfilterCheckboxes()
+changeScriptValue()
 addListeners();
 showHideFilters();
 // onDownloadAllCryptoButton();
 
-//dodać footer z możliwością wysłania maila
-
-
-
 
 function onCalculatePressed(data, table, modalCalculation) {
+    currentPage = 1;
     let token = tokenCheckBox;
     let dateFilter = dateFilterCheckbox;
     let bestPerformingCryptoFilter = bestPerformingCryptoFilterCheckBox;
     let worstPerFormingCryptoFilter = worstPerformingCryptoFilterCheckBox;
     let cryptoWorthDolarsFilter = cryptoWorthDolarsCheckBox;
     let cryptoWorthCentsFilter = cryptoWorthCentsCheckBox;
+
     if (modalCalculation) {
         token = document.getElementById("modalTokenFilter");
         dateFilter = document.getElementById("modalDateFilter");
@@ -90,14 +121,12 @@ function onCalculatePressed(data, table, modalCalculation) {
         worstPerFormingCryptoFilter = document.getElementById("modalWorstFilter");
         cryptoWorthDolarsFilter = document.getElementById("modalDolarFilter");
         cryptoWorthCentsFilter = document.getElementById("modalCentFilter");
-
-
     }
+
     if (data === cryptoData) {
         calculatedCryptoList = [];
         searchedCrypto = [];
     }
-
     let cryptoWithHistoricalMaxMin = getMaxMinValueHistorical(data);
     let tokenFiltered = token.checked ? getCryptoFilteredByToken(cryptoWithHistoricalMaxMin) : cryptoWithHistoricalMaxMin;
     let timeFiltered = dateFilter.checked ? getCryptoFilteredByTime(tokenFiltered, modalCalculation) : tokenFiltered;
@@ -109,16 +138,31 @@ function onCalculatePressed(data, table, modalCalculation) {
 
     if (data === favoriteCryptoList) {
         favoriteListFiltered = [...cryptoWorthCentsFiltered];
-    }else{
+    } else {
+
+        if (!cryptoWorthCentsFiltered.length) {
+            alert("There are 0 cryptocurrencies with applied filters.")
+        }
         calculatedCryptoList.push(...cryptoWorthCentsFiltered);
     }
     createAndDeleteTable(table, cryptoWorthCentsFiltered);
-    addListenersToTable();
     addTableToList(table);
-    console.log(cryptoWorthCentsFiltered);
+    enableOrDisablePageButtons(currentPage)
 }
 
+function clearAllfilterCheckboxes() {
+    tokenCheckBox.checked = false;
+    dateFilterCheckbox.checked = false;
+    bestPerformingCryptoFilterCheckBox.checked = false;
+    worstPerformingCryptoFilterCheckBox.checked = false;
+    cryptoWorthDolarsCheckBox.checked = false;
+    cryptoWorthCentsCheckBox.checked = false;
+}
 
+function changeScriptValue() {
+    let actualTime = new Date().getTime();
+    document.getElementById("js-src").src = `crypto.js?${actualTime}`
+}
 
 function createAndDeleteTable(table, cryptoToTable) {
     deleteTable(table);
@@ -211,67 +255,69 @@ function addHeaderCellToRow(table, row, rowName, filterName) {
 }
 
 function generateTableRows(table, crypto) {
+    let pageToShow = table.id.includes("modal") ? 1 : currentPage
     crypto.forEach((obj, i) => {
-        let row = table.insertRow();
-        row.addEventListener("click", addFavoritesFunc);
-        checkForFavorites(obj.name, row)
-        let cell = row.insertCell();
-        let text = document.createTextNode(i + 1);
-        cell.appendChild(text);
 
-        if (obj.id) {
-            let rowData = obj.id;
-            addCellsToTable(row, rowData)
-        }
-
-        if (obj.name) {
-            let rowData = obj.name;
-            addCellsToTable(row, rowData)
-        }
-
-        if (obj.percentChange == 0 || obj.percentChange) {
-            let rowData = `${obj.percentChange.toFixed(2)}%`;
-            let parsedPercent = parseFloat(rowData);
+        if (pageToShow > 1 ? i >= (rowDisplayChanger.value * pageToShow) - rowDisplayChanger.value && i < rowDisplayChanger.value * pageToShow : i <= rowDisplayChanger.value -1) {
+        // if (pageToShow > 1 ? i >= `${pageToShow - 1}000` && i < `${pageToShow}000` : i <= 999) {
+            let row = table.insertRow();
+            row.addEventListener("click", addFavoritesFunc);
+            checkForFavorites(obj.name, row)
             let cell = row.insertCell();
-            let text = document.createTextNode(rowData);
-
-            if (parsedPercent > 0) {
-                cell.style.color = "green";
-            } else if (parsedPercent < 0) {
-                cell.style.color = "red";
-            }
+            let text = document.createTextNode(i + 1);
             cell.appendChild(text);
-        }
 
-        if (obj.lowestPriceData) {
-            let rowData = obj.lowestPriceData.price;
-            addCellsToTable(row, rowData)
-        }
+            if (obj.id) {
+                let rowData = obj.id;
+                addCellsToTable(row, rowData)
+            }
 
-        if (obj.highestPriceData) {
-            let CryptoData = obj.highestPriceData.price;
-            addCellsToTable(row, CryptoData)
-        }
+            if (obj.name) {
+                let rowData = obj.name;
+                addCellsToTable(row, rowData)
+            }
 
-        if (obj.minPriceDataHistorical) {
-            let rowData = obj.minPriceDataHistorical.price;
-            addCellsToTable(row, rowData)
-        }
-        if (obj.maxPriceDataHistorical) {
-            let rowData = obj.maxPriceDataHistorical.price;
-            addCellsToTable(row, rowData)
-        }
-        if (obj.averagePrice) {
-            let rowData = obj.averagePrice;
-            addCellsToTable(row, rowData)
-        }
+            if (obj.percentChange == 0 || obj.percentChange) {
+                let rowData = `${obj.percentChange.toFixed(2)}%`;
+                let parsedPercent = parseFloat(rowData);
+                let cell = row.insertCell();
+                let text = document.createTextNode(rowData);
 
+                if (parsedPercent > 0) {
+                    cell.style.color = "green";
+                } else if (parsedPercent < 0) {
+                    cell.style.color = "red";
+                }
+                cell.appendChild(text);
+            }
+
+            if (obj.lowestPriceData) {
+                let rowData = obj.lowestPriceData.price;
+                addCellsToTable(row, rowData)
+            }
+
+            if (obj.highestPriceData) {
+                let CryptoData = obj.highestPriceData.price;
+                addCellsToTable(row, CryptoData)
+            }
+
+            if (obj.minPriceDataHistorical) {
+                let rowData = obj.minPriceDataHistorical.price;
+                addCellsToTable(row, rowData)
+            }
+            if (obj.maxPriceDataHistorical) {
+                let rowData = obj.maxPriceDataHistorical.price;
+                addCellsToTable(row, rowData)
+            }
+            if (obj.averagePrice) {
+                let rowData = obj.averagePrice;
+                addCellsToTable(row, rowData)
+            }
+            if (i % 2 === 0 && !table.id.includes("modal") && row.style.backgroundColor === "") {
+                row.style.backgroundColor = "white"
+            }
+        }
     });
-}
-
-function addListenersToTable() {
-    favoritesContainer[0].addEventListener("mouseover", () => mainTable.style.opacity = "0.3");
-    favoritesContainer[0].addEventListener("mouseleave", () => mainTable.style.opacity = "1");
 }
 
 function checkForFavorites(objName, row) {
@@ -306,6 +352,7 @@ function findTableColumnToSort(event) {
 function sortUp(rowName, cryptoKey, cryptoSecondKey) {
     let table = rowName.includes("modal") ? document.getElementById("modalTable") : document.getElementById("mainTable");
     let dataToSort = sortFrom(table);
+
     if (cryptoKey === "id" || cryptoKey === "name") {
         dataToSort.sort((a, b) => a[cryptoKey].localeCompare(b[cryptoKey]));
         createAndDeleteTable(table, dataToSort);
@@ -321,6 +368,7 @@ function sortUp(rowName, cryptoKey, cryptoSecondKey) {
 function sortDown(rowName, cryptoKey, cryptoSecondKey) {
     let table = rowName.includes("modal") ? document.getElementById("modalTable") : document.getElementById("mainTable");
     let dataToSort = sortFrom(table);
+
     if (cryptoKey === "id" || cryptoKey === "name") {
         dataToSort.sort((a, b) => b[cryptoKey].localeCompare(a[cryptoKey]));
         createAndDeleteTable(table, dataToSort);
@@ -404,10 +452,16 @@ function disableEnableGrowMoreThenInput(modalGrowMore, modalGrowLess) {
 }
 
 function disableCryptoWorthCentsCheckBox(modalCheckBoxDolar, modalCheckBoxCents) {
+
     if (cryptoWorthDolarsCheckBox.checked) {
+        dolarWorthIconCheckbox.checked = true;
         cryptoWorthCentsCheckBox.checked = false;
+        centsWorthIconCheckbox.checked = false;
+    } else {
+        dolarWorthIconCheckbox.checked = false;
     }
     try {
+
         if (modalCheckBoxDolar.checked) {
             modalCheckBoxCents.checked = false;
         }
@@ -417,8 +471,13 @@ function disableCryptoWorthCentsCheckBox(modalCheckBoxDolar, modalCheckBoxCents)
 };
 
 function disableCryptoWorthDolarsCheckBox(modalCheckBoxDolar, modalCheckBoxCents) {
+
     if (cryptoWorthCentsCheckBox.checked) {
+        centsWorthIconCheckbox.checked = true;
         cryptoWorthDolarsCheckBox.checked = false;
+        dolarWorthIconCheckbox.checked = false;
+    } else {
+        centsWorthIconCheckbox.checked = false;
     }
     try {
         if (modalCheckBoxCents.checked) {
@@ -436,14 +495,17 @@ function getCryptoFilteredByToken(data) {
 }
 
 function hideWorstPerformingFilter(modalBestPerformingCheckbox, modalWorstPerformingCheckbox, modalShrinkMoreInput, modalShrinkLessInput) {
-    if (bestPerformingCryptoFilterCheckBox.checked) {
+
+    if (bestPerformingCryptoFilterCheckBox.checked || bestPerformingCryptoIconCheckbox.checked) {
         worstPerformingCryptoFilterCheckBox.checked = false;
+        worstPerformingCryptoIconCheckbox.checked = false;
         shrinkLessThenInput.value = null;
         shrinkMoreThenInput.value = null;
         disableEnableShrinkMoreThenInput();
         disableEnableShrinkLessThenInput();
     }
     try {
+
         if (modalBestPerformingCheckbox.checked) {
             modalWorstPerformingCheckbox.checked = false;
             modalShrinkLessInput.value = null;
@@ -456,8 +518,10 @@ function hideWorstPerformingFilter(modalBestPerformingCheckbox, modalWorstPerfor
 }
 
 function hideBestPerformingFilter(modalBestPerformingCheckbox, modalWorstPerformingCheckbox, modalGrowMoreInput, modalGrowLessInput) {
-    if (worstPerformingCryptoFilterCheckBox.checked) {
+
+    if (worstPerformingCryptoFilterCheckBox.checked || worstPerformingCryptoIconCheckbox.checked) {
         bestPerformingCryptoFilterCheckBox.checked = false;
+        bestPerformingCryptoIconCheckbox.checked = false;
         growLessThenInput.value = null;
         growMoreThenInput.value = null;
         disableEnableGrowLessThenInput();
@@ -483,7 +547,6 @@ function showHideFilters() {
         const modalBestPerformingCryptoGrowLess = document.getElementById("modalBestPerformingCryptoGrowLess");
         const modalWorstPerformingCryptoShrinkMore = document.getElementById("modalWorstPerformingCryptoShrinkMore");
         const modalWorstPerformingCryptoShrinkLess = document.getElementById("modalWorstPerformingCryptoShrinkLess");
-
         document.getElementById("modalDateFilter").checked ? modalStartDateFilter.style.display = "" : modalStartDateFilter.style.display = "none"
         document.getElementById("modalDateFilter").checked ? modalEndDateFilter.style.display = "" : modalEndDateFilter.style.display = "none";
         document.getElementById("modalBestFilter").checked ? modalBestPerformingCryptoGrowMore.style.display = "" : modalBestPerformingCryptoGrowMore.style.display = "none";
@@ -492,12 +555,89 @@ function showHideFilters() {
         document.getElementById("modalWorstFilter").checked ? modalWorstPerformingCryptoShrinkLess.style.display = "" : modalWorstPerformingCryptoShrinkLess.style.display = "none";
     } catch (error) {
     }
-    dateFilterCheckbox.checked ? startDateFilter.style.display = "" : startDateFilter.style.display = "none";
-    dateFilterCheckbox.checked ? endDateFilter.style.display = "" : endDateFilter.style.display = "none";
+    bestPerformingCryptoFilterCheckBox.checked ? bestPerformingCryptoIconCheckbox.checked = true : bestPerformingCryptoIconCheckbox.checked = false;
+    worstPerformingCryptoFilterCheckBox.checked ? worstPerformingCryptoIconCheckbox.checked = true : worstPerformingCryptoIconCheckbox.checked = false;
+    dateFilterCheckbox.checked ? dateFilterIconCheckbox.checked = true : dateFilterIconCheckbox.checked = false;
+    dateFilterCheckbox.checked ? dateFilterContainer.style.display = "" : dateFilterContainer.style.display = "none";
     bestPerformingCryptoFilterCheckBox.checked ? bestPerFormingCryptoFilter.style.display = "" : bestPerFormingCryptoFilter.style.display = "none";
     worstPerformingCryptoFilterCheckBox.checked ? worstPerFormingCryptoFilter.style.display = "" : worstPerFormingCryptoFilter.style.display = "none";
-
 }
+
+function changeCheckboxes() {
+
+    if (dateFilterIconCheckbox.checked) {
+        dateFilterCheckbox.checked = true;
+        showHideFilters()
+    } else {
+        dateFilterCheckbox.checked = false;
+        showHideFilters();
+    }
+}
+
+function changeBestPerformingCheckboxes() {
+
+    if (bestPerformingCryptoIconCheckbox.checked) {
+        bestPerformingCryptoFilterCheckBox.checked = true;
+        hideWorstPerformingFilter();
+        showHideFilters();
+    } else {
+        bestPerformingCryptoFilterCheckBox.checked = false;
+        hideWorstPerformingFilter();
+        showHideFilters();
+    }
+}
+
+function changeWorstPerformingCheckboxes() {
+
+    if (worstPerformingCryptoIconCheckbox.checked) {
+        worstPerformingCryptoFilterCheckBox.checked = true;
+        hideBestPerformingFilter();
+        showHideFilters();
+    } else {
+        worstPerformingCryptoFilterCheckBox.checked = false;
+        hideBestPerformingFilter();
+        showHideFilters();
+    }
+}
+
+function changeDolarWorthCheckboxes() {
+
+    if (dolarWorthIconCheckbox.checked) {
+        cryptoWorthDolarsCheckBox.checked = true;
+        disableCryptoWorthCentsCheckBox();
+    } else {
+        cryptoWorthDolarsCheckBox.checked = false;
+        disableCryptoWorthCentsCheckBox();
+    }
+}
+function changeCentsWorthCheckboxes() {
+
+    if (centsWorthIconCheckbox.checked) {
+        cryptoWorthCentsCheckBox.checked = true;
+        disableCryptoWorthDolarsCheckBox();
+    } else {
+        cryptoWorthCentsCheckBox.checked = false;
+        disableCryptoWorthDolarsCheckBox();
+    }
+}
+function changeTokenCheckboxes(event) {
+
+    if (event.target.id.includes("icon")) {
+        if (tokenIconCheckbox.checked) {
+            tokenCheckBox.checked = true;
+        } else {
+            tokenCheckBox.checked = false;
+        }
+    } else {
+
+        if (tokenCheckBox.checked) {
+            tokenIconCheckbox.checked = true;
+        } else {
+            tokenIconCheckbox.checked = false;
+        }
+    }
+}
+
 
 function getPercentValue(modalCalculation) {
     let counter = {};
@@ -505,28 +645,28 @@ function getPercentValue(modalCalculation) {
     let growLessInput = growLessThenInput;
     let shrinkMoreInput = shrinkMoreThenInput;
     let shrinkLessInput = shrinkLessThenInput;
+
     if (modalCalculation) {
         grownMoreInput = document.getElementById("modalBestPerformingCryptoGrowMore");
         growLessInput = document.getElementById("modalBestPerformingCryptoGrowLess");
         shrinkMoreInput = document.getElementById("modalWorstPerformingCryptoShrinkMore");
         shrinkLessInput = document.getElementById("modalWorstPerformingCryptoShrinkLess");
-
-
     }
     grownMoreInput.value ? counter.growMore = parseFloat(grownMoreInput.value) : counter.growMore = undefined;
     growLessInput.value ? counter.growLess = parseFloat(growLessInput.value) : counter.growLess = undefined;
     shrinkMoreInput.value ? counter.shrinkMore = parseFloat(shrinkMoreInput.value) : counter.shrinkMore = undefined;
     shrinkLessInput.value ? counter.shrinkLess = parseFloat(shrinkLessInput.value) : counter.shrinkLess = undefined;
+
     if (counter.growLess < 0 || counter.growMore < 0 || counter.shrinkLess < 0 || counter.shrinkMore < 0) {
         alert(`Percent value cannot be negative`);
         throw new Error;
     } else if (counter.growLess == 0 || counter.growMore == 0 || counter.shrinkLess == 0 || counter.shrinkMore == 0) {
-        alert(`Percent value cannot has 0 value. Un match filter checkbox in case you don't want to use it`);
+        alert(`Percent value cannot has 0 value. Unmatch filter checkbox in case you don't want to use it`);
         throw new Error;
     } else if (counter.growLess == undefined && counter.growMore == undefined && counter.shrinkMore == undefined && counter.shrinkLess == undefined) {
-        alert(`Percent value cannot be empty. Un match filter checkbox in case you don't want to use it`);
+        alert(`Percent value cannot be empty. Unmatch filter checkbox in case you don't want to use it`);
         throw new Error;
-    } else if (counter.shrinkMore > 100) {
+    } else if (counter.shrinkMore >= 100) {
         alert(`Its not possible to shrink more then 100%. Correct "shrink more then" value.`);
         throw new Error;
     }
@@ -538,6 +678,7 @@ function getMaxMinValueHistorical(data) {
     let cryptoWithHistoricalMinMaxData = data.map(crypto => {
         let cryptoWithHistoricalMaxMin = { ...crypto };
         let minPriceData = cryptoWithHistoricalMaxMin.dailyStats.reduce((acc, val) => {
+
             if (parseFloat(acc.price) < 0) {
 
                 return acc.price = val.price;
@@ -553,8 +694,6 @@ function getMaxMinValueHistorical(data) {
             cryptoWithHistoricalMaxMin.minPriceDataHistorical.price = parseFloat(cryptoWithHistoricalMaxMin.minPriceDataHistorical.price).toFixed(10);
             cryptoWithHistoricalMaxMin.maxPriceDataHistorical.price = parseFloat(cryptoWithHistoricalMaxMin.maxPriceDataHistorical.price).toFixed(10);
         } catch (error) {
-            console.error(error)
-            console.log(cryptoWithHistoricalMaxMin)
         }
 
         return cryptoWithHistoricalMaxMin;
@@ -566,16 +705,17 @@ function getMaxMinValueHistorical(data) {
 }
 
 function getPercentChangeValue(data) {
+
     if (!data.length) {
         return [];
     }
     let historicalOrRangeMinDate = data[0].lowestPriceData ? "lowestPriceData" : "minPriceDataHistorical";
     let historicalOrRangeMaxDate = data[0].highestPriceData ? "highestPriceData" : "maxPriceDataHistorical"
     let cryptoWithPercentChange = data.map(crypto => {
+
         if (crypto[`${historicalOrRangeMinDate}`].date > crypto[`${historicalOrRangeMaxDate}`].date) {
             let differenceBetweenMaxMin = (crypto[`${historicalOrRangeMinDate}`].price - crypto[`${historicalOrRangeMaxDate}`].price) / crypto[`${historicalOrRangeMaxDate}`].price;
             let changeDifferenceToPercent = -Math.abs(differenceBetweenMaxMin) * 100;
-
             crypto.percentChange = !Number.isNaN(changeDifferenceToPercent) ? changeDifferenceToPercent : 0
 
             return crypto;
@@ -583,8 +723,6 @@ function getPercentChangeValue(data) {
         } else {
             let differenceBetweenMaxMin = (crypto[`${historicalOrRangeMaxDate}`].price - crypto[`${historicalOrRangeMinDate}`].price) / crypto[`${historicalOrRangeMinDate}`].price;
             let changeDifferenceToPercent = Math.abs(differenceBetweenMaxMin) * 100;
-
-
             crypto.percentChange = changeDifferenceToPercent;
 
             return crypto;
@@ -595,6 +733,7 @@ function getPercentChangeValue(data) {
 }
 
 function getCryptoFilteredByPercent(percent, crypto) {
+
     if (percent.growMore) {
         let filtered = crypto.filter(obj => obj.percentChange > 0 && obj.percentChange > percent.growMore);
 
@@ -639,6 +778,7 @@ function getCryptoFilteredByTime(data, modalCalculation) {
     validateDateFilter(modalCalculation);
     let start = startEndSearchDate.start;
     let end = startEndSearchDate.end;
+
     if (modalCalculation) {
         start = startEndSearchDateModal.start;
         end = startEndSearchDateModal.end;
@@ -722,10 +862,11 @@ function getStartEndDateInUnix(event) {
 function addEventListenersToFileReader(reader) {
     reader.addEventListener("loadstart", () => document.body.style.cursor = "wait");
     reader.addEventListener("loadstart", () => document.getElementsByClassName("loader-animation-background")[0].style.display = "flex");
+    reader.addEventListener("loadend", () => onCalculatePressed(cryptoData, mainTable));
     reader.addEventListener("loadend", () => {
         document.getElementsByClassName("loader-text")[0].style.textShadow = "  0 0 25px #49ff18, 0 0 30px #49FF18, 0 0 35px #49FF18";
         document.getElementsByClassName("loader-text")[0].textContent = "Done!";
-        setTimeout(()=>document.getElementsByClassName("welcome-header-background")[0].remove(), 1500);
+        setTimeout(() => document.getElementsByClassName("welcome-header-background")[0].remove(), 1500);
         document.body.style.cursor = "default";
         showBiggestWinnersAndLoosers(3000);
     }
@@ -748,7 +889,8 @@ function onCryptoUploaded(e) {
 function getSearchResults(event) {
 
     if (event.key === "Enter") {
-        if (calculatedCryptoList.length === 0){
+
+        if (calculatedCryptoList.length === 0) {
             alert("Calculate your crypto first");
             throw new Error("Calculate crypto before searching");
         }
@@ -772,7 +914,6 @@ function addFavoritesFunc(e) {
     changefavoriteCounterValue();
 }
 
-
 function checkFavorites(event) {
     let cryptoToAddOrRemove = event.path[1].cells[2].textContent;
     favoriteCryptoList.find(x => x.name === cryptoToAddOrRemove) ? removeCryptoFromFavorites(event) : addCryptoToFavorites(event);
@@ -785,8 +926,6 @@ function addCryptoToFavorites(event) {
     let cryptoToAdd = cryptoData.find(x => x.name === cryptoName);
     let cryptoToAddWithHistoricalData = getMaxMinValueHistorical([cryptoToAdd])
     favoriteCryptoList.push(...cryptoToAddWithHistoricalData);
-    console.log(favoriteCryptoList)
-
 }
 
 function removeCryptoFromFavorites(event) {
@@ -795,21 +934,27 @@ function removeCryptoFromFavorites(event) {
     changeRowColorInTables(cryptoToRemove, addCrypto);
     let index = favoriteCryptoList.findIndex(x => x.name === cryptoToRemove);
     index > -1 && favoriteCryptoList.splice(index, 1);
-    console.log(favoriteCryptoList)
 }
 
 function changeRowColorInTables(crypto, addCrypto) {
     tableList.forEach(table => {
         let tableRows = Array.from(table.rows);
+
         if (tableRows.length < 2) {
             return;
         }
         let rowToChange = tableRows.find(x => x.cells[2].textContent === crypto);
+
         if (rowToChange) {
             if (addCrypto) {
                 rowToChange.style.backgroundColor = "lightgreen";
             } else {
-                rowToChange.style.backgroundColor = "";
+
+                if (parseInt(rowToChange.firstChild.textContent) % 2) {
+                    rowToChange.style.backgroundColor = "white";
+                } else {
+                    rowToChange.style.backgroundColor = "";
+                }
             }
         }
     });
@@ -821,8 +966,9 @@ function changefavoriteCounterValue() {
 }
 
 function showFavoritesInNewWindow() {
+
     if (favoriteCryptoList.length === 0) {
-        alert("Add some crypto to favorites");
+        alert("Add some crypto to favorites. You can do this by clicking on the table row.");
         throw new Error;
     }
     favoriteListFiltered = [];
@@ -914,16 +1060,15 @@ function createModalButtons(node) {
     node.appendChild(buttonContainer);
 }
 
-function addInformationTextToButton(wrapper, inputName, text){
-    let textInput = {[inputName]: null};
+function addInformationTextToButton(wrapper, inputName, text) {
+    let textInput = { [inputName]: null };
     textInput[inputName] = document.createElement("input");
     textInput[inputName].setAttribute("type", "text");
     textInput[inputName].setAttribute("readonly", "true");
     textInput[inputName].setAttribute("value", text);
     textInput[inputName].setAttribute("id", `${inputName}-text`);
-
     wrapper.appendChild(textInput[inputName]);
-    
+
 }
 
 function addListenersToModal(table) {
@@ -940,6 +1085,7 @@ function addListenersToModal(table) {
 }
 
 function addFiltersToModal() {
+
     if (document.querySelector(".modal-filter-container")) {
         throw new Error("There is already one modal filter container")
     }
@@ -966,12 +1112,12 @@ function addFiltersToModal() {
 }
 
 function addButtonsToFilterContainer(container) {
-    createFilterButton(container, "modalDateFilter", "Data/modalDateFilter.png", "Search by date");
-    createFilterButton(container, "modalBestFilter", "Data/modalBestFilter.png", "Search for best performing cryptocurrencies");
-    createFilterButton(container, "modalWorstFilter", "Data/modalWorstFilter.png", "Search for worst performing cryptocurrencies");
-    createFilterButton(container, "modalDolarFilter", "Data/modalDolarFilter.png", "Crypto worth dolars on average");
-    createFilterButton(container, "modalCentFilter", "Data/modalCentFilter.png", "Crypto worth cents on average");
-    createFilterButton(container, "modalTokenFilter", "Data/modalTokenFilter.png", "Dont show token cryptocurrencies");
+    createFilterButton(container, "modalDateFilter", "Data/modalDateFilterWhite.png", "Search by date");
+    createFilterButton(container, "modalBestFilter", "Data/modalBestFilterWhite.png", "Search for best performing cryptocurrencies");
+    createFilterButton(container, "modalWorstFilter", "Data/modalWorstFilterWhite.png", "Search for worst performing cryptocurrencies");
+    createFilterButton(container, "modalDolarFilter", "Data/modalDolarFilterWhite.png", "Crypto worth dolars on average");
+    createFilterButton(container, "modalCentFilter", "Data/modalCentFilterWhite.png", "Crypto worth cents on average");
+    createFilterButton(container, "modalTokenFilter", "Data/modalTokenFilterWhite.png", "Dont show token cryptocurrencies");
 }
 
 function createFilterButton(container, filterName, imgSrc, text) {
@@ -1002,8 +1148,8 @@ function createFilterButton(container, filterName, imgSrc, text) {
 function addInputsToFilterContainer(container) {
     createInputs(container, "modalStartDateFilter", "date", "Start search date")
     createInputs(container, "modalEndDateFilter", "date", "End search date")
-    createInputs(container, "modalBestPerformingCryptoGrowMore", "number", "Show crypto that grown more then x percent", "Crypto grown more");
-    createInputs(container, "modalBestPerformingCryptoGrowLess", "number", "Show crypto that grown less then x percent", "Crypto grow less");
+    createInputs(container, "modalBestPerformingCryptoGrowMore", "number", "Show crypto that grown more then x percent", "crypto grown more");
+    createInputs(container, "modalBestPerformingCryptoGrowLess", "number", "Show crypto that grown less then x percent", "crypto grow less");
     createInputs(container, "modalWorstPerformingCryptoShrinkMore", "number", "Show crypto that shrink more then x percent", "Crypto shrink more");
     createInputs(container, "modalWorstPerformingCryptoShrinkLess", "number", "Show crypto that shrink less then x percent", "Crypto shrink less");
 }
@@ -1039,8 +1185,6 @@ function addEventListenersToModalFilterContainer() {
     const modalCalculate = document.getElementById("modal-calculate-button");
     const modalStartDateFilter = document.getElementById("modalStartDateFilter");
     const modalEndDateFilter = document.getElementById("modalEndDateFilter");
-
-
     modalDateFilterCheckbox.addEventListener("click", showHideFilters);
     modalBestFilterCheckbox.addEventListener("click", showHideFilters);
     modalWorstFilterCheckbox.addEventListener("click", showHideFilters);
@@ -1061,12 +1205,9 @@ function addEventListenersToModalFilterContainer() {
     modalBestFilterCheckbox.addEventListener("change", showHideFilters);
     modalWorstFilterCheckbox.addEventListener("change", showHideFilters);
     modalCalculate.addEventListener("click", () => onCalculatePressed(favoriteCryptoList, document.getElementById("modalTable"), true));
-
     modalStartDateFilter.addEventListener("change", getStartEndDateInUnix);
     modalEndDateFilter.addEventListener("change", getStartEndDateInUnix);
-
     showHideFilters()
-
 }
 
 function removeModalTable() {
@@ -1076,6 +1217,7 @@ function removeModalTable() {
 
 
 function addTableToList(table) {
+
     if (tableList.find(x => x.id === table.id)) {
         let index = tableList.findIndex(x => x.id === table.id);
         tableList.splice(index, 1)
@@ -1084,22 +1226,22 @@ function addTableToList(table) {
 }
 
 function askUserForConfirmationAppliedFilters(cryptoWorthCentsFiltered) {
+
     if (cryptoWorthCentsFiltered.length !== favoriteCryptoList.length) {
         let cryptoHiddenInFavoritesUseingFilters = favoriteCryptoList.filter(x => !cryptoWorthCentsFiltered.some(y => y.name === x.name));
         let listOfHiddenCryptoNames = cryptoHiddenInFavoritesUseingFilters.map(x => x = x.name).join(",\n");
         let confirmApplyingFilters = confirm(`Applying this filters will hide some crypto from your favorites list: \n${listOfHiddenCryptoNames}`);
+
         if (!confirmApplyingFilters) {
             throw new Error("Calculation aborted by user")
         }
     }
 }
 
-
 function showBiggestWinnersAndLoosers(timer) {
     let winnersAndLoosers = getBiggestWinnerLooserFromLastDay();
     winnersAndLoosers.counter = 0;
-    setInterval(() => { showWinnersAndLoosers(winnersAndLoosers) }, timer)
-
+    setInterval(() => { showWinnersAndLoosers(winnersAndLoosers) }, timer);
 }
 
 function getBiggestWinnerLooserFromLastDay() {
@@ -1113,7 +1255,6 @@ function getBiggestWinnerLooserFromLastDay() {
             return cryptoWithLast24hPriceChange;
 
         } catch (error) {
-            console.log(error + crypto.id);
         }
     })
     let biggestLoosers = cryptoWith24hPercentChange.sort((a, b) => a.priceChange24h - b.priceChange24h).splice(0, 5);
@@ -1122,15 +1263,16 @@ function getBiggestWinnerLooserFromLastDay() {
     for (let key in lastDayWinnerLooser) {
         lastDayWinnerLooser[key].forEach(x => x.priceChange24h = `${x.priceChange24h.toFixed(2)}%`);
     }
-    console.log(lastDayWinnerLooser);
 
     return lastDayWinnerLooser;
 }
 
 function showWinnersAndLoosers(winnersAndLoosers) {
+
     if (winnersAndLoosers.counter > 9) {
         winnersAndLoosers.counter = 0;
     }
+
     if (winnersAndLoosers.counter > 4) {
         bestWorstCryptoIn24HInput.value = `${winnersAndLoosers.biggestLoosers[winnersAndLoosers.counter - 5].id}: ${winnersAndLoosers.biggestLoosers[winnersAndLoosers.counter - 5].priceChange24h}`;
         bestWorstCryptoIn24HInput.style.color = "red";
@@ -1144,7 +1286,46 @@ function showWinnersAndLoosers(winnersAndLoosers) {
     }
 }
 
+function changeCurrentPage(e) {
 
+    if (e.target.id.includes("next")) {
+        currentPage++
+    } else {
+        currentPage--
+    }
+    enableOrDisablePageButtons(currentPage);
+    createAndDeleteTable(mainTable, calculatedCryptoList)
+}
+
+function enableOrDisablePageButtons(page) {
+    let pageCounter = Math.ceil(calculatedCryptoList.length / rowDisplayChanger.value);
+
+    if (page === 1 && pageCounter === 1) {
+        tablePageChangerButtonContainer.style.display = "none";
+        prevPageButton.disabled = false;
+        nextPageButton.disabled = false;
+    } else if (page === 1) {
+        tablePageChangerButtonContainer.style.display = "block";
+        prevPageButton.disabled = true;
+        nextPageButton.disabled = false;
+    } else if (page > 1 && page < pageCounter) {
+        tablePageChangerButtonContainer.style.display = "block";
+        nextPageButton.disabled = false;
+        prevPageButton.disabled = false;
+    } else {
+        tablePageChangerButtonContainer.style.display = "block";
+        prevPageButton.disabled = false;
+        nextPageButton.disabled = true;
+    }
+}
+
+function showHideRowSettings() {
+    if (selectorPageChangerContainer.style.right === "" || selectorPageChangerContainer.style.right === "-205px") {
+        selectorPageChangerContainer.style.right = "50px";
+    } else if (selectorPageChangerContainer.style.right === "50px") {
+        selectorPageChangerContainer.style.right = "-205px";
+    }
+}
 
 async function onDownloadAllCryptoButton() {
     let cryptoList = await fetchCryptoCurrenciesList();
@@ -1171,30 +1352,28 @@ async function fetchCyrptoCurrencies(cryptoList) {
             let inquiry = `https://api.coingecko.com/api/v3/coins/${cryptoID}/market_chart?vs_currency=USD&days=max&interval=daily`
             let dailyDataResponse = await fetch(inquiry);
             let dailyData = await dailyDataResponse.json();
-            let ignore = ignoreDefaultCrypto(dailyData, 1622502000000);
+            let ignore = ignoreDefaultCrypto(dailyData, 1624831200000, 1609459200000);
 
             if (dailyData.error) {
                 console.log(`${cryptoID} - ${cryptoName} data doesnt exists`);
                 continue;
-
             } else if (ignore) {
                 defaultedCryptocurrencies.push({ cryptoSymbol: cryptoSymbol, cryptoName: cryptoName });
                 continue;
             }
-
             let currencyData = convertCurrencyDataToNewFormat(dailyData, cryptoName, cryptoSymbol);
             fetchedData.push(currencyData);
             console.log("krypto dodane:", fetchedData.length, "krypto smieci:", defaultedCryptocurrencies.length);
         } catch (error) {
             console.error(error);
-
         }
     }
 
     return fetchedData;
 }
 
-function ignoreDefaultCrypto(data, time) {
+function ignoreDefaultCrypto(data, time, pastTime) {
+
     if (data.prices == undefined) {
         let defaultCrypto = true;
 
@@ -1202,6 +1381,17 @@ function ignoreDefaultCrypto(data, time) {
     }
 
     let defaultCrypto = data.prices.find(x => x[0] > time);
+    // let oldCrypto = data.prices.find(x => x[0] < pastTime)
+
+    // if (defaultCrypto == undefined || oldCrypto == undefined) {
+    //     return true;
+
+    // } else if (defaultCrypto[1] > 0 && oldCrypto[1] > 0) {
+    //     return false;
+
+    // } else {
+    //     return true;
+    // }
 
     if (defaultCrypto == undefined) {
         return true;
@@ -1212,7 +1402,6 @@ function ignoreDefaultCrypto(data, time) {
     } else {
         return true;
     }
-
 }
 
 async function fetchCryptoCurrenciesList() {
@@ -1227,8 +1416,7 @@ function convertCurrencyDataToNewFormat(data, name, symbol) {
         id: symbol,
         name: name,
         dailyStats: []
-    }
-
+    };
     data.prices.forEach((x, i) => {
         let dailyStats = {};
 
@@ -1237,6 +1425,9 @@ function convertCurrencyDataToNewFormat(data, name, symbol) {
                 console.log(name, "-", "Cena:", x[1])
                 return;
             }
+            // if (x[0] < 1619820000000) {
+            //     return;
+            // }
             dailyStats.date = x[0];
             dailyStats.price = parseFloat(x[1]);
             dailyStats.volume = parseInt(data.total_volumes[i][1]);

@@ -1,24 +1,4 @@
-.filterCheckbox{
-    position: relative;
-    height: 37px;
-    margin: 5px;
-    border-bottom: 1px solid darkgray;
-    padding: 10px;
-}
 
-.date{
-    height: 25px;
-}
-
-.filterCheckbox p{
-    margin: 0px;
-    padding: 0px;
-    position: absolute;
-    top: 0px;
-    left: 0px;
-    z-index: 1;
-    width: 120px;
-}
 
 .short p{
   top:10px;

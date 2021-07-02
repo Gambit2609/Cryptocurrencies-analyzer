@@ -69,7 +69,6 @@ hr{
 }
 
 .prompter{
-    width: 40%;
     padding: 5px;
     margin-left: 50px;
 }
@@ -80,6 +79,7 @@ hr{
     border: none;
     background-color: #f2f2f2;
     font-weight: bold;
+    pointer-events: none;
 }
 
 #best-worst-crypto-label{
@@ -87,14 +87,15 @@ hr{
 }
 
 #show-favorites-list-text{
-position: absolute;
-top:80px;
-right: 0px;
-width: 0px;
-height: 0px;
-transition: 0.5s ease-in;
-opacity: 0;
-cursor: default;
+    position: absolute;
+    top: 32px;
+    right: 55px;
+    width: 0px;
+    height: 0px;
+    transition: 0.5s;
+    opacity: 0;
+    cursor: default;
+    pointer-events: none;
 }
 
 .favoritesContainer:hover #show-favorites-list-text{
