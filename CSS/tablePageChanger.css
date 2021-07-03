@@ -111,10 +111,12 @@
 }
 
 #jump-to-page-input{
-    height: 20px;
+    height: 18px;
     width: 22px;
     outline: none;
     font-size: 18px;
+    text-align: center;
+    padding: 2px;
 }
 
 .jump-to-page-container label{
@@ -136,6 +138,7 @@
     background: #f2f2f2;
     font-size: 19px;
     padding: 3px;
+    pointer-events: none;
 }
 
 #display-page-ammount-label{

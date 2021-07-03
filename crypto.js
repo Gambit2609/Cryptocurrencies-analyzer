@@ -51,6 +51,8 @@ const tablePageChangerButtonContainer = document.querySelector(".table-page-chan
 const settingsContainer = document.querySelector(".settings-container");
 const selectorPageChangerContainer = document.querySelector(".selector-page-changer-container");
 const rowDisplayChanger = document.getElementById("row-display-changer");
+const displayPageAmmountInput = document.getElementById("display-page-ammount");
+const jumpToPageInput = document.getElementById("jump-to-page-input");
 let currentPage = 1;
 let calculatedCryptoList = [];
 let searchedCrypto = [];
@@ -90,13 +92,15 @@ function addListeners() {
     tokenCheckBox.addEventListener("change", changeTokenCheckboxes);
     nextPageButton.addEventListener("click", changeCurrentPage);
     prevPageButton.addEventListener("click", changeCurrentPage);
+    jumpToPageInput.addEventListener("keydown", changeCurrentPage);
     settingsContainer.addEventListener("click", showHideRowSettings);
-    rowDisplayChanger.addEventListener("change", ()=> {
+    rowDisplayChanger.addEventListener("change", () => {
         currentPage = 1;
-        createAndDeleteTable(mainTable,calculatedCryptoList);
+        createAndDeleteTable(mainTable, calculatedCryptoList);
         enableOrDisablePageButtons(currentPage);
     });
-    
+
+
 }
 clearAllfilterCheckboxes()
 changeScriptValue()
@@ -255,11 +259,11 @@ function addHeaderCellToRow(table, row, rowName, filterName) {
 }
 
 function generateTableRows(table, crypto) {
-    let pageToShow = table.id.includes("modal") ? 1 : currentPage
+    let pageToShow = table.id.includes("modal") ? 1 : currentPage;
+    jumpToPageInput.value = currentPage;
     crypto.forEach((obj, i) => {
 
-        if (pageToShow > 1 ? i >= (rowDisplayChanger.value * pageToShow) - rowDisplayChanger.value && i < rowDisplayChanger.value * pageToShow : i <= rowDisplayChanger.value -1) {
-        // if (pageToShow > 1 ? i >= `${pageToShow - 1}000` && i < `${pageToShow}000` : i <= 999) {
+        if (pageToShow > 1 ? i >= (rowDisplayChanger.value * pageToShow) - rowDisplayChanger.value && i < rowDisplayChanger.value * pageToShow : i <= rowDisplayChanger.value - 1) {
             let row = table.insertRow();
             row.addEventListener("click", addFavoritesFunc);
             checkForFavorites(obj.name, row)
@@ -869,6 +873,7 @@ function addEventListenersToFileReader(reader) {
         setTimeout(() => document.getElementsByClassName("welcome-header-background")[0].remove(), 1500);
         document.body.style.cursor = "default";
         showBiggestWinnersAndLoosers(3000);
+        tablePageChangerButtonContainer.style.display = "block";
     }
     );
 }
@@ -1287,33 +1292,50 @@ function showWinnersAndLoosers(winnersAndLoosers) {
 }
 
 function changeCurrentPage(e) {
-
-    if (e.target.id.includes("next")) {
-        currentPage++
+    if (e.key === "Enter") {
+        currentPage = jumpToPageInput.value;
+        validateJumpTopageInputValue()
+        enableOrDisablePageButtons(currentPage);
+        createAndDeleteTable(mainTable, calculatedCryptoList);
     } else {
-        currentPage--
+        if (e.target.id.includes("next")) {
+            currentPage++;
+            enableOrDisablePageButtons(currentPage);
+            createAndDeleteTable(mainTable, calculatedCryptoList);
+        } else if (e.target.id.includes("prev")) {
+            currentPage--;
+            enableOrDisablePageButtons(currentPage);
+            createAndDeleteTable(mainTable, calculatedCryptoList);
+        }
+
     }
-    enableOrDisablePageButtons(currentPage);
-    createAndDeleteTable(mainTable, calculatedCryptoList)
+}
+
+function validateJumpTopageInputValue() {
+
+    if (!/\b(\d|[1-9][0-9])\b/.test(jumpToPageInput.value) || parseInt(jumpToPageInput.value) === 0 || parseInt(jumpToPageInput.value) < 0) {
+        alert(`Use only numbers in range from 1 to ${displayPageAmmountInput.value}`);
+        throw new Error("Invalid user input");
+    } else if (parseInt(jumpToPageInput.value) > parseInt(displayPageAmmountInput.value)) {
+        alert(`You cannot jump to page ${jumpToPageInput.value}. Last page is ${displayPageAmmountInput.value}`)
+        throw new Error("Page doesnt exist")
+    }
 }
 
 function enableOrDisablePageButtons(page) {
     let pageCounter = Math.ceil(calculatedCryptoList.length / rowDisplayChanger.value);
+    displayPageAmmountInput.value = pageCounter;
 
     if (page === 1 && pageCounter === 1) {
-        tablePageChangerButtonContainer.style.display = "none";
         prevPageButton.disabled = false;
         nextPageButton.disabled = false;
     } else if (page === 1) {
-        tablePageChangerButtonContainer.style.display = "block";
         prevPageButton.disabled = true;
         nextPageButton.disabled = false;
     } else if (page > 1 && page < pageCounter) {
-        tablePageChangerButtonContainer.style.display = "block";
         nextPageButton.disabled = false;
         prevPageButton.disabled = false;
     } else {
-        tablePageChangerButtonContainer.style.display = "block";
         prevPageButton.disabled = false;
         nextPageButton.disabled = true;
     }
