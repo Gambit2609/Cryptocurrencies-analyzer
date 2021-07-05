@@ -904,6 +904,8 @@ function getSearchResults(event) {
             currencyData.name.toLowerCase().includes(searchedValue) || currencyData.id.toLowerCase().includes(searchedValue));
 
         if (filteredCurrencies.length) {
+            currentPage = 1;
+            enableOrDisablePageButtons(currentPage, filteredCurrencies);
             searchedCrypto = [];
             createAndDeleteTable(mainTable, filteredCurrencies);
             searchedCrypto.push(...filteredCurrencies);
@@ -920,13 +922,13 @@ function addFavoritesFunc(e) {
 }
 
 function checkFavorites(event) {
-    let cryptoToAddOrRemove = event.path[1].cells[2].textContent;
-    favoriteCryptoList.find(x => x.name === cryptoToAddOrRemove) ? removeCryptoFromFavorites(event) : addCryptoToFavorites(event);
+        let cryptoToAddOrRemove = event.currentTarget.cells[2].textContent;
+        favoriteCryptoList.find(x => x.name === cryptoToAddOrRemove) ? removeCryptoFromFavorites(event) : addCryptoToFavorites(event);
 }
 
 function addCryptoToFavorites(event) {
     let addCrypto = true;
-    let cryptoName = event.path[1].cells[2].textContent;
+    let cryptoName = event.currentTarget.cells[2].textContent;
     changeRowColorInTables(cryptoName, addCrypto);
     let cryptoToAdd = cryptoData.find(x => x.name === cryptoName);
     let cryptoToAddWithHistoricalData = getMaxMinValueHistorical([cryptoToAdd])
@@ -935,7 +937,7 @@ function addCryptoToFavorites(event) {
 
 function removeCryptoFromFavorites(event) {
     let addCrypto = false;
-    let cryptoToRemove = event.path[1].cells[2].textContent;
+    let cryptoToRemove = event.currentTarget.cells[2].textContent;
     changeRowColorInTables(cryptoToRemove, addCrypto);
     let index = favoriteCryptoList.findIndex(x => x.name === cryptoToRemove);
     index > -1 && favoriteCryptoList.splice(index, 1);
@@ -1322,13 +1324,14 @@ function validateJumpTopageInputValue() {
     }
 }
 
-function enableOrDisablePageButtons(page) {
-    let pageCounter = Math.ceil(calculatedCryptoList.length / rowDisplayChanger.value);
+function enableOrDisablePageButtons(page, cryptoFromSearchInput) {
+    let cryptoListToShow = cryptoFromSearchInput || calculatedCryptoList;
+    let pageCounter = Math.ceil(cryptoListToShow.length / rowDisplayChanger.value);
     displayPageAmmountInput.value = pageCounter;
 
     if (page === 1 && pageCounter === 1) {
-        prevPageButton.disabled = false;
-        nextPageButton.disabled = false;
+        prevPageButton.disabled = true;
+        nextPageButton.disabled = true;
     } else if (page === 1) {
         prevPageButton.disabled = true;
         nextPageButton.disabled = false;

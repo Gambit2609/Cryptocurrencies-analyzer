@@ -131,6 +131,10 @@
     margin: 0; 
 }
 
+#jump-to-page-input{
+-moz-appearance: textfield;
+}
+
 #display-page-ammount{
     width: 25px;
     height: 20px;
