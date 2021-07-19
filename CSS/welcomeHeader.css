@@ -107,17 +107,17 @@ width: 278px;
 }
 
 .loader-sector-red{
-    border-top: 10px solid lightcoral;
+    box-shadow: 3px 3px 5px 3px lightcoral;
     animation: loader-animation 1.4s ease infinite;
 }
 
 .loader-sector-blue{
-    border-top: 10px solid lightblue;
+    box-shadow: 3px 3px 5px 3px lightblue;
     animation: loader-animation 1.7s ease-out infinite;
 }
 
 .loader-sector-green{
-    border-top: 10px solid lightgreen;
+    box-shadow: 3px 3px 5px 3px lightgreen;
     animation: loader-animation 2.3s ease-in-out infinite;
 }
 
