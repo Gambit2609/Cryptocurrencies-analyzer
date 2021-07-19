@@ -78,7 +78,7 @@ width: 278px;
     display: none; 
     align-items: center;
     justify-content: center;
-    background-color: hsla(201, 100%, 10%,0.9);
+    background-color: hsla(201, 100%, 10%,0.8);
     z-index: 1;
 }
 

@@ -59,7 +59,6 @@ let searchedCrypto = [];
 let favoriteListFiltered = [];
 
 function addListeners() {
-    uploadCryptoButton.addEventListener("change", onCryptoUploaded);
     startSearchDateInput.addEventListener("change", getStartEndDateInUnix);
     endSearchDateInput.addEventListener("change", getStartEndDateInUnix);
     calculateButton.addEventListener("click", () => { onCalculatePressed(cryptoData, mainTable) });
@@ -106,8 +105,29 @@ clearAllfilterCheckboxes()
 changeScriptValue()
 addListeners();
 showHideFilters();
+handleLoadingCrypto();
 // onDownloadAllCryptoButton();
 
+
+async function handleLoadingCrypto() {
+    document.getElementsByClassName("loader-animation-background")[0].style.display = "flex";
+    let dataFromServer = await fetch("/cryptoData.txt");
+    let parsedData = await dataFromServer.json();
+    cryptoData.push(...parsedData);
+    onCalculatePressed(cryptoData, mainTable);
+    showBiggestWinnersAndLoosers(3000);
+    document.getElementsByClassName("loader-text")[0].style.textShadow = "0 0 10px #49ff18 , 0 0 30px #49FF18";
+    document.getElementsByClassName("loader-text")[0].textContent = "Done!";
+    await handleRemovingWelcomeBackground();
+}
+
+function handleRemovingWelcomeBackground() {
+    return (new Promise(() => setTimeout(() => {
+        tablePageChangerButtonContainer.style.display = "block";
+        document.getElementsByClassName("welcome-header-background")[0].remove();
+    }, 2500)
+    ));
+}
 
 function onCalculatePressed(data, table, modalCalculation) {
     currentPage = 1;
@@ -862,35 +882,6 @@ function getStartEndDateInUnix(event) {
     }
 }
 
-
-function addEventListenersToFileReader(reader) {
-    reader.addEventListener("loadstart", () => document.body.style.cursor = "wait");
-    reader.addEventListener("loadstart", () => document.getElementsByClassName("loader-animation-background")[0].style.display = "flex");
-    reader.addEventListener("loadend", () => onCalculatePressed(cryptoData, mainTable));
-    reader.addEventListener("loadend", () => {
-        document.getElementsByClassName("loader-text")[0].style.textShadow = "0 0 10px #49ff18 , 0 0 30px #49FF18";
-        document.getElementsByClassName("loader-text")[0].textContent = "Done!";
-        setTimeout(() => document.getElementsByClassName("welcome-header-background")[0].remove(), 2500);
-        document.body.style.cursor = "default";
-        showBiggestWinnersAndLoosers(3000);
-        tablePageChangerButtonContainer.style.display = "block";
-    }
-    );
-}
-
-
-function onCryptoUploaded(e) {
-    let file = e.target.files[0];
-    let reader = new FileReader();
-    addEventListenersToFileReader(reader);
-    reader.onload = function () {
-        let dataToParse = reader.result;
-        let parsedData = JSON.parse(dataToParse);
-        cryptoData.push(...parsedData);
-    }
-    reader.readAsText(file);
-}
-
 function getSearchResults(event) {
 
     if (event.key === "Enter") {
@@ -922,8 +913,8 @@ function addFavoritesFunc(e) {
 }
 
 function checkFavorites(event) {
-        let cryptoToAddOrRemove = event.currentTarget.cells[2].textContent;
-        favoriteCryptoList.find(x => x.name === cryptoToAddOrRemove) ? removeCryptoFromFavorites(event) : addCryptoToFavorites(event);
+    let cryptoToAddOrRemove = event.currentTarget.cells[2].textContent;
+    favoriteCryptoList.find(x => x.name === cryptoToAddOrRemove) ? removeCryptoFromFavorites(event) : addCryptoToFavorites(event);
 }
 
 function addCryptoToFavorites(event) {
