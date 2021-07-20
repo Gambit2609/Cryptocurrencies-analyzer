@@ -78,7 +78,8 @@ width: 278px;
     display: none; 
     align-items: center;
     justify-content: center;
-    background-color: hsla(201, 100%, 10%,0.8);
+    background-color: black;
+    opacity: 0.9;
     z-index: 1;
 }
 
@@ -107,18 +108,22 @@ width: 278px;
 }
 
 .loader-sector-red{
-    box-shadow: 3px 3px 5px 3px lightcoral;
-    animation: loader-animation 1.4s ease infinite;
+    box-shadow: 1px 3px 5px 0px lightcoral;
+    animation: loader-animation 2.4s linear infinite;
 }
 
 .loader-sector-blue{
-    box-shadow: 3px 3px 5px 3px lightblue;
-    animation: loader-animation 1.7s ease-out infinite;
+    box-shadow: 1px 3px 5px 0px lightblue;
+    animation: loader-animation 1.9s linear infinite;
+    width: 93%;
+    height: 93%;
 }
 
 .loader-sector-green{
-    box-shadow: 3px 3px 5px 3px lightgreen;
-    animation: loader-animation 2.3s ease-in-out infinite;
+    box-shadow: 1px 3px 5px 0px lightgreen;
+    animation: loader-animation 1.4s linear infinite;
+    width: 85%;
+    height: 85%;
 }
 
 @keyframes loader-animation{
