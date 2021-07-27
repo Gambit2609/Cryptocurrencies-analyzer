@@ -109,26 +109,38 @@ width: 278px;
 
 .loader-sector-red{
     box-shadow: 1px 3px 5px 0px lightcoral;
-    animation: loader-animation 2.4s linear infinite;
+    animation: loader-animation1 2.1s linear infinite;
 }
 
 .loader-sector-blue{
     box-shadow: 1px 3px 5px 0px lightblue;
-    animation: loader-animation 1.9s linear infinite;
+    animation: loader-animation2 1.7s linear infinite;
     width: 93%;
     height: 93%;
+    
 }
 
 .loader-sector-green{
     box-shadow: 1px 3px 5px 0px lightgreen;
-    animation: loader-animation 1.4s linear infinite;
+    animation: loader-animation3 1.3s linear infinite;
     width: 85%;
     height: 85%;
+    
 }
 
-@keyframes loader-animation{
-    from{transform: rotate(0);}
-    to{transform: rotate(360deg);}
+@keyframes loader-animation1{
+    0% {transform: rotate(90deg);}
+    to{transform: rotate(450deg);}
+}
+
+@keyframes loader-animation2{
+    from{transform: rotate(180deg);}
+    to{transform: rotate(540deg);}
+}
+
+@keyframes loader-animation3{
+    from{transform: rotate(270deg);}
+    to{transform: rotate(630deg);}
 }
 
 .download-button-container{

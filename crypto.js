@@ -338,7 +338,7 @@ function generateTableRows(table, crypto) {
                 addCellsToTable(row, rowData)
             }
             if (i % 2 === 0 && !table.id.includes("modal") && row.style.backgroundColor === "") {
-                row.style.backgroundColor = "white"
+                row.style.backgroundColor = "#f2f2f2"
             }
         }
     });
